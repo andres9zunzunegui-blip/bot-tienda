@@ -1,0 +1,531 @@
+{
+ "duracion_s": 58.04,
+ "voces_faltantes": [
+  "s01_gancho",
+  "s03_inciso_ofrece",
+  "s04_codiguito_duda",
+  "s05_que_lo_diga",
+  "s06_957_f1",
+  "s06_957_f2",
+  "s06_957_f3",
+  "s06_957_f4",
+  "s06_957_f5",
+  "s06_957_f6",
+  "s06_957_f7",
+  "s08_mil_quince",
+  "s09_1015_f1",
+  "s09_1015_f2",
+  "s09_1015_f3",
+  "s09_1015_f4",
+  "s10_cierre_a",
+  "s11_cierre_b",
+  "s12_queda_resaltado"
+ ],
+ "tramos": [
+  {
+   "id": "s01_gancho",
+   "tipo": "dialogo",
+   "t0": 0.0,
+   "dur": 3.145714285714286,
+   "personaje": "clausulo",
+   "texto": "¿Un apretón de manos… es un contrato?",
+   "resaltar": [
+    "contrato"
+   ],
+   "sfx": [
+    {
+     "t": 0.0,
+     "s": "apreton"
+    },
+    {
+     "t": 0.12,
+     "s": "brillo"
+    },
+    {
+     "t": 0.45,
+     "s": "whoosh"
+    }
+   ],
+   "voz": "None",
+   "voz_dur": 2.7857142857142856,
+   "estimada": true
+  },
+  {
+   "id": "s02_apertura",
+   "tipo": "apertura",
+   "t0": 3.145714285714286,
+   "dur": 2.4,
+   "articulo": 957,
+   "sfx": [
+    {
+     "t": 0.0,
+     "s": "golpe_libro"
+    },
+    {
+     "t": 0.55,
+     "s": "pagina"
+    },
+    {
+     "t": 1.2,
+     "s": "brillo"
+    }
+   ],
+   "voz": "None",
+   "texto": ""
+  },
+  {
+   "id": "s03_inciso_ofrece",
+   "tipo": "dialogo",
+   "t0": 5.545714285714286,
+   "dur": 3.8600000000000003,
+   "personaje": "inciso",
+   "texto": "¡Te vendo mi bici! Cincuenta mil pesos y es tuya.",
+   "resaltar": [
+    "Cincuenta mil pesos"
+   ],
+   "sfx": [
+    {
+     "t": 0.0,
+     "s": "timbre_bici"
+    },
+    {
+     "t": 0.45,
+     "s": "pop"
+    }
+   ],
+   "voz": "None",
+   "voz_dur": 3.5,
+   "estimada": true
+  },
+  {
+   "id": "s04_codiguito_duda",
+   "tipo": "dialogo",
+   "t0": 9.405714285714286,
+   "dur": 1.5,
+   "personaje": "codiguito",
+   "texto": "Pará, pará…",
+   "resaltar": [],
+   "sfx": [
+    {
+     "t": 0.0,
+     "s": "freno"
+    }
+   ],
+   "voz": "None",
+   "voz_dur": 0.9285714285714286,
+   "estimada": true
+  },
+  {
+   "id": "s05_que_lo_diga",
+   "tipo": "dialogo",
+   "t0": 10.905714285714286,
+   "dur": 1.7171428571428573,
+   "personaje": "clausulo",
+   "texto": "Que lo diga la ley.",
+   "resaltar": [
+    "la ley"
+   ],
+   "sfx": [
+    {
+     "t": 0.0,
+     "s": "whoosh"
+    },
+    {
+     "t": 0.2,
+     "s": "brillo"
+    }
+   ],
+   "voz": "None",
+   "voz_dur": 1.3571428571428572,
+   "estimada": true
+  },
+  {
+   "id": "s06_957_f1",
+   "tipo": "ley",
+   "t0": 12.622857142857143,
+   "dur": 3.2600000000000002,
+   "personaje": "voz_ley",
+   "articulo": 957,
+   "texto": "ARTÍCULO 957.-",
+   "resaltar": [],
+   "sfx": [
+    {
+     "t": 0.0,
+     "s": "pagina"
+    }
+   ],
+   "voz": "None",
+   "voz_dur": 3.0,
+   "estimada": true
+  },
+  {
+   "id": "s06_957_f2",
+   "tipo": "ley",
+   "t0": 15.882857142857143,
+   "dur": 1.3,
+   "personaje": "voz_ley",
+   "articulo": 957,
+   "texto": "Definición.",
+   "resaltar": [
+    "Definición"
+   ],
+   "sfx": [
+    {
+     "t": 0.0,
+     "s": "whoosh"
+    },
+    {
+     "t": 0.15,
+     "s": "brillo"
+    }
+   ],
+   "voz": "None",
+   "voz_dur": 0.9,
+   "estimada": true
+  },
+  {
+   "id": "s06_957_f3",
+   "tipo": "ley",
+   "t0": 17.18285714285714,
+   "dur": 2.413846153846154,
+   "personaje": "voz_ley",
+   "articulo": 957,
+   "texto": "Contrato es el acto jurídico",
+   "resaltar": [
+    "Contrato",
+    "acto jurídico"
+   ],
+   "sfx": [
+    {
+     "t": 0.0,
+     "s": "holograma"
+    }
+   ],
+   "voz": "None",
+   "voz_dur": 2.1538461538461537,
+   "estimada": true
+  },
+  {
+   "id": "s06_957_f4",
+   "tipo": "ley",
+   "t0": 19.596703296703296,
+   "dur": 2.7984615384615386,
+   "personaje": "voz_ley",
+   "articulo": 957,
+   "texto": "mediante el cual dos o más partes",
+   "resaltar": [
+    "dos o más partes"
+   ],
+   "sfx": [
+    {
+     "t": 0.0,
+     "s": "reflector"
+    },
+    {
+     "t": 0.35,
+     "s": "reflector"
+    }
+   ],
+   "voz": "None",
+   "voz_dur": 2.5384615384615383,
+   "estimada": true
+  },
+  {
+   "id": "s06_957_f5",
+   "tipo": "ley",
+   "t0": 22.395164835164834,
+   "dur": 2.490769230769231,
+   "personaje": "voz_ley",
+   "articulo": 957,
+   "texto": "manifiestan su consentimiento",
+   "resaltar": [
+    "consentimiento"
+   ],
+   "sfx": [
+    {
+     "t": 0.0,
+     "s": "apreton"
+    },
+    {
+     "t": 0.3,
+     "s": "brillo"
+    }
+   ],
+   "voz": "None",
+   "voz_dur": 2.230769230769231,
+   "estimada": true
+  },
+  {
+   "id": "s06_957_f6",
+   "tipo": "ley",
+   "t0": 24.885934065934066,
+   "dur": 4.413846153846154,
+   "personaje": "voz_ley",
+   "articulo": 957,
+   "texto": "para crear, regular, modificar, transferir o extinguir",
+   "resaltar": [
+    "transferir"
+   ],
+   "sfx": [
+    {
+     "t": 0.0,
+     "s": "whoosh"
+    },
+    {
+     "t": 0.5,
+     "s": "pop"
+    },
+    {
+     "t": 1.4,
+     "s": "ding"
+    }
+   ],
+   "voz": "None",
+   "voz_dur": 4.153846153846154,
+   "estimada": true
+  },
+  {
+   "id": "s06_957_f7",
+   "tipo": "ley",
+   "t0": 29.29978021978022,
+   "dur": 2.9523076923076927,
+   "personaje": "voz_ley",
+   "articulo": 957,
+   "texto": "relaciones jurídicas patrimoniales.",
+   "resaltar": [
+    "patrimoniales"
+   ],
+   "sfx": [
+    {
+     "t": 0.0,
+     "s": "timbre_bici"
+    }
+   ],
+   "voz": "None",
+   "voz_dur": 2.6923076923076925,
+   "estimada": true
+  },
+  {
+   "id": "s07_papeles",
+   "tipo": "accion",
+   "t0": 32.252087912087916,
+   "dur": 2.4,
+   "articulo": null,
+   "sfx": [
+    {
+     "t": 0.0,
+     "s": "papeles"
+    },
+    {
+     "t": 0.6,
+     "s": "boing"
+    },
+    {
+     "t": 1.4,
+     "s": "papeles"
+    }
+   ],
+   "voz": "None",
+   "texto": ""
+  },
+  {
+   "id": "s08_mil_quince",
+   "tipo": "dialogo",
+   "t0": 34.652087912087914,
+   "dur": 2.3600000000000003,
+   "personaje": "clausulo",
+   "texto": "Para eso está el 1015.",
+   "resaltar": [
+    "1015"
+   ],
+   "sfx": [
+    {
+     "t": 0.0,
+     "s": "whoosh"
+    },
+    {
+     "t": 0.2,
+     "s": "brillo"
+    }
+   ],
+   "voz": "None",
+   "voz_dur": 2.0,
+   "estimada": true
+  },
+  {
+   "id": "s09_1015_f1",
+   "tipo": "ley",
+   "t0": 37.012087912087914,
+   "dur": 1.7984615384615386,
+   "personaje": "voz_ley",
+   "articulo": 1015,
+   "texto": "ARTÍCULO 1015.-",
+   "resaltar": [],
+   "sfx": [
+    {
+     "t": 0.0,
+     "s": "pagina"
+    }
+   ],
+   "voz": "None",
+   "voz_dur": 1.5384615384615385,
+   "estimada": true
+  },
+  {
+   "id": "s09_1015_f2",
+   "tipo": "ley",
+   "t0": 38.81054945054945,
+   "dur": 1.7215384615384615,
+   "personaje": "voz_ley",
+   "articulo": 1015,
+   "texto": "Libertad de formas.",
+   "resaltar": [
+    "Libertad de formas"
+   ],
+   "sfx": [
+    {
+     "t": 0.0,
+     "s": "papeles"
+    },
+    {
+     "t": 0.1,
+     "s": "whoosh"
+    }
+   ],
+   "voz": "None",
+   "voz_dur": 1.4615384615384615,
+   "estimada": true
+  },
+  {
+   "id": "s09_1015_f3",
+   "tipo": "ley",
+   "t0": 40.53208791208792,
+   "dur": 2.644615384615385,
+   "personaje": "voz_ley",
+   "articulo": 1015,
+   "texto": "Sólo son formales los contratos",
+   "resaltar": [
+    "formales"
+   ],
+   "sfx": [
+    {
+     "t": 0.0,
+     "s": "holograma"
+    }
+   ],
+   "voz": "None",
+   "voz_dur": 2.3846153846153846,
+   "estimada": true
+  },
+  {
+   "id": "s09_1015_f4",
+   "tipo": "ley",
+   "t0": 43.1767032967033,
+   "dur": 4.336923076923076,
+   "personaje": "voz_ley",
+   "articulo": 1015,
+   "texto": "a los cuales la ley les impone una forma determinada.",
+   "resaltar": [
+    "la ley les impone"
+   ],
+   "sfx": [
+    {
+     "t": 0.0,
+     "s": "whoosh"
+    },
+    {
+     "t": 2.4,
+     "s": "sello"
+    }
+   ],
+   "voz": "None",
+   "voz_dur": 4.076923076923077,
+   "estimada": true
+  },
+  {
+   "id": "s10_cierre_a",
+   "tipo": "dialogo",
+   "t0": 47.51362637362638,
+   "dur": 4.145714285714286,
+   "personaje": "clausulo",
+   "texto": "Para vender una bici, la ley no impone ninguna forma.",
+   "resaltar": [
+    "ninguna forma"
+   ],
+   "sfx": [
+    {
+     "t": 0.0,
+     "s": "timbre_bici"
+    },
+    {
+     "t": 1.9,
+     "s": "pop"
+    }
+   ],
+   "voz": "None",
+   "voz_dur": 3.7857142857142856,
+   "estimada": true
+  },
+  {
+   "id": "s11_cierre_b",
+   "tipo": "dialogo",
+   "t0": 51.659340659340664,
+   "dur": 3.0028571428571427,
+   "personaje": "clausulo",
+   "texto": "Si están de acuerdo, ya hay contrato.",
+   "resaltar": [
+    "ya hay contrato"
+   ],
+   "sfx": [
+    {
+     "t": 0.0,
+     "s": "whoosh"
+    },
+    {
+     "t": 0.3,
+     "s": "pop"
+    }
+   ],
+   "voz": "None",
+   "voz_dur": 2.642857142857143,
+   "estimada": true
+  },
+  {
+   "id": "s12_queda_resaltado",
+   "tipo": "final",
+   "t0": 54.66219780219781,
+   "dur": 2.876666666666667,
+   "personaje": "clausulo",
+   "texto": "¡Queda resaltado!",
+   "resaltar": [],
+   "sfx": [
+    {
+     "t": 0.0,
+     "s": "ding"
+    },
+    {
+     "t": 0.35,
+     "s": "marcador"
+    }
+   ],
+   "voz": "None",
+   "voz_dur": 1.4166666666666667,
+   "estimada": true
+  },
+  {
+   "id": "s13_loop",
+   "tipo": "loop",
+   "t0": 57.538864468864475,
+   "dur": 0.5,
+   "articulo": null,
+   "sfx": [
+    {
+     "t": 0.0,
+     "s": "whoosh"
+    }
+   ],
+   "voz": "None",
+   "texto": ""
+  }
+ ]
+}
