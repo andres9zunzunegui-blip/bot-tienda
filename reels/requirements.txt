@@ -1,0 +1,11 @@
+# Render, audio y control (pasos 0, 1, 4, 5, 6, 7)
+numpy>=1.26
+pillow>=10.0
+# Además: ffmpeg en el sistema
+
+# Voces (paso 3) — instalar en una máquina con acceso a Hugging Face (mejor con GPU)
+# chatterbox-tts
+# faster-whisper
+
+# Veo (paso 2, opcional)
+# google-genai

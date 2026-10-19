@@ -1,0 +1,319 @@
+<style>
+/* ============ Calendario editorial (agente 3 · prefijo ca_) ============ */
+.ca-tool{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.ca-nav{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ca-mes{font-family:var(--f-display);font-size:26px;font-weight:600;line-height:1.1;min-width:10ch;text-align:center}
+.ca-legend{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--muted);align-items:center}
+.ca-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.ca-lg-pub{background:var(--info)}.ca-lg-reel{background:var(--oro)}.ca-lg-hist{background:var(--ok)}
+.ca-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.ca-dh{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:2px 4px}
+.ca-cell{background:var(--surface);border:1px solid var(--line);border-radius:8px;min-height:108px;padding:4px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.ca-cell.out{background:transparent;opacity:.55}
+.ca-cell.hoy{box-shadow:inset 0 0 0 1.5px var(--oro)}
+.ca-cell.sel{border-color:var(--oro-ink);background:color-mix(in srgb,var(--oro) 8%,var(--surface))}
+.ca-cell.drop{background:color-mix(in srgb,var(--oro) 22%,var(--surface))}
+.ca-dn{font:500 12px var(--f-mono);color:var(--muted);background:none;border:0;padding:2px 4px;cursor:pointer;text-align:left;border-radius:4px;display:flex;justify-content:space-between;align-items:center;gap:4px;width:100%}
+.ca-dn:hover{color:var(--ink)}
+.ca-dn .ca-gap{width:6px;height:6px;border-radius:50%;background:var(--warn);display:inline-block}
+.ca-it{display:block;width:100%;text-align:left;font:600 11.5px var(--f-body);color:var(--ink);background:var(--soft);border:0;border-left:3px solid var(--muted);border-radius:4px;padding:3px 5px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ca-it:hover{background:color-mix(in srgb,var(--oro) 16%,var(--soft))}
+.ca-it .ca-h{font:500 10.5px var(--f-mono);color:var(--muted);margin-right:3px}
+.ca-t-pub{border-left-color:var(--info)}.ca-t-reel{border-left-color:var(--oro)}.ca-t-hist{border-left-color:var(--ok)}
+.ca-it.ca-done{opacity:.55}
+.ca-it.ca-prog{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--oro) 60%,transparent)}
+.ca-more{font:700 11px var(--f-body);color:var(--oro-ink);background:none;border:0;padding:1px 5px;cursor:pointer;text-align:left}
+.ca-row{display:flex;flex-direction:column;gap:8px;padding:10px 0;border-top:1px solid var(--line)}
+.ca-row:first-child{border-top:0}
+.ca-rowtop{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+.ca-rowtop .ca-tt{display:flex;flex-direction:column;gap:3px;min-width:0}
+.ca-rowtop .ca-tt button{font:700 14.5px var(--f-body);color:var(--ink);background:none;border:0;padding:0;text-align:left;cursor:pointer;overflow-wrap:anywhere}
+.ca-rowtop .ca-tt button:hover{color:var(--oro-ink)}
+.ca-meta{display:flex;flex-wrap:wrap;gap:5px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ca-tchip{font-size:11px;font-weight:700;padding:1px 7px;border-radius:99px;border-left:3px solid var(--muted);background:var(--soft);color:var(--ink)}
+.ca-move{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;background:var(--soft);border-radius:8px;padding:10px}
+.ca-move label{flex:1 1 130px}
+.ca-move .btns{flex:1 1 100%}
+.ca-warnbox{border:1px solid color-mix(in srgb,var(--warn) 45%,transparent);background:color-mix(in srgb,var(--warn) 10%,transparent);border-radius:8px;padding:10px 12px;font-size:13.5px;display:flex;flex-direction:column;gap:6px}
+.ca-okbox{border:1px solid color-mix(in srgb,var(--ok) 40%,transparent);background:color-mix(in srgb,var(--ok) 9%,transparent);border-radius:8px;padding:10px 12px;font-size:13.5px}
+.ca-bars{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+.ca-bari{display:flex;flex-direction:column;gap:5px;font-size:13px}
+.ca-bari .ca-bl{display:flex;justify-content:space-between;gap:8px;font-weight:700}
+.ca-bari .ca-bl span{font-family:var(--f-mono);font-weight:500}
+.ca-bar{height:8px;background:var(--soft);border-radius:99px;overflow:hidden}
+.ca-bar i{display:block;height:100%;background:var(--oro);border-radius:99px}
+.ca-bar i.ca-full{background:var(--ok)}
+.ca-gaps{display:flex;flex-direction:column}
+.ca-gaprow{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;justify-content:space-between;padding:9px 0;border-top:1px solid var(--line);font-size:13.5px}
+.ca-gaprow:first-child{border-top:0}
+.ca-gaprow .ca-sug{color:var(--muted);font-size:12.5px;display:block}
+.ca-plrow{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;padding:8px 0;border-top:1px solid var(--line);font-size:13.5px}
+.ca-plrow:first-child{border-top:0}
+.ca-plrow input{width:auto;margin-top:3px}
+.ca-tpl{display:flex;flex-direction:column;gap:6px}
+.ca-tplrow{display:grid;grid-template-columns:96px minmax(0,1fr) 120px auto;gap:8px;align-items:center}
+.ca-tplrow b{font-size:13.5px}
+.ca-tplrow label.ca-chk{flex-direction:row;align-items:center;gap:6px;font-weight:600;color:var(--ink);white-space:nowrap}
+.ca-tplrow label.ca-chk input{width:auto}
+.ca-metas{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.ca-mday{display:flex;flex-direction:column;gap:2px;padding-top:6px}
+.ca-mday>h3{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;align-items:center;gap:8px;margin:6px 0 0}
+.ca-mday.hoy>h3{color:var(--oro-ink)}
+.ca-mempty{font-size:13px;color:var(--muted);padding:4px 0 8px}
+.ca-exp textarea{font:500 12.5px var(--f-mono);min-height:180px;white-space:pre;overflow:auto}
+.ca-sum{flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:14px 18px}
+.ca-sum b{font-family:var(--f-display);font-size:21px;font-weight:600;line-height:1.2}
+.ca-sum .ca-bar{flex:1 1 140px;max-width:260px}
+@media (max-width:860px){
+  .ca-mes{font-size:22px;min-width:0}
+  .ca-tplrow{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .ca-tplrow b{grid-column:1/-1}
+  .ca-sum .ca-bar{max-width:none}
+}
+</style>
+<script>
+"use strict";
+/* ============ Calendario editorial: mes, reprogramación interna, metas, semana tipo y exportación ============ */
+(()=>{const i=VIEWS.findIndex(v=>v[0]==="historias");VIEWS.splice(i>=0?i+1:VIEWS.length,0,["calendario","Calendario"])})();
+SHORT.calendario="Calendario";
+const CA_DIAS=["lunes","martes","miércoles","jueves","viernes","sábado","domingo"];
+const CA_TIPOS={pub:"Publicación",reel:"Reel",hist:"Historias"};
+const CA_METAS_DEF={pub:3,reel:2,hist:7};
+const CA_TPL_DEF=[{tipo:"pub",hora:"19:00",hist:true},{tipo:"reel",hora:"19:00",hist:true},{tipo:"pub",hora:"19:00",hist:true},{tipo:"reel",hora:"19:00",hist:true},{tipo:"pub",hora:"19:00",hist:true},{tipo:"",hora:"",hist:true},{tipo:"",hora:"",hist:true}];
+let ca_mes=null, ca_sel=null, ca_filtro="todo", ca_mov=null, ca_semOff=0, ca_plan=null, ca_exp=null, ca_aviso=null, ca_vacios=false, ca_drag=null;
+
+/* --- fechas: aritmética de calendario pura (sin zona) sobre días ya expresados en hora de Argentina --- */
+const ca_hoy=()=>typeof todayAR==="function"?todayAR():new Date().toISOString().slice(0,10);
+const ca_ahora=()=>typeof nowAR==="function"?nowAR():new Date().toISOString().slice(0,16);
+const ca_add=(d,n)=>new Date(Date.parse(d+"T12:00:00Z")+n*864e5).toISOString().slice(0,10);
+const ca_dow=d=>(new Date(d+"T12:00:00Z").getUTCDay()+6)%7;
+const ca_lunes=d=>ca_add(d,-ca_dow(d));
+const ca_lbl=(d,o)=>new Date(d+"T12:00:00-03:00").toLocaleDateString("es-AR",{timeZone:TZ,...(o||{weekday:"long",day:"numeric",month:"short"})});
+const ca_cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const ca_mesLbl=ym=>ca_cap(new Date(ym+"-15T12:00:00-03:00").toLocaleDateString("es-AR",{timeZone:TZ,month:"long",year:"numeric"}));
+const ca_mesAdd=(ym,n)=>{let [y,m]=ym.split("-").map(Number);m+=n;while(m>12){m-=12;y++}while(m<1){m+=12;y--}return y+"-"+String(m).padStart(2,"0")};
+const ca_movil=()=>{try{return matchMedia("(max-width:860px)").matches}catch(e){return false}};
+
+/* --- ajustes --- */
+const ca_metas=()=>({...CA_METAS_DEF,...(S.settings.ca_metas||{})});
+const ca_tpl=()=>{const t=Array.isArray(S.settings.ca_plantilla)&&S.settings.ca_plantilla.length===7?S.settings.ca_plantilla:CA_TPL_DEF;return t.map((x,i)=>({...CA_TPL_DEF[i],...x}))};
+
+/* --- piezas con fecha y sin fecha --- */
+const ca_tipoPost=p=>p.format==="reel"?"reel":p.format==="historia"?"hist":"pub";
+const ca_raw=(col,id)=>(S[col]||[]).find(x=>x.id===id);
+function ca_prog(col,o){if(!o)return false;if(col==="posts")return o.stage==="programado"||!!o.plannerUrl&&o.stage!=="publicado";if(col==="reels")return o.sala==="programado"||!!o.plannerUrl&&o.sala!=="publicado"&&o.estado!=="publicado";return false}
+function ca_pub(col,o){if(col==="posts")return o.stage==="publicado";if(col==="reels")return o.estado==="publicado"||o.sala==="publicado";return o.estado==="publicada"}
+function ca_estado(col,o){
+  if(col==="posts")return[stageLabel(o.stage||"idea"),STAGE_CHIP[o.stage]||""];
+  if(col==="reels"){if(o.sala==="programado")return["Programado","gold"];if(o.sala==="publicado"||o.estado==="publicado")return["Publicado","ok"];return[rLabel(R_ESTADOS,o.estado||"idea"),R_CHIP[o.estado]||""]}
+  return[o.estado==="publicada"?"Publicada":o.estado==="lista"?"Lista para subir":"Borrador",o.estado==="publicada"?"ok":o.estado==="lista"?"info":""]}
+function ca_item(col,o){const tipo=col==="posts"?ca_tipoPost(o):col==="reels"?"reel":"hist";const raw=col==="historias"?String(o.fecha||""):String(o.scheduledAt||"");
+  const [st,stc]=ca_estado(col,o);
+  return{col,id:o.id,tipo,f:raw.slice(0,10),h:col==="historias"?"":raw.slice(11,16),
+    t:col==="posts"?(o.title||"Sin título"):col==="reels"?(o.titulo||"Reel sin título"):(typeof H_OBJ!=="undefined"?rLabel(H_OBJ,o.objetivo||"post"):"Secuencia de historias"),
+    k:col==="posts"?fmtLabel(o.format||"post"):col==="reels"?"Reel":"Historias",st,stc,prog:ca_prog(col,o),pub:ca_pub(col,o),o}}
+function ca_items(){const out=[];
+  S.posts.forEach(p=>{if(p.scheduledAt)out.push(ca_item("posts",p))});
+  (S.reels||[]).forEach(r=>{if(r.scheduledAt)out.push(ca_item("reels",r))});
+  (S.historias||[]).forEach(h=>{if(h.fecha)out.push(ca_item("historias",h))});
+  return out.filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x.f))}
+const ca_filtrar=list=>ca_filtro==="todo"?list:list.filter(x=>x.tipo===ca_filtro);
+const ca_ord=(a,b)=>(a.h||"99").localeCompare(b.h||"99")||a.t.localeCompare(b.t);
+/* candidatas sin fecha: primero las más avanzadas (más cerca de estar listas), después las más viejas */
+function ca_candidatas(tipo){const out=[];
+  if(tipo==="pub"||tipo==="reel"||tipo==="hist")S.posts.forEach(p=>{if(!p.scheduledAt&&ca_tipoPost(p)===tipo&&p.format!=="guion"&&!["publicado","programado","error"].includes(p.stage))out.push({col:"posts",id:p.id,t:p.title||"Sin título",st:stageLabel(p.stage||"idea"),rank:STAGES.findIndex(s=>s[0]===(p.stage||"idea")),c:p.createdAt||0})});
+  if(tipo==="reel")(S.reels||[]).forEach(r=>{if(!r.scheduledAt&&r.estado!=="publicado"&&!["publicado","programado"].includes(r.sala))out.push({col:"reels",id:r.id,t:r.titulo||"Reel sin título",st:rLabel(R_ESTADOS,r.estado||"idea"),rank:R_ESTADOS.findIndex(s=>s[0]===(r.estado||"idea"))+(r.video&&r.video.url?3:0),c:r.createdAt||0})});
+  if(tipo==="hist")(S.historias||[]).forEach(h=>{if(!h.fecha&&h.estado!=="publicada")out.push({col:"historias",id:h.id,t:"Historias · "+rLabel(H_OBJ,h.objetivo),st:h.estado||"borrador",rank:h.estado==="lista"?5:1,c:h.createdAt||0})});
+  return out.sort((a,b)=>b.rank-a.rank||a.c-b.c)}
+const ca_horaDef=(tipo,d)=>{const s=ca_tpl()[ca_dow(d)];return s.tipo===tipo&&s.hora?s.hora:(ca_tpl().find(x=>x.tipo===tipo&&x.hora)||{}).hora||"19:00"};
+
+/* --- semana: conteo contra metas, huecos y sugerencias --- */
+function ca_semana(off){const lun=ca_add(ca_lunes(ca_hoy()),7*(off||0));const dias=[...Array(7)].map((_,i)=>ca_add(lun,i));const its=ca_items().filter(x=>dias.includes(x.f));
+  const m=ca_metas();const cnt={pub:its.filter(x=>x.tipo==="pub").length,reel:its.filter(x=>x.tipo==="reel").length,hist:new Set(its.filter(x=>x.tipo==="hist").map(x=>x.f)).size};
+  const meta=m.pub+m.reel+m.hist,hecho=Math.min(cnt.pub,m.pub)+Math.min(cnt.reel,m.reel)+Math.min(cnt.hist,m.hist);
+  const hoy=ca_hoy(),tpl=ca_tpl(),gaps=[];const usadas=new Set();
+  dias.filter(d=>d>=hoy).forEach(d=>{const del=its.filter(x=>x.f===d);const s=tpl[ca_dow(d)];const falta=[];
+    if(s.tipo&&!del.some(x=>x.tipo===s.tipo)&&cnt[s.tipo]<m[s.tipo])falta.push(s.tipo);
+    if(s.hist&&!del.some(x=>x.tipo==="hist")&&cnt.hist<m.hist)falta.push("hist");
+    if(!del.length||falta.length){const sug=falta.filter(t=>t!=="hist"||ca_candidatas("hist").length).map(t=>{const c=ca_candidatas(t).find(c=>!usadas.has(c.col+c.id));if(c)usadas.add(c.col+c.id);return{tipo:t,c,hora:t==="hist"?"":ca_horaDef(t,d)}});
+      gaps.push({d,vacio:!del.length,falta,sug})}});
+  return{lun,dias,its,cnt,m,meta,hecho,gaps}}
+
+/* --- escribir una fecha (solo en la app: nunca toca Metricool) --- */
+async function ca_mover(col,id,fecha,hora){const o=ca_raw(col,id);if(!o){toast("La pieza ya no existe");return false}
+  if(ca_pub(col,o)){toast("Esa pieza ya está publicada: su fecha no se cambia");return false}
+  const antes=col==="historias"?String(o.fecha||""):String(o.scheduledAt||"");let patch,nueva;
+  if(col==="historias"){nueva=fecha||"";patch={fecha:nueva,updatedAt:Date.now()}}
+  else{const h=hora||antes.slice(11,16)||ca_horaDef(col==="reels"?"reel":ca_tipoPost(o),fecha);nueva=fecha?fecha+"T"+h:"";patch={scheduledAt:nueva,updatedAt:Date.now()};
+    if(col==="posts")patch.history=[...(o.history||[]),{stage:o.stage||"idea",at:Date.now(),by:S.uid||null,note:"Fecha cambiada en el calendario: "+(antes?niceDate(antes):"sin fecha")+" → "+(nueva?niceDate(nueva):"sin fecha")}]}
+  if(nueva===antes){toast("Es la misma fecha");return false}
+  await dbUpdate(col+"/"+id,patch);
+  if(ca_prog(col,o)){ca_aviso={t:col==="posts"?(o.title||"La publicación"):(o.titulo||"El reel"),url:o.plannerUrl||null,antes,nueva};toast("Fecha cambiada en la app. Sigue programada en Metricool con la fecha anterior")}
+  else toast(nueva?(nueva.slice(0,10)<ca_hoy()?"Fecha guardada (ojo: ya pasó)":"Fecha guardada (solo en la app)"):"Quedó sin fecha");
+  return true}
+
+/* --- piezas: fila con controles de reprogramación --- */
+function ca_fila(x){const abierto=ca_mov===x.col+":"+x.id;const key=`data-cacol="${esc(x.col)}" data-caid="${esc(x.id)}"`;
+  return `<div class="ca-row"><div class="ca-rowtop"><div class="ca-tt"><button ${key} data-caact="abrir">${esc(x.t)}</button>
+    <span class="ca-meta"><span class="ca-tchip ca-t-${x.tipo}">${esc(x.k)}</span>${x.h?`<span>${esc(x.h)} h</span>`:""}<span class="chip ${x.stc}">${esc(x.st)}</span>${x.prog?`<span class="chip gold">En Metricool</span>`:""}</span></div>
+    ${x.pub?`<span class="small muted">Publicada</span>`:`<button class="btn sm" ${key} data-caact="mover" aria-expanded="${abierto}">${abierto?"Cerrar":"Mover"}</button>`}</div>
+  ${abierto?`<div class="ca-move" role="group" aria-label="Cambiar fecha de ${esc(x.t)}">
+    ${x.prog?`<div class="ca-warnbox" style="flex:1 1 100%"><b>Esta pieza ya está programada en Metricool.</b><span>Cambiar la fecha acá solo la cambia en la app. Después tenés que moverla también en Metricool, o va a salir en la fecha anterior.${x.o.plannerUrl?` <a class="link" href="${esc(x.o.plannerUrl)}" target="_blank" rel="noopener">Abrir en Metricool</a>`:""}</span></div>`:""}
+    <label for="ca-nd">Nuevo día<input id="ca-nd" type="date" value="${esc(x.f)}"></label>
+    ${x.col==="historias"?"":`<label for="ca-nh">Hora (Argentina)<input id="ca-nh" type="time" value="${esc(x.h||ca_horaDef(x.tipo,x.f))}"></label>`}
+    <div class="btns"><button class="btn sm" data-caact="corrDia" data-n="-1">Un día antes</button><button class="btn sm" data-caact="corrDia" data-n="1">Un día después</button><button class="btn sm" data-caact="corrDia" data-n="7">Una semana después</button></div>
+    <div class="btns"><button class="btn sm primary" ${key} data-caact="guardarFecha">Guardar nueva fecha</button><button class="btn sm" ${key} data-caact="quitarFecha">Quitar fecha</button></div>
+    <span class="small muted" style="flex:1 1 100%">Solo cambia la fecha guardada en la app. No programa ni mueve nada en Metricool.</span></div>`:""}</div>`}
+
+/* --- vista --- */
+function ca_grilla(its){const ym=ca_mes,first=ym+"-01",ini=ca_lunes(first);const hoy=ca_hoy();const sem=ca_semana(0);const gapDays=new Set(sem.gaps.map(g=>g.d));
+  const finMes=ca_add(ca_mesAdd(ym,1)+"-01",-1);const fin=ca_add(ca_lunes(finMes),6);const dias=[];for(let d=ini;d<=fin;d=ca_add(d,1))dias.push(d);
+  return `<div class="ca-grid" role="grid" aria-label="Calendario de ${esc(ca_mesLbl(ym))}">${CA_DIAS.map(d=>`<div class="ca-dh" role="columnheader">${esc(d.slice(0,3))}</div>`).join("")}
+  ${dias.map(d=>{const del=its.filter(x=>x.f===d).sort(ca_ord);const cls=["ca-cell",d.slice(0,7)!==ym?"out":"",d===hoy?"hoy":"",d===ca_sel?"sel":""].filter(Boolean).join(" ");
+    return `<div class="${cls}" data-cadrop="${d}" role="gridcell"><button class="ca-dn" data-caact="dia" data-d="${d}" aria-label="${esc(ca_lbl(d))}: ${del.length} ${del.length===1?"pieza":"piezas"}${gapDays.has(d)?", con hueco":""}"><span>${+d.slice(8)}</span>${gapDays.has(d)?`<span class="ca-gap" title="Hueco según tu semana tipo"></span>`:""}</button>
+    ${del.slice(0,4).map(x=>`<button class="ca-it ca-t-${x.tipo}${x.pub?" ca-done":""}${x.prog?" ca-prog":""}" data-cacol="${esc(x.col)}" data-caid="${esc(x.id)}" data-caact="abrir" ${x.pub?"":`draggable="true" data-cadrag="1"`} title="${esc(x.k+(x.h?" · "+x.h:"")+" · "+x.t+" · "+x.st+(x.prog?" · programada en Metricool":""))}">${x.h?`<span class="ca-h">${esc(x.h)}</span>`:""}${esc(x.t)}</button>`).join("")}
+    ${del.length>4?`<button class="ca-more" data-caact="dia" data-d="${d}">+${del.length-4} más</button>`:""}</div>`}).join("")}</div>`}
+function ca_detalle(its){const d=ca_sel;if(!d)return"";const del=its.filter(x=>x.f===d).sort(ca_ord);
+  return `<section class="panel" id="ca-detalle"><div class="ph"><h2>${esc(ca_cap(ca_lbl(d,{weekday:"long",day:"numeric",month:"long"})))}</h2><span class="small muted">${del.length} ${del.length===1?"pieza":"piezas"}</span></div>
+  <div class="list">${del.map(ca_fila).join("")||`<div class="empty">Nada planificado para este día.${ca_candHtml(d)}</div>`}</div>
+  <span class="small muted">Tocá el título para abrir el editor. Con “Mover” cambiás el día o la hora. En la grilla también podés arrastrar una pieza a otro día.</span></section>`}
+function ca_candHtml(d){const s=ca_tpl()[ca_dow(d)];const tipo=s.tipo||"pub";const c=ca_candidatas(tipo).slice(0,3);if(!c.length)return"";
+  return `<span>Podrían ir acá (sin fecha todavía):</span>${c.map(x=>`<span class="ca-gaprow" style="border:0;padding:4px 0"><span>${esc(x.t)} <span class="ca-sug" style="display:inline">· ${esc(x.st)}</span></span><button class="btn sm" data-caact="asignar" data-cacol="${esc(x.col)}" data-caid="${esc(x.id)}" data-d="${d}" data-h="${esc(tipo==="hist"?"":ca_horaDef(tipo,d))}">Poner este día</button></span>`).join("")}`}
+function ca_lista(its){const ym=ca_mes,hoy=ca_hoy();const finMes=ca_add(ca_mesAdd(ym,1)+"-01",-1);const out=[];
+  for(let d=ym+"-01";d<=finMes;d=ca_add(d,1)){const del=its.filter(x=>x.f===d).sort(ca_ord);if(!del.length&&!ca_vacios&&d!==hoy)continue;
+    out.push(`<div class="ca-mday${d===hoy?" hoy":""}"><h3><span>${esc(d===hoy?"Hoy · ":"")}${esc(ca_lbl(d))}</span><span>${del.length||""}</span></h3>${del.length?`<div class="list">${del.map(ca_fila).join("")}</div>`:`<div class="ca-mempty">Nada planificado.</div>`}</div>`)}
+  return `<section class="panel"><div class="ph"><h2>Día por día</h2><label class="ca-chk" style="flex-direction:row;align-items:center;gap:6px;font-weight:600"><input type="checkbox" style="width:auto" data-caact="vacios" ${ca_vacios?"checked":""}>Ver días vacíos</label></div>
+  ${out.join("")||`<div class="empty">No hay piezas con fecha en ${esc(ca_mesLbl(ym))}.</div>`}</section>`}
+function ca_bar(lbl,n,m){const pct=m?Math.min(100,Math.round(n/m*100)):100;return `<div class="ca-bari"><div class="ca-bl">${esc(lbl)}<span>${n} / ${m}</span></div><div class="ca-bar" role="progressbar" aria-label="${esc(lbl)}" aria-valuemin="0" aria-valuemax="${m}" aria-valuenow="${Math.min(n,m)}"><i class="${n>=m?"ca-full":""}" style="width:${pct}%"></i></div></div>`}
+function ca_metasPanel(){const s=ca_semana(ca_semOff);const fin=ca_add(s.lun,6);
+  return `<section class="panel"><div class="ph"><h2>Metas de la semana</h2><div class="btns"><button class="fchip${ca_semOff===0?" on":""}" data-caact="sem" data-n="0">Esta semana</button><button class="fchip${ca_semOff===1?" on":""}" data-caact="sem" data-n="1">La próxima</button></div></div>
+  <span class="small muted">Del ${esc(ca_lbl(s.lun,{weekday:"long",day:"numeric",month:"short"}))} al ${esc(ca_lbl(fin,{weekday:"long",day:"numeric",month:"short"}))} · ${s.hecho} de ${s.meta} piezas planificadas</span>
+  <div class="ca-bars">${ca_bar("Publicaciones",s.cnt.pub,s.m.pub)}${ca_bar("Reels",s.cnt.reel,s.m.reel)}${ca_bar("Días con historias",s.cnt.hist,s.m.hist)}</div>
+  <h3>Huecos${ca_semOff===0?" de acá al domingo":""}</h3>
+  <div class="ca-gaps">${s.gaps.map(g=>`<div class="ca-gaprow"><span><b style="text-transform:capitalize">${esc(ca_lbl(g.d,{weekday:"long",day:"numeric"}))}</b>: ${g.vacio?"no hay nada planificado":""}${g.falta.length?(g.vacio?". Según tu semana tipo, ":"falta ")+g.falta.map(t=>t==="pub"?"una publicación":t==="reel"?"un reel":"la secuencia de historias").join(" y "):""}
+    ${g.sug.filter(x=>x.c).map(x=>`<span class="ca-sug">Podría ir: ${esc(x.c.t)} (${esc(x.c.st)})${x.hora?" a las "+esc(x.hora):""}</span>`).join("")}${g.falta.some(t=>t!=="hist")&&!g.sug.some(x=>x.c&&x.tipo!=="hist")?`<span class="ca-sug">No hay piezas sin fecha de ese formato. Creá una nueva o pedile una idea al agente.</span>`:g.falta.length===1&&g.falta[0]==="hist"&&!g.sug.some(x=>x.c)?`<span class="ca-sug">Armala en <a class="link" href="#historias">Historias</a>.</span>`:""}</span>
+    ${g.sug.filter(x=>x.c).map(x=>`<button class="btn sm" data-caact="asignar" data-cacol="${esc(x.c.col)}" data-caid="${esc(x.c.id)}" data-d="${g.d}" data-h="${esc(x.hora)}">Poner ${x.tipo==="reel"?"el reel":x.tipo==="hist"?"las historias":"la publicación"}</button>`).join("")}</div>`).join("")||`<div class="ca-okbox">Sin huecos: la semana cumple tu plantilla y tus metas.</div>`}</div>
+  <div class="btns"><button class="btn primary sm" data-caact="planificar">Planificar la ${ca_semOff?"próxima semana":"semana"}</button></div></section>`}
+function ca_planPanel(){if(!ca_plan)return"";const p=ca_plan;
+  return `<section class="panel" style="border-color:var(--oro)" id="ca-plan"><div class="ph"><h2>Propuesta para la semana</h2><button class="link" data-caact="planCancel">Cerrar</button></div>
+  ${p.items.length?`<p class="small muted" style="margin:0">Estas piezas no tienen fecha. Destildá las que no quieras y confirmá. Solo se guarda la fecha en la app: no se programa nada en Metricool.</p>
+  <div>${p.items.map((x,i)=>`<label class="ca-plrow" for="ca-pl-${i}"><input type="checkbox" id="ca-pl-${i}" data-capl="${i}" ${x.ok?"checked":""}><span><b style="text-transform:capitalize">${esc(ca_lbl(x.d,{weekday:"long",day:"numeric",month:"short"}))}${x.h?" · "+esc(x.h):""}</b> · ${esc(CA_TIPOS[x.tipo])}<br>${esc(x.t)} <span class="muted">(${esc(x.st)})</span></span></label>`).join("")}</div>
+  <div class="btns"><button class="btn primary" data-caact="planOk">Confirmar y guardar fechas</button><button class="btn" data-caact="planCancel">Cancelar</button></div>`
+  :`<div class="empty">${esc(p.motivo)}</div>`}</section>`}
+function ca_expPanel(){if(!ca_exp)return"";
+  return `<section class="panel ca-exp" id="ca-exp"><div class="ph"><h2>${ca_exp.tipo==="ics"?"Calendario (.ics)":"Texto del mes"}</h2><button class="link" data-caact="expCerrar">Cerrar</button></div>
+  <p class="small muted" style="margin:0">${ca_exp.tipo==="ics"?(downloads?"Se descargó el archivo. Si no lo ves, copiá el texto y guardalo como archivo .ics.":"Esta vista no puede descargar archivos. Copiá el texto, pegalo en un archivo nuevo y guardalo con extensión .ics para importarlo en Google Calendar o en el calendario del celular."):"Listo para pegar en una nota, un chat o un correo."}</p>
+  <label for="ca-exptxt" class="sr-only">Contenido exportado</label><textarea id="ca-exptxt" readonly>${esc(ca_exp.txt)}</textarea>
+  <div class="btns"><button class="btn primary sm" data-caact="expCopiar">Copiar</button>${downloads?`<button class="btn sm" data-caact="expBajar">Descargar archivo</button>`:""}</div></section>`}
+function ca_avisoHtml(){if(!ca_aviso)return"";const a=ca_aviso;
+  return `<div class="ca-warnbox" role="alert"><b>Acordate de cambiarla también en Metricool</b><span>“${esc(a.t)}” sigue programada en Metricool para ${esc(niceDate(a.antes))}. En la app ahora figura ${a.nueva?esc(niceDate(a.nueva)):"sin fecha"}. Si no la movés allá, sale en la fecha anterior.${a.url?` <a class="link" href="${esc(a.url)}" target="_blank" rel="noopener">Abrir en Metricool</a>`:""}</span><button class="btn sm" data-caact="avisoOk" style="align-self:flex-start">Listo, ya la cambié</button></div>`}
+function ca_ajustes(){const m=ca_metas(),t=ca_tpl();
+  return `<section class="panel"><details${ca_ajustes.open?" open":""} id="ca-aj" style="border:0;padding:0"><summary>Metas y semana tipo</summary>
+  <div style="display:flex;flex-direction:column;gap:14px;padding-top:12px">
+  <div class="ca-metas"><label for="ca-mp">Publicaciones por semana<input id="ca-mp" type="number" min="0" max="21" value="${m.pub}"></label><label for="ca-mr">Reels por semana<input id="ca-mr" type="number" min="0" max="21" value="${m.reel}"></label><label for="ca-mh">Días con historias<input id="ca-mh" type="number" min="0" max="7" value="${m.hist}"></label></div>
+  <div class="ca-tpl"><b class="small">Semana tipo: qué va cada día y a qué hora</b>${t.map((s,i)=>`<div class="ca-tplrow"><b>${esc(CA_DIAS[i][0].toUpperCase()+CA_DIAS[i].slice(1))}</b>
+    <label class="sr-only" for="ca-tt-${i}">Formato del ${esc(CA_DIAS[i])}</label><select id="ca-tt-${i}">${opts([["","Sin pieza principal"],["pub","Publicación"],["reel","Reel"]],s.tipo)}</select>
+    <label class="sr-only" for="ca-th-${i}">Hora del ${esc(CA_DIAS[i])}</label><input id="ca-th-${i}" type="time" value="${esc(s.hora)}">
+    <label class="ca-chk" for="ca-tc-${i}"><input id="ca-tc-${i}" type="checkbox" ${s.hist?"checked":""}>Historias</label></div>`).join("")}</div>
+  <span class="small muted">Los horarios son tu referencia. Si Metricool tiene datos de tu audiencia, podés consultarlos en la Sala de reels o con el agente de crecimiento.</span>
+  <div class="btns"><button class="btn primary sm" data-caact="guardarAj">Guardar metas y semana tipo</button><button class="btn sm" data-caact="ajDef">Volver a los valores sugeridos</button></div></div></details></section>`}
+function vCalendario(){if(!ca_mes)ca_mes=ca_hoy().slice(0,7);const all=ca_items();const its=ca_filtrar(all);const mob=ca_movil();
+  if(!ca_sel||ca_sel.slice(0,7)!==ca_mes)ca_sel=ca_hoy().slice(0,7)===ca_mes?ca_hoy():ca_mes+"-01";
+  const enMes=its.filter(x=>x.f.slice(0,7)===ca_mes);const cnt=t=>all.filter(x=>x.f.slice(0,7)===ca_mes&&(t==="todo"||x.tipo===t)).length;
+  return `<div class="head"><div><div class="eyebrow">Planificación editorial</div><h1>Calendario</h1><p>Publicaciones, reels e historias con fecha. Mover una pieza acá cambia solo la fecha guardada en la app: nada se programa ni se publica sin tu confirmación.</p></div>
+  <div class="btns"><button class="btn primary" data-caact="planificar">Planificar la semana</button><button class="btn" data-caact="expIcs">Exportar .ics</button><button class="btn" data-caact="expTxt">Texto del mes</button></div></div>
+  ${ca_avisoHtml()}${ca_planPanel()}${ca_expPanel()}
+  <section class="panel"><div class="ca-tool"><div class="ca-nav"><button class="btn sm" data-caact="mes" data-n="-1" aria-label="Mes anterior">Anterior</button><span class="ca-mes" aria-live="polite">${esc(ca_mesLbl(ca_mes))}</span><button class="btn sm" data-caact="mes" data-n="1" aria-label="Mes siguiente">Siguiente</button>${ca_mes!==ca_hoy().slice(0,7)?`<button class="btn sm" data-caact="mesHoy">Hoy</button>`:""}</div>
+    <div class="fchips" role="tablist" aria-label="Filtrar por tipo">${[["todo","Todo"],["pub","Publicaciones"],["reel","Reels"],["hist","Historias"]].map(([k,l])=>`<button role="tab" aria-selected="${k===ca_filtro}" class="fchip${k===ca_filtro?" on":""}" data-caact="filtro" data-k="${k}">${esc(l)} <span>${cnt(k)}</span></button>`).join("")}</div></div>
+    <div class="ca-legend"><span><i class="ca-lg-pub"></i>Publicación o carrusel</span><span><i class="ca-lg-reel"></i>Reel</span><span><i class="ca-lg-hist"></i>Historias</span><span><span class="ca-gap" style="width:7px;height:7px;border-radius:50%;background:var(--warn);display:inline-block;margin-right:5px"></span>Hueco según tu semana tipo</span></div>
+    ${mob?"":ca_grilla(its)}
+    ${!enMes.length?`<div class="empty">No hay piezas con fecha en este mes${ca_filtro!=="todo"?" para este filtro":""}. Usá “Planificar la semana” o asigná fechas desde los huecos.</div>`:""}</section>
+  ${mob?ca_lista(its):ca_detalle(its)}
+  ${ca_metasPanel()}
+  ${ca_ajustes()}`}
+
+/* --- planificar la semana: propuesta que se confirma en la página --- */
+function ca_proponer(){const s=ca_semana(ca_semOff);const tpl=ca_tpl();const hoy=ca_hoy(),ahora=ca_ahora();const usadas=new Set();const cnt={...s.cnt};const items=[];
+  s.dias.forEach(d=>{if(d<hoy)return;const sl=tpl[ca_dow(d)];const del=s.its.filter(x=>x.f===d);
+    if(sl.tipo&&!del.some(x=>x.tipo===sl.tipo)&&cnt[sl.tipo]<s.m[sl.tipo]&&(d>hoy||(sl.hora||"23:59")>ahora.slice(11,16))){const c=ca_candidatas(sl.tipo).find(c=>!usadas.has(c.col+c.id));
+      if(c){usadas.add(c.col+c.id);cnt[sl.tipo]++;items.push({...c,tipo:sl.tipo,d,h:sl.hora||ca_horaDef(sl.tipo,d),ok:true})}}
+    if(sl.hist&&!del.some(x=>x.tipo==="hist")&&cnt.hist<s.m.hist){const c=ca_candidatas("hist").find(c=>!usadas.has(c.col+c.id));if(c){usadas.add(c.col+c.id);cnt.hist++;items.push({...c,tipo:"hist",d,h:"",ok:true})}}});
+  const sinFecha=ca_candidatas("pub").length+ca_candidatas("reel").length;
+  ca_plan={items,motivo:sinFecha?"Tu semana tipo ya está cubierta o ya se alcanzaron las metas: no hace falta asignar nada más.":"No hay publicaciones ni reels sin fecha para asignar. Creá ideas nuevas o pedíselas al agente de contenido."}}
+async function ca_confirmarPlan(){if(!ca_plan)return;document.querySelectorAll("[data-capl]").forEach(el=>{const it=ca_plan.items[+el.dataset.capl];if(it)it.ok=el.checked});
+  const sel=ca_plan.items.filter(x=>x.ok);if(!sel.length){toast("No elegiste ninguna pieza");return}let n=0;
+  for(const x of sel){const o=ca_raw(x.col,x.id);if(!o)continue;const ya=x.col==="historias"?o.fecha:o.scheduledAt;if(ya)continue;
+    try{if(await ca_mover(x.col,x.id,x.d,x.h))n++}catch(e){break}}
+  ca_plan=null;toast(n?`${n} ${n===1?"pieza quedó con fecha":"piezas quedaron con fecha"} (solo en la app)`:"No se guardó ninguna fecha");render()}
+
+/* --- exportar: .ics y texto --- */
+function ca_icsEsc(s){return String(s||"").replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\r?\n/g,"\\n")}
+function ca_fold(line){const enc=new TextEncoder();if(enc.encode(line).length<=75)return line;const out=[];let cur="",lim=75;
+  for(const ch of line){if(enc.encode(cur+ch).length>lim){out.push(cur);cur=" "+ch;lim=75}else cur+=ch}out.push(cur);return out.join("\r\n")}
+function ca_mesItems(){return ca_filtrar(ca_items()).filter(x=>x.f.slice(0,7)===ca_mes).sort((a,b)=>a.f.localeCompare(b.f)||ca_ord(a,b))}
+function ca_ics(){const its=ca_mesItems();const stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d+/,"");const L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Clausula Legal OS//Calendario editorial//ES","CALSCALE:GREGORIAN","METHOD:PUBLISH",
+  "X-WR-CALNAME:"+ca_icsEsc("Cláusula Legal · "+ca_mesLbl(ca_mes)),"X-WR-TIMEZONE:"+TZ,"BEGIN:VTIMEZONE","TZID:"+TZ,"BEGIN:STANDARD","DTSTART:19700101T000000","TZOFFSETFROM:-0300","TZOFFSETTO:-0300","TZNAME:-03","END:STANDARD","END:VTIMEZONE"];
+  its.forEach(x=>{const d=x.f.replace(/-/g,"");L.push("BEGIN:VEVENT","UID:"+x.col+"-"+String(x.id).replace(/[^\w-]/g,"")+"@clausula-legal-os","DTSTAMP:"+stamp);
+    if(x.h){L.push("DTSTART;TZID="+TZ+":"+d+"T"+x.h.replace(":","")+"00","DURATION:PT30M")}else{L.push("DTSTART;VALUE=DATE:"+d,"DTEND;VALUE=DATE:"+ca_add(x.f,1).replace(/-/g,""))}
+    L.push("SUMMARY:"+ca_icsEsc(`[${x.k}] ${x.t}`),"DESCRIPTION:"+ca_icsEsc(`Estado: ${x.st}${x.prog?" (programada en Metricool)":""}\nFecha interna de Cláusula Legal OS para @${S.settings.igUser}. No implica que esté programada en Metricool.`),"CATEGORIES:"+ca_icsEsc(CA_TIPOS[x.tipo]),"END:VEVENT")});
+  L.push("END:VCALENDAR");return L.map(ca_fold).join("\r\n")+"\r\n"}
+function ca_texto(){const its=ca_mesItems();const dias=[...new Set(its.map(x=>x.f))];
+  return `Calendario de ${ca_mesLbl(ca_mes)} · @${S.settings.igUser}\n(Fechas internas de la app; lo que no dice "programada en Metricool" todavía no está programado.)\n\n`+
+    (dias.map(d=>{const t=ca_lbl(d);return t.charAt(0).toUpperCase()+t.slice(1)+"\n"+its.filter(x=>x.f===d).map(x=>`  ${x.h||"--:--"} · ${x.k} · ${x.t} (${x.st}${x.prog?", programada en Metricool":""})`).join("\n")}).join("\n\n")||"Sin piezas con fecha este mes.")+"\n"}
+async function ca_bajar(){if(!ca_exp)return;if(!downloads){toast("La descarga no está disponible en esta vista");return}
+  const ics=ca_exp.tipo==="ics";try{await downloads.save({filename:`clausula-calendario-${ca_mes}.${ics?"ics":"txt"}`,data:new Blob([ca_exp.txt],{type:ics?"text/calendar":"text/plain"})});toast("Archivo descargado")}catch(e){toast(e?.code==="declined"?"Descarga cancelada":"No se pudo descargar: copiá el texto")}}
+
+/* --- eventos --- */
+const ca_scroll=id=>setTimeout(()=>document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"}),40);
+document.addEventListener("click",async e=>{const el=e.target.closest("[data-caact]");if(!el)return;const a=el.dataset.caact,col=el.dataset.cacol,id=el.dataset.caid;
+  try{switch(a){
+  case"abrir":if(col==="posts")openPost(id);else if(col==="reels")openReel(id);else if(col==="historias")openHist(id);break;
+  case"mover":ca_mov=ca_mov===col+":"+id?null:col+":"+id;render();setTimeout(()=>document.getElementById("ca-nd")?.focus(),30);break;
+  case"corrDia":{const i=document.getElementById("ca-nd");if(i&&i.value)i.value=ca_add(i.value,+el.dataset.n);else if(i)i.value=ca_add(ca_hoy(),+el.dataset.n);break}
+  case"guardarFecha":{const d=document.getElementById("ca-nd")?.value,h=document.getElementById("ca-nh")?.value;if(!d){toast("Elegí un día");break}if(await ca_mover(col,id,d,h)){ca_mov=null;ca_sel=d;ca_mes=d.slice(0,7);render()}break}
+  case"quitarFecha":if(el.dataset.confirm){if(await ca_mover(col,id,"","")){ca_mov=null;render()}}else{el.dataset.confirm="1";el.textContent="Tocá de nuevo para quitarla"}break;
+  case"asignar":if(await ca_mover(col,id,el.dataset.d,el.dataset.h)){render()}break;
+  case"dia":ca_sel=el.dataset.d;if(ca_sel.slice(0,7)!==ca_mes)ca_mes=ca_sel.slice(0,7);ca_mov=null;render();ca_scroll("ca-detalle");break;
+  case"mes":ca_mes=ca_mesAdd(ca_mes,+el.dataset.n);ca_sel=null;ca_mov=null;render();break;
+  case"mesHoy":ca_mes=ca_hoy().slice(0,7);ca_sel=ca_hoy();ca_mov=null;render();break;
+  case"filtro":ca_filtro=el.dataset.k;render();break;
+  case"vacios":ca_vacios=el.checked;render();break;
+  case"sem":ca_semOff=+el.dataset.n;ca_plan=null;render();break;
+  case"planificar":ca_proponer();if(current!=="calendario")location.hash="#calendario";else render();ca_scroll("ca-plan");break;
+  case"planOk":await ca_confirmarPlan();break;
+  case"planCancel":ca_plan=null;render();break;
+  case"expIcs":ca_exp={tipo:"ics",txt:ca_ics()};render();ca_scroll("ca-exp");if(downloads)await ca_bajar();break;
+  case"expTxt":ca_exp={tipo:"txt",txt:ca_texto()};render();ca_scroll("ca-exp");break;
+  case"expCopiar":{const t=document.getElementById("ca-exptxt");if(t){t.select();await copy(t.value)}break}
+  case"expBajar":await ca_bajar();break;
+  case"expCerrar":ca_exp=null;render();break;
+  case"avisoOk":ca_aviso=null;render();break;
+  case"guardarAj":{const num=(id,max)=>Math.max(0,Math.min(max,Math.round(+document.getElementById(id).value||0)));
+    const metas={pub:num("ca-mp",21),reel:num("ca-mr",21),hist:num("ca-mh",7)};
+    const tpl=CA_DIAS.map((_,i)=>({tipo:document.getElementById("ca-tt-"+i).value,hora:document.getElementById("ca-th-"+i).value||"",hist:document.getElementById("ca-tc-"+i).checked}));
+    await saveSettings({ca_metas:metas,ca_plantilla:tpl});toast("Metas y semana tipo guardadas");render();break}
+  case"ajDef":await saveSettings({ca_metas:{...CA_METAS_DEF},ca_plantilla:CA_TPL_DEF.map(x=>({...x}))});toast("Volviste a los valores sugeridos");render();break;
+  }}catch(err){if(err?.message!=="no-db")console.error(err)}});
+document.addEventListener("toggle",e=>{if(e.target&&e.target.id==="ca-aj")ca_ajustes.open=e.target.open},true);
+/* arrastrar y soltar (extra de escritorio; los botones "Mover" hacen lo mismo) */
+document.addEventListener("dragstart",e=>{const el=e.target.closest&&e.target.closest("[data-cadrag]");if(!el)return;ca_drag={col:el.dataset.cacol,id:el.dataset.caid};try{e.dataTransfer.setData("text/plain",el.dataset.caid);e.dataTransfer.effectAllowed="move"}catch(_){}});
+document.addEventListener("dragover",e=>{const c=e.target.closest&&e.target.closest("[data-cadrop]");if(!c||!ca_drag)return;e.preventDefault();document.querySelectorAll(".ca-cell.drop").forEach(x=>x!==c&&x.classList.remove("drop"));c.classList.add("drop")});
+document.addEventListener("dragleave",e=>{const c=e.target.closest&&e.target.closest("[data-cadrop]");if(c&&!c.contains(e.relatedTarget))c.classList.remove("drop")});
+document.addEventListener("drop",async e=>{const c=e.target.closest&&e.target.closest("[data-cadrop]");if(!c||!ca_drag)return;e.preventDefault();const d=ca_drag;ca_drag=null;c.classList.remove("drop");
+  try{if(await ca_mover(d.col,d.id,c.dataset.cadrop,"")){ca_sel=c.dataset.cadrop;render()}}catch(_){}});
+document.addEventListener("dragend",()=>{ca_drag=null;document.querySelectorAll(".ca-cell.drop").forEach(x=>x.classList.remove("drop"))});
+try{matchMedia("(max-width:860px)").addEventListener("change",()=>{if(current==="calendario")render()})}catch(_){}
+
+/* --- vista en el mapa de render --- */
+const _renderCa=render;render=function(){if(current!=="calendario")return _renderCa();renderNav();const v=$("#view");const y=window.scrollY;v.innerHTML=vCalendario();if(render.keep)window.scrollTo(0,y);render.keep=true};
+
+/* --- Inicio: resumen compacto de la semana --- */
+function ca_resumen(){if(!S.loaded.posts)return"";const s=ca_semana(0);const pct=s.meta?Math.min(100,Math.round(s.hecho/s.meta*100)):100;const g=s.gaps.length;
+  return `<section class="panel ca-sum" style="grid-column:1/-1"><div><div class="eyebrow">Calendario</div><b>Esta semana: ${s.hecho} de ${s.meta} piezas planificadas</b><div class="small muted">${s.cnt.pub} ${s.cnt.pub===1?"publicación":"publicaciones"} · ${s.cnt.reel} ${s.cnt.reel===1?"reel":"reels"} · ${s.cnt.hist} ${s.cnt.hist===1?"día":"días"} con historias${g?` · ${g} ${g===1?"día con hueco":"días con huecos"}`:""}</div></div>
+  <div class="ca-bar" role="progressbar" aria-label="Cumplimiento semanal" aria-valuemin="0" aria-valuemax="${s.meta}" aria-valuenow="${s.hecho}"><i class="${s.hecho>=s.meta?"ca-full":""}" style="width:${pct}%"></i></div>
+  <a class="btn sm" href="#calendario" style="text-decoration:none">Abrir calendario</a></section>`}
+const _vPanelCa=vPanel;vPanel=()=>{const h=_vPanelCa();const i=h.indexOf(`<div class="grid">`);return i<0?h:h.slice(0,i)+`<div class="grid">`+ca_resumen()+h.slice(i+`<div class="grid">`.length)};
+
+if((location.hash||"").slice(1)==="calendario")current="calendario";
+render();
+</script>

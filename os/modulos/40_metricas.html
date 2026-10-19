@@ -1,0 +1,304 @@
+<style>
+/* Agente 4 · Resultados (prefijo me-) */
+:root{--me-s1:#9A6A0E;--me-s2:#2D6CB5}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--me-s1:#BC8A2E;--me-s2:#4F8DD6}}
+:root[data-theme="dark"]{--me-s1:#BC8A2E;--me-s2:#4F8DD6}
+.me-full{grid-column:1/-1}
+.me-src{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;color:var(--muted)}
+.me-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.me-tile{background:var(--soft);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.me-tile span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.me-tile b{font-family:var(--f-display);font-size:28px;font-weight:600;line-height:1.1;overflow-wrap:anywhere}
+.me-tile small{font-size:11.5px;color:var(--muted)}
+.me-form{display:flex;flex-direction:column;gap:12px}
+.me-form .fields{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+.me-sub{font-size:12.5px;color:var(--muted);margin:-6px 0 0}
+.me-chart{width:100%;display:block;overflow:visible}
+.me-chart .me-grid{stroke:var(--line);stroke-width:1}
+.me-chart .me-base{stroke:var(--muted);stroke-width:1;opacity:.6}
+.me-chart text{fill:var(--muted);font:500 11px var(--f-body)}
+.me-chart text.me-val{fill:var(--ink);font-weight:700}
+.me-chart .me-bar{fill:var(--me-s1)}
+.me-chart .me-line{fill:none;stroke:var(--me-s1);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.me-chart .me-dot{fill:var(--me-s1);stroke:var(--surface);stroke-width:2}
+.me-chart .me-hit{fill:transparent;cursor:default}
+.me-chart rect.me-hit:hover{fill:color-mix(in srgb,var(--ink) 5%,transparent)}
+.me-hb{display:flex;flex-direction:column}
+.me-hbr{display:grid;grid-template-columns:minmax(0,38%) minmax(0,1fr);gap:10px;align-items:center;padding:6px 0;border-top:1px solid var(--line)}
+.me-hbr:first-child{border-top:0}
+.me-hbr:hover,.me-hbr:focus-visible{background:color-mix(in srgb,var(--ink) 3%,transparent)}
+.me-hbl{font-size:13px;font-weight:600;min-width:0;overflow-wrap:anywhere;display:flex;flex-direction:column}
+.me-hbl small{font-weight:500;color:var(--muted);font-size:11.5px}
+.me-hbt{display:flex;flex-direction:column;gap:3px;min-width:0}
+.me-bl{display:flex;align-items:center;gap:6px;min-width:0}
+.me-bl i{display:block;height:10px;border-radius:0 4px 4px 0;min-width:2px;flex:none}
+.me-bl b{font:500 12px var(--f-mono);color:var(--ink);white-space:nowrap;font-variant-numeric:tabular-nums}
+.me-s1{background:var(--me-s1)}.me-s2{background:var(--me-s2)}
+.me-leg{display:flex;flex-wrap:wrap;gap:12px;font-size:12.5px;color:var(--muted)}
+.me-leg span{display:inline-flex;align-items:center;gap:6px}.me-leg i{width:12px;height:10px;border-radius:2px;display:inline-block}
+.me-note{font-size:13px;color:var(--muted);background:var(--soft);border-radius:8px;padding:10px 12px}
+.me-meter{height:10px;border-radius:99px;background:var(--soft);overflow:hidden}
+.me-meter i{display:block;height:100%;background:var(--me-s1);border-radius:99px}
+.me-rank{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px}
+.me-rank li::marker{font:500 12px var(--f-mono);color:var(--oro-ink)}
+.me-rank .s{font-size:12.5px;color:var(--muted)}
+.me-piece{border-top:1px solid var(--line);padding:10px 0;display:flex;flex-direction:column;gap:6px}
+.me-piece:first-child{border-top:0}
+.me-meds{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--muted)}
+.me-meds div{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.me-txt{font:500 12.5px var(--f-mono);min-height:220px;white-space:pre;overflow:auto}
+#me-tip{position:fixed;z-index:45;pointer-events:none;background:var(--noche);color:var(--marfil);font:600 12.5px var(--f-body);padding:7px 10px;border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.25);max-width:min(280px,calc(100vw - 16px));white-space:pre-line}
+details.me-det{border-top:0;padding-top:0}
+@media (max-width:860px){.me-hbr{grid-template-columns:minmax(0,1fr)}.me-hbr{gap:4px}}
+</style>
+<script>
+"use strict";
+/* ============ Agente 4 · Resultados: métricas cargadas a mano + Metricool, gráficos propios, ranking, informe y objetivos ============
+   Regla de oro: solo se muestran números de Metricool (S.metrics.rows) o cargados a mano por Andrés (me_metricas, me_cuenta). Cada número dice su origen. */
+S.me_metricas=[];S.me_cuenta=[];S.me_objetivos=[];Object.assign(S.loaded,{me_metricas:false,me_cuenta:false,me_objetivos:false});
+const ME_FMT=[["reel","Reel"],["carrusel","Carrusel"],["post","Publicación"]];
+const ME_VENT=[["24h","A las 24 h"],["7d","A los 7 días"],["28d","A los 28 días"],["otra","Otro momento"]];
+const ME_OBJ=[["seguidores","Seguidores de la cuenta"],["alcance_mes","Alcance del mes (suma de piezas)"],["guardados_mes","Guardados del mes"],["envios_mes","Envíos del mes"]];
+const ME_NUM=[["alcance","Alcance","me-alcance"],["reproducciones","Reproducciones","me-repro"],["meGusta","Me gusta","me-likes"],["comentarios","Comentarios","me-coment"],["guardados","Guardados","me-guard"],["compartidos","Compartidos / envíos","me-envios"],["seguidores","Seguidores ganados","me-seg"]];
+const me_lbl=(L,k)=>(L.find(x=>x[0]===k)||[k,k||"–"])[1];
+const me_n=v=>v==null||!isFinite(v)?"–":Math.round(v).toLocaleString("es-AR");
+const me_pct=v=>v==null||!isFinite(v)?"–":(v*100).toLocaleString("es-AR",{maximumFractionDigits:1})+" %";
+const me_c=v=>{v=+v||0;const a=Math.abs(v);return a>=1e6?(v/1e6).toLocaleString("es-AR",{maximumFractionDigits:1})+"M":a>=1000?(v/1000).toLocaleString("es-AR",{maximumFractionDigits:1})+"K":Math.round(v).toLocaleString("es-AR")};
+const me_dm=d=>d?String(d).slice(8,10)+"/"+String(d).slice(5,7):"";
+const me_lunes=d=>{const x=new Date(String(d).slice(0,10)+"T12:00:00Z");if(isNaN(x))return"";const dow=(x.getUTCDay()+6)%7;x.setUTCDate(x.getUTCDate()-dow);return x.toISOString().slice(0,10)};
+const me_addD=(d,n)=>{const x=new Date(d+"T12:00:00Z");x.setUTCDate(x.getUTCDate()+n);return x.toISOString().slice(0,10)};
+const me_finMes=()=>{const t=todayAR();const y=+t.slice(0,4),m=+t.slice(5,7);return new Date(Date.UTC(y,m,0)).toISOString().slice(0,10)};
+const me_fechaMs=ms=>ms?fmtAR.format(new Date(ms)).slice(0,10):"";
+
+/* ---------- Datos ---------- */
+(function me_sub(){let n=0;const t=setInterval(()=>{
+  if(db){clearInterval(t);["me_metricas","me_cuenta","me_objetivos"].forEach(c=>db.collection(c).onSnapshot(s=>{S[c]=s.docs.map(d=>({...d.data(),id:d.id}));S.loaded[c]=true;me_refrescar()},()=>{S.loaded[c]=true;me_refrescar()}))}
+  else if(S.caps.db==="off"||++n>600){clearInterval(t);["me_metricas","me_cuenta","me_objetivos"].forEach(c=>S.loaded[c]=true);me_refrescar()}},100)})();
+function me_refrescar(){if(current==="resultados"||current==="panel")render()}
+/* piezas medibles: posts y reels publicados + piezas libres ya medidas */
+function me_piezas(){const out=[];
+  S.posts.filter(p=>p.stage==="publicado").forEach(p=>out.push({key:"post:"+p.id,tipo:"post",titulo:p.title||"Sin título",formato:p.format==="carrusel"?"carrusel":p.format==="reel"?"reel":"post",tema:p.tema||"",fecha:me_fechaMs(p.publishedAt)||(p.scheduledAt||"").slice(0,10),enlace:p.igUrl||""}));
+  (S.reels||[]).filter(r=>r.estado==="publicado"||r.sala==="publicado").forEach(r=>out.push({key:"reel:"+r.id,tipo:"reel",titulo:r.titulo||"Reel",formato:"reel",tema:r.episodio?"Ep. "+r.episodio+(r.articulos?" · art. "+r.articulos:""):"",fecha:me_fechaMs(r.publishedAt)||(r.scheduledAt||"").slice(0,10),enlace:r.igUrl||""}));
+  S.me_metricas.slice().sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).forEach(m=>{if(m.pieza&&!out.some(o=>o.key===m.pieza))out.push({key:m.pieza,tipo:m.piezaTipo||"libre",titulo:m.titulo||"Pieza",formato:m.formato||"post",tema:m.tema||"",fecha:m.publicadoEl||"",enlace:m.enlace||""})});
+  return out}
+const me_ord=m=>(m.medidoEl||"")+String(m.createdAt||0).padStart(15,"0");
+const me_fmtMC=t=>/reel/i.test(t)?"reel":/carrusel/i.test(t)?"carrusel":"post";
+const me_mcFecha=d=>{d=String(d||"").replace(/\D/g,"");return d.length>=8?`${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}`:""};
+/* una fila por pieza: la última medición manual de cada pieza + filas de Metricool (sin duplicar por enlace) */
+function me_filas(){const by={},cnt={};S.me_metricas.forEach(m=>{const k=m.pieza;if(!k)return;cnt[k]=(cnt[k]||0)+1;if(!by[k]||me_ord(m)>me_ord(by[k]))by[k]=m});
+  const man=Object.values(by).map(m=>({key:m.pieza,titulo:m.titulo||"Pieza",formato:m.formato||"post",tema:m.tema||"",fecha:m.publicadoEl||m.medidoEl||"",enlace:m.enlace||"",alcance:m.alcance??null,reproducciones:m.reproducciones??null,meGusta:m.meGusta??null,comentarios:m.comentarios??null,guardados:m.guardados??null,compartidos:m.compartidos??null,seguidores:m.seguidores??null,retencion:m.retencion??null,origen:"manual",medidoEl:m.medidoEl||"",ventana:m.ventana||"",n:cnt[m.pieza]}));
+  const urls=new Set(man.map(x=>x.enlace).filter(Boolean));
+  const mc=(S.metrics.rows||[]).filter(r=>!(r.url&&urls.has(r.url))).map(r=>({key:"mc:"+(r.url||r.date),titulo:(r.text||"").slice(0,70)||"(publicación sin texto)",formato:me_fmtMC(r.type),tema:"",fecha:me_mcFecha(r.date),enlace:r.url||"",alcance:r.reach,reproducciones:r.views,meGusta:null,comentarios:null,guardados:r.saved,compartidos:r.shares,seguidores:r.follows,retencion:null,origen:"metricool",medidoEl:me_fechaMs(S.metrics.at),ventana:"",n:1}));
+  return[...man,...mc]}
+const me_tasa=(x,k)=>x.alcance>0&&x[k]!=null?x[k]/x.alcance:null;
+function me_origen(list){const m=list.filter(x=>x.origen==="manual").length,c=list.length-m;return m&&c?`${m} ${m===1?"carga manual":"cargas manuales"} y ${c} de Metricool`:m?(m===1?"carga manual":m+" cargas manuales"):c?(c===1?"Metricool":c+" de Metricool"):"sin datos"}
+const me_chipO=o=>o==="metricool"?`<span class="chip info">Metricool</span>`:`<span class="chip gold">Carga manual</span>`;
+const me_sum=(f,k)=>{const v=f.filter(x=>x[k]!=null);return v.length?v.reduce((s,x)=>s+(+x[k]||0),0):null};
+function me_pool(f,ks){const v=f.filter(x=>x.alcance>0&&ks.every(k=>x[k]!=null));if(!v.length)return null;return{t:v.reduce((s,x)=>s+ks.reduce((a,k)=>a+(+x[k]||0),0),0)/v.reduce((s,x)=>s+x.alcance,0),n:v.length,list:v}}
+
+/* ---------- Gráficos SVG propios ---------- */
+function me_W(){const v=document.getElementById("view");return Math.max(260,Math.min(1080,(v?v.clientWidth:600)-40))}
+function me_nice(v){if(v<=0)return 1;const p=10**Math.floor(Math.log10(v));const n=v/p;return(n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10)*p}
+function me_columnas(data,label){const W=me_W(),H=210,ml=44,mr=10,mt=20,mb=28,iw=W-ml-mr,ih=H-mt-mb;
+  const max=me_nice(Math.max(...data.map(d=>d.v),1));const band=iw/data.length,bw=Math.min(24,band*.6);
+  const imax=data.reduce((b,d,i)=>d.v>data[b].v?i:b,0),il=data.length-1;const step=Math.max(1,Math.ceil(52/band));
+  const y=v=>mt+ih-v/max*ih;let s=`<svg class="me-chart" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(label)}" style="max-width:100%;height:auto">`;
+  [0,max/2,max].forEach(t=>{s+=`<line class="${t?"me-grid":"me-base"}" x1="${ml}" x2="${W-mr}" y1="${y(t)}" y2="${y(t)}"/><text x="${ml-6}" y="${y(t)+4}" text-anchor="end">${me_c(t)}</text>`});
+  data.forEach((d,i)=>{const x=ml+band*i+(band-bw)/2,h=Math.max(d.v/max*ih,d.v>0?1:0),top=mt+ih-h,r=Math.min(4,h,bw/2);
+    s+=`<rect class="me-hit" x="${ml+band*i}" y="${mt}" width="${band}" height="${ih}" data-metip="${esc(d.tip)}"><title>${esc(d.tip)}</title></rect>`;
+    if(h>0)s+=`<path class="me-bar" pointer-events="none" d="M${x},${mt+ih}V${top+r}Q${x},${top} ${x+r},${top}H${x+bw-r}Q${x+bw},${top} ${x+bw},${top+r}V${mt+ih}Z"/>`;
+    if(i===imax||i===il)s+=`<text class="me-val" x="${x+bw/2}" y="${top-6}" text-anchor="middle">${me_c(d.v)}</text>`;
+    if((il-i)%step===0)s+=`<text x="${x+bw/2}" y="${H-8}" text-anchor="middle">${esc(d.x)}</text>`});
+  return s+`</svg>`}
+function me_linea(data,label){const W=me_W(),H=210,ml=48,mr=16,mt=22,mb=28,iw=W-ml-mr,ih=H-mt-mb;
+  const vs=data.map(d=>d.v);let lo=Math.min(...vs),hi=Math.max(...vs);const st=me_nice(Math.max((hi-lo)/2,1));lo=Math.max(0,Math.floor(lo/st)*st);hi=Math.ceil(hi/st)*st;if(hi<=lo)hi=lo+st;if((hi-lo)/st%2)hi+=st;
+  const x=i=>ml+(data.length===1?iw/2:i*iw/(data.length-1)),y=v=>mt+ih-(v-lo)/(hi-lo)*ih;const step=Math.max(1,Math.ceil(56/(iw/Math.max(1,data.length-1))));
+  let s=`<svg class="me-chart" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(label)}" style="max-width:100%;height:auto">`;
+  [lo,(lo+hi)/2,hi].forEach((t,k)=>{s+=`<line class="${k?"me-grid":"me-base"}" x1="${ml}" x2="${W-mr}" y1="${y(t)}" y2="${y(t)}"/><text x="${ml-6}" y="${y(t)+4}" text-anchor="end">${me_c(t)}</text>`});
+  s+=`<path class="me-line" d="${data.map((d,i)=>(i?"L":"M")+x(i).toFixed(1)+","+y(d.v).toFixed(1)).join("")}"/>`;
+  const il=data.length-1;
+  data.forEach((d,i)=>{s+=`<circle class="me-dot" cx="${x(i)}" cy="${y(d.v)}" r="4"/>`;if((il-i)%step===0)s+=`<text x="${x(i)}" y="${H-8}" text-anchor="middle">${esc(d.x)}</text>`});
+  s+=`<text class="me-val" x="${Math.min(x(il),W-mr)}" y="${y(data[il].v)-10}" text-anchor="${data.length>1?"end":"middle"}">${me_c(data[il].v)}</text>`;
+  data.forEach((d,i)=>{s+=`<circle class="me-hit" cx="${x(i)}" cy="${y(d.v)}" r="14" data-metip="${esc(d.tip)}"><title>${esc(d.tip)}</title></circle>`});
+  return s+`</svg>`}
+/* barras horizontales en HTML (nítidas en cualquier ancho); series: [{k,cls,fmt}] */
+function me_hbarras(rows,series){const mx={};series.forEach(s=>{mx[s.k]=Math.max(...rows.map(r=>r[s.k]||0),0)||1});
+  return `<div class="me-hb">${rows.map(r=>`<div class="me-hbr" tabindex="0" data-metip="${esc(r.tip)}"><span class="me-hbl">${esc(r.label)}${r.sub?`<small>${esc(r.sub)}</small>`:""}</span><span class="me-hbt">${series.map(s=>r[s.k]==null?`<span class="me-bl"><b>sin dato</b></span>`:`<span class="me-bl"><i class="${s.cls}" style="width:calc((100% - 70px) * ${((r[s.k]||0)/mx[s.k]).toFixed(4)})"></i><b>${s.fmt(r[s.k])}</b></span>`).join("")}</span></div>`).join("")}</div>`}
+const me_tabla=(cab,filas)=>`<details class="me-det"><summary class="small">Ver los datos en tabla</summary><div class="tbl"><table><thead><tr>${cab.map((c,i)=>`<th${i?` class="n"`:""}>${esc(c)}</th>`).join("")}</tr></thead><tbody>${filas.map(f=>`<tr>${f.map((c,i)=>`<td${i?` class="n"`:""}>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div></details>`;
+const me_poco=(n,que)=>`<div class="me-note">${n?`Hay ${n} ${n===1?"dato":"datos"}`:"Todavía no hay datos"}: con menos de 3 ${que} no se puede leer una tendencia. Seguí cargando y el gráfico aparece solo.</div>`;
+
+/* ---------- Tooltip ---------- */
+function me_tipShow(el,cx,cy){let t=document.getElementById("me-tip");if(!t){t=document.createElement("div");t.id="me-tip";t.setAttribute("role","tooltip");document.body.appendChild(t)}
+  t.textContent=el.dataset.metip;t.hidden=false;const w=t.offsetWidth,h=t.offsetHeight;t.style.left=Math.max(8,Math.min(cx+12,innerWidth-w-8))+"px";t.style.top=Math.max(8,cy-h-12)+"px"}
+const me_tipHide=()=>{const t=document.getElementById("me-tip");if(t)t.hidden=true};
+document.addEventListener("pointermove",e=>{const el=e.target.closest?.("[data-metip]");if(el&&el.dataset.metip)me_tipShow(el,e.clientX,e.clientY);else me_tipHide()});
+document.addEventListener("focusin",e=>{const el=e.target.closest?.("[data-metip]");if(el&&el.dataset.metip){const r=el.getBoundingClientRect();me_tipShow(el,r.left+20,r.top)}else me_tipHide()});
+window.addEventListener("scroll",me_tipHide,{passive:true});
+
+/* ---------- Formulario (borrador que sobrevive a los re-render) ---------- */
+let me_draft={pieza:"",titulo:"",formato:"reel",tema:"",pub:"",enlace:"",ventana:"24h",medido:"",ret:""};let me_csv=null,me_aprTxt="",me_aprK="";
+function me_campo(k,label,o={}){const id="me-"+k,v=me_draft[k]??"";
+  if(o.select)return `<label for="${id}">${esc(label)}<select id="${id}" data-mef="${k}">${opts(o.select,v)}</select></label>`;
+  return `<label for="${id}">${esc(label)}<input id="${id}" data-mef="${k}" value="${esc(v)}"${o.type?` type="${o.type}"`:""}${o.ph?` placeholder="${esc(o.ph)}"`:""}${o.im?` inputmode="${o.im}"`:""}></label>`}
+function me_form(){const pz=me_piezas();if(!me_draft.medido)me_draft.medido=todayAR();
+  if(!me_draft.pieza||(me_draft.pieza!=="nueva"&&!pz.some(p=>p.key===me_draft.pieza)))me_draft.pieza=pz[0]?pz[0].key:"nueva";
+  const sel=pz.find(p=>p.key===me_draft.pieza);const nueva=me_draft.pieza==="nueva";
+  return `<section class="panel" id="me-cargar"><div class="ph"><h2>Cargar métricas</h2><span class="chip gold">Carga manual</span></div>
+  <p class="me-sub">Copiá los números de Instagram → la pieza → Ver estadísticas. Podés cargar varias mediciones de la misma pieza (a las 24 h y a los 7 días). Dejá vacío lo que no sepas: nunca se completa solo.</p>
+  <form class="me-form" data-meform="medicion">
+   <label for="me-pieza">Pieza publicada<select id="me-pieza" data-mef="pieza">${pz.map(p=>`<option value="${esc(p.key)}"${p.key===me_draft.pieza?" selected":""}>${esc((p.fecha?me_dm(p.fecha)+" · ":"")+me_lbl(ME_FMT,p.formato)+" · "+p.titulo)}</option>`).join("")}<option value="nueva"${nueva?" selected":""}>Otra pieza (cargar fecha y enlace)</option></select></label>
+   ${!pz.length?`<span class="small muted">Todavía no hay posts ni reels marcados como publicados: cargá la pieza como “Otra pieza”.</span>`:""}
+   ${nueva?`<div class="fields">${me_campo("titulo","Título o tema de la pieza",{ph:"Ej.: La seña, ep. 9"})}${me_campo("formato","Formato",{select:ME_FMT})}${me_campo("pub","Publicada el",{type:"date"})}${me_campo("enlace","Enlace (opcional)",{ph:"https://www.instagram.com/…"})}</div>${me_campo("tema","Tema o episodio (para comparar)",{ph:"Ej.: Ep. 9 · seña"})}`
+     :sel?`<div class="small muted">${esc(me_lbl(ME_FMT,sel.formato))}${sel.fecha?" · publicada el "+esc(dia(sel.fecha)):""}${sel.tema?" · "+esc(sel.tema):""}</div>${me_campo("tema","Tema o episodio (para comparar)",{ph:sel.tema||"Ej.: alquileres"})}`:""}
+   <div class="fields">${me_campo("ventana","Momento de la medición",{select:ME_VENT})}${me_campo("medido","Fecha de la medición",{type:"date"})}</div>
+   <div class="fields">${ME_NUM.map(([k,l])=>me_campo(k,l,{im:"numeric"})).join("")}${me_campo("ret","Retención promedio % (opcional)",{im:"decimal",ph:"Ej.: 42"})}</div>
+   <div class="btns"><button class="btn primary">Guardar medición</button></div>
+  </form></section>`}
+const me_numero=(v,dec)=>{v=String(v??"").trim();if(v==="")return null;v=dec?v.replace(",","."):v.replace(/[.,\s]/g,"");const n=+v;return isFinite(n)&&n>=0?n:NaN};
+async function me_guardar(){const d=me_draft;const pz=me_piezas().find(p=>p.key===d.pieza);const nueva=d.pieza==="nueva"||!pz;
+  if(nueva&&!String(d.titulo||"").trim()){toast("Poné el título o tema de la pieza");return}
+  if(nueva&&!d.pub){toast("Poné la fecha en que se publicó");return}
+  const doc={};for(const[k,l]of ME_NUM){const n=me_numero(d[k]);if(Number.isNaN(n)){toast(`Revisá “${l}”: tiene que ser un número`);return}doc[k]=n}
+  const ret=me_numero(d.ret,true);if(Number.isNaN(ret)||ret>100){toast("La retención es un porcentaje entre 0 y 100");return}
+  if(ME_NUM.every(([k])=>doc[k]==null)&&ret==null){toast("Cargá al menos un número");return}
+  if(!d.medido){toast("Poné la fecha de la medición");return}
+  const pub=nueva?d.pub:(pz.fecha||"");if(pub&&d.medido<pub){toast("La medición no puede ser anterior a la publicación");return}
+  const id=newId("me");const key=nueva?"libre:"+newId("pz"):pz.key;
+  await dbSet("me_metricas/"+id,{id,pieza:key,piezaTipo:nueva?"libre":pz.tipo,titulo:nueva?d.titulo.trim():pz.titulo,formato:nueva?d.formato:pz.formato,tema:String(d.tema||"").trim()||(nueva?"":pz.tema||""),publicadoEl:pub,enlace:nueva?String(d.enlace||"").trim():pz.enlace||"",
+    ventana:d.ventana,medidoEl:d.medido,...doc,retencion:ret,origen:"manual",createdAt:Date.now(),by:S.uid||null});
+  const sig={"24h":"7d","7d":"28d"}[d.ventana]||d.ventana;
+  me_draft={pieza:key,titulo:"",formato:d.formato,tema:"",pub:"",enlace:"",ventana:sig,medido:todayAR(),ret:""};toast("Medición guardada");render()}
+
+/* ---------- Secciones ---------- */
+function me_resumenTiles(f){const g=me_pool(f,["guardados"]),e=me_pool(f,["compartidos"]);
+  const t=(l,v,o)=>`<div class="me-tile"><span>${esc(l)}</span><b>${v}</b><small>${esc(o)}</small></div>`;
+  return `<div class="me-tiles">${t("Piezas medidas",me_n(f.length),me_origen(f))}${t("Alcance total",me_n(me_sum(f,"alcance")),"suma de la última medición")}${t("Guardados / alcance",g?me_pct(g.t):"–",g?`${g.n} piezas con ambos datos`:"sin datos")}${t("Envíos / alcance",e?me_pct(e.t):"–",e?`${e.n} piezas con ambos datos`:"sin datos")}${t("Seguidores ganados",me_n(me_sum(f,"seguidores")),"atribuidos a las piezas")}</div>`}
+function me_mediciones(){const by={};S.me_metricas.forEach(m=>{(by[m.pieza]=by[m.pieza]||[]).push(m)});
+  const keys=Object.keys(by).sort((a,b)=>Math.max(...by[b].map(m=>m.createdAt||0))-Math.max(...by[a].map(m=>m.createdAt||0))).slice(0,12);
+  return `<section class="panel"><div class="ph"><h2>Mediciones cargadas</h2><span class="small muted">${S.me_metricas.length}</span></div>
+  <div>${keys.map(k=>{const ms=by[k].sort((a,b)=>me_ord(a).localeCompare(me_ord(b)));const m0=ms[ms.length-1];
+    return `<div class="me-piece"><div class="ph"><b style="overflow-wrap:anywhere;min-width:0">${esc(m0.titulo)}</b><span class="chip">${esc(me_lbl(ME_FMT,m0.formato))}</span></div>
+    <div class="me-meds">${ms.map(m=>`<div><span>${esc(me_lbl(ME_VENT,m.ventana))} · ${esc(dia(m.medidoEl))}: alcance ${me_n(m.alcance)} · guard. ${me_n(m.guardados)} · envíos ${me_n(m.compartidos)}${m.retencion!=null?" · ret. "+esc(String(m.retencion).replace(".",","))+" %":""}</span><button class="link" data-me="borrar" data-id="${esc(m.id)}">Borrar</button></div>`).join("")}</div>
+    <button class="link" data-me="otra" data-k="${esc(k)}" style="align-self:flex-start">Agregar otra medición</button></div>`}).join("")||`<div class="empty">Todavía no cargaste ninguna medición.</div>`}</div></section>`}
+function me_metricool(){const m=S.metrics;const rows=m.rows||[];
+  return `<section class="panel"><div class="ph"><h2>Datos de Metricool</h2>${me_chipO("metricool")}</div>
+  ${S.caps.mcp!=="ok"?`<div class="empty">Metricool no está conectado en esta vista. Todo lo de esta pantalla funciona con tus cargas manuales; cuando Metricool esté, sus filas aparecen acá y en los gráficos, marcadas con su origen.</div>`
+   :!rows.length?`<div class="empty">${m.state==="loading"?"Consultando Metricool…":m.state==="error"?esc(m.error):"Metricool no registra publicaciones en los últimos 90 días."}</div>`
+   :`<span class="small muted">Últimos 90 días · ${metricsStamp()}</span><div class="tbl"><table><thead><tr><th>Fecha</th><th>Publicación</th><th class="n">Alcance</th><th class="n">Guard.</th><th class="n">Compart.</th></tr></thead><tbody>${rows.slice(0,15).map(r=>`<tr><td style="white-space:nowrap">${esc(r.dateLabel)}</td><td style="min-width:160px">${esc((r.text||"").slice(0,60))}</td><td class="n">${me_n(r.reach)}</td><td class="n">${me_n(r.saved)}</td><td class="n">${me_n(r.shares)}</td></tr>`).join("")}</tbody></table></div>`}</section>`}
+function me_semanal(f,k){const g={},o={};f.forEach(x=>{if(x[k]==null||!x.fecha)return;const w=me_lunes(x.fecha);if(!w)return;g[w]=(g[w]||0)+(+x[k]||0);(o[w]=o[w]||[]).push(x)});return Object.keys(g).sort().map(w=>({w,v:g[w],list:o[w]}))}
+function me_evolucion(f){const al=me_semanal(f,"alcance").slice(-16);const sg=me_semanal(f,"seguidores").slice(-16);
+  const sn=S.me_cuenta.slice().filter(s=>s.fecha&&s.seguidores!=null).sort((a,b)=>a.fecha.localeCompare(b.fecha)||(a.createdAt||0)-(b.createdAt||0));const gw={};sn.forEach(s=>gw[me_lunes(s.fecha)]=s);const cu=Object.keys(gw).sort().slice(-16).map(w=>({w,s:gw[w]}));
+  return `<section class="panel me-full"><div class="ph"><h2>Evolución por semana</h2></div>
+  <h3>Alcance por semana de publicación</h3><p class="me-sub">Suma de la última medición de cada pieza · ${esc(me_origen(al.flatMap(x=>x.list)))}. Las semanas sin piezas medidas no aparecen.</p>
+  ${al.length>=3?me_columnas(al.map(x=>({x:me_dm(x.w),v:x.v,tip:`Semana del ${dia(x.w)}\nAlcance ${me_n(x.v)} · ${x.list.length} ${x.list.length===1?"pieza":"piezas"}\nOrigen: ${me_origen(x.list)}`})),"Alcance por semana")+me_tabla(["Semana","Alcance","Piezas"],al.map(x=>[dia(x.w),me_n(x.v),x.list.length])):me_poco(al.length,"semanas con alcance")}
+  <h3>Seguidores de la cuenta</h3><p class="me-sub">Tus registros manuales del total de seguidores (último registro de cada semana).</p>
+  ${cu.length>=3?me_linea(cu.map(x=>({x:me_dm(x.w),v:+x.s.seguidores,tip:`${dia(x.s.fecha)}: ${me_n(x.s.seguidores)} seguidores\nOrigen: carga manual`})),"Seguidores por semana")+me_tabla(["Fecha","Seguidores"],cu.map(x=>[dia(x.s.fecha),me_n(x.s.seguidores)])):me_poco(cu.length,"semanas con registro de seguidores")}
+  ${sg.length>=3?`<h3>Seguidores ganados por las piezas, por semana</h3>`+me_columnas(sg.map(x=>({x:me_dm(x.w),v:x.v,tip:`Semana del ${dia(x.w)}\n${me_n(x.v)} seguidores ganados\nOrigen: ${me_origen(x.list)}`})),"Seguidores ganados por semana"):""}
+  <form data-meform="cuenta" class="fields" style="align-items:end"><label for="me-cfecha">Fecha<input id="me-cfecha" type="date" value="${esc(todayAR())}"></label><label for="me-cseg">Seguidores totales hoy<input id="me-cseg" inputmode="numeric" placeholder="Lo ves en tu perfil"></label><button class="btn sm" style="align-self:end">Registrar seguidores</button></form>
+  ${sn.length?`<div class="small muted">Últimos registros: ${sn.slice(-4).reverse().map(s=>`${esc(dia(s.fecha))} → ${me_n(s.seguidores)} <button class="link" data-me="borrarC" data-id="${esc(s.id)}">borrar</button>`).join(" · ")}</div>`:""}</section>`}
+function me_comparar(f){const conA=f.filter(x=>x.alcance>0);const aviso=conA.length<3?`<div class="me-note">Hay ${conA.length} ${conA.length===1?"pieza":"piezas"} con alcance: la comparación es solo orientativa hasta tener más datos.</div>`:"";
+  const grupo=(key,lab)=>{const g={};conA.forEach(x=>{const k=x[key]||"";if(!k)return;(g[k]=g[k]||[]).push(x)});return Object.entries(g).map(([k,l])=>{const p=me_pool(l,["guardados","compartidos"]);return{label:lab(k),sub:`${l.length} ${l.length===1?"pieza":"piezas"}`,alc:l.reduce((s,x)=>s+x.alcance,0)/l.length,tasa:p?p.t:null,tip:`${lab(k)} · ${l.length} ${l.length===1?"pieza":"piezas"}\nAlcance promedio ${me_n(l.reduce((s,x)=>s+x.alcance,0)/l.length)}\nGuardados + envíos / alcance: ${p?me_pct(p.t):"sin dato"}\nOrigen: ${me_origen(l)}`}})};
+  const fm=grupo("formato",k=>me_lbl(ME_FMT,k)).sort((a,b)=>b.alc-a.alc);const tm=grupo("tema",k=>k).sort((a,b)=>(b.tasa??-1)-(a.tasa??-1)).slice(0,8);
+  const ser=[{k:"alc",cls:"me-s1",fmt:me_c},{k:"tasa",cls:"me-s2",fmt:me_pct}];const leg=`<div class="me-leg"><span><i class="me-s1"></i>Alcance promedio</span><span><i class="me-s2"></i>Guardados + envíos / alcance</span><span>Cada medida usa su propia escala</span></div>`;
+  return `<section class="panel"><div class="ph"><h2>Por formato</h2></div>${aviso}${fm.length?leg+me_hbarras(fm,ser):`<div class="empty">Sin piezas con alcance todavía.</div>`}</section>
+  <section class="panel"><div class="ph"><h2>Por tema o episodio</h2></div><p class="me-sub">Ordenado por guardados + envíos sobre alcance. Ponele tema a cada medición para que aparezca acá.</p>${tm.length?leg+me_hbarras(tm,ser):`<div class="empty">Ninguna pieza medida tiene tema o episodio cargado.</div>`}</section>`}
+function me_tasas(f){const l=f.filter(x=>x.alcance>0&&(x.guardados!=null||x.compartidos!=null)).sort((a,b)=>b.alcance-a.alcance).slice(0,10);
+  return `<section class="panel me-full"><div class="ph"><h2>Guardados y envíos sobre alcance</h2></div><p class="me-sub">Por pieza (las 10 de más alcance). Guardar y enviar son las señales que más pesan para llegar a gente nueva.</p>
+  ${l.length?`<div class="me-leg"><span><i class="me-s1"></i>Guardados / alcance</span><span><i class="me-s2"></i>Envíos / alcance</span></div>`+me_hbarras(l.map(x=>({label:x.titulo,sub:`${me_lbl(ME_FMT,x.formato)}${x.fecha?" · "+dia(x.fecha):""} · ${x.origen==="metricool"?"Metricool":"carga manual"}`,g:me_tasa(x,"guardados"),e:me_tasa(x,"compartidos"),tip:`${x.titulo}\nAlcance ${me_n(x.alcance)} · guardados ${me_n(x.guardados)} · envíos ${me_n(x.compartidos)}\nOrigen: ${x.origen==="metricool"?"Metricool":"carga manual"+(x.medidoEl?" del "+dia(x.medidoEl):"")}`})),[{k:"g",cls:"me-s1",fmt:me_pct},{k:"e",cls:"me-s2",fmt:me_pct}])
+   +me_tabla(["Pieza","Alcance","Guardados","Envíos","Guard./alc.","Envíos/alc."],l.map(x=>[x.titulo,me_n(x.alcance),me_n(x.guardados),me_n(x.compartidos),me_pct(me_tasa(x,"guardados")),me_pct(me_tasa(x,"compartidos"))])):`<div class="empty">Cargá alcance y guardados o envíos de al menos una pieza.</div>`}</section>`}
+function me_rank(f,k){return f.filter(x=>x.alcance>0&&x[k]!=null).map(x=>({...x,t:x[k]/x.alcance})).sort((a,b)=>b.t-a.t)}
+function me_frase(f,k){const r=me_rank(f,k);if(!r.length)return"";const x=r[0];const p=me_pool(f,[k]);const nom=k==="compartidos"?"envíos":"guardados";
+  return `Lo que más ${k==="compartidos"?"se envió":"se guardó"}: “${x.titulo}” (${me_lbl(ME_FMT,x.formato).toLowerCase()}${x.tema?", "+x.tema:""}) tuvo ${me_pct(x.t)} de ${nom} sobre alcance (${me_n(x[k])} ${nom} con ${me_n(x.alcance)} de alcance, ${x.origen==="metricool"?"dato de Metricool":"carga manual"+(x.medidoEl?" del "+dia(x.medidoEl):"")}); el promedio de ${p.n} ${p.n===1?"pieza":"piezas"} es ${me_pct(p.t)}.${p.n<3?" Son pocos datos: confirmarlo con más piezas.":""}`}
+function me_ranking(f){const blq=(k,tit)=>{const r=me_rank(f,k).slice(0,5);return `<h3>${tit}</h3>${r.length?`<ol class="me-rank">${r.map(x=>`<li><b style="overflow-wrap:anywhere">${esc(x.titulo)}</b> <span class="chip">${esc(me_lbl(ME_FMT,x.formato))}</span> ${me_chipO(x.origen)}<div class="s">${me_pct(x.t)} · ${me_n(x[k])} ${k==="compartidos"?"envíos":"guardados"} / ${me_n(x.alcance)} de alcance</div></li>`).join("")}</ol><button class="btn sm" data-me="sugerir" data-k="${k}" style="align-self:flex-start">Sugerir aprendizaje con estos números</button>`:`<div class="empty">Sin piezas con alcance y ${k==="compartidos"?"envíos":"guardados"}.</div>`}`};
+  const mem=(S.settings.memoria||[]).slice(-4).reverse();
+  return `<section class="panel"><div class="ph"><h2>Qué funcionó</h2></div>${blq("compartidos","Más envíos sobre alcance")}${blq("guardados","Más guardados sobre alcance")}</section>
+  <section class="panel"><div class="ph"><h2>Aprendizajes</h2></div><p class="me-sub">Lo que guardes acá lo leen los agentes antes de proponer contenido. Escribilo vos: la sugerencia solo usa números reales y la podés corregir.</p>
+   <form data-meform="aprendizaje" style="display:flex;flex-direction:column;gap:8px"><label for="me-apr">Aprendizaje<textarea id="me-apr" style="min-height:96px" placeholder="Ej.: los reels con un caso de alquiler se envían el doble que los carruseles">${esc(me_aprTxt)}</textarea></label><button class="btn sm primary" style="align-self:flex-start">Guardar aprendizaje</button></form>
+   ${mem.length?`<h3>Últimos guardados</h3><div class="list">${mem.map(m=>`<div class="row"><span class="small">${esc(m)}</span></div>`).join("")}</div><a class="link" href="#config">Ver todos en Ajustes</a>`:""}</section>`}
+function me_progreso(o,f){const t=todayAR();
+  if(o.metrica==="seguidores"){const sn=S.me_cuenta.filter(s=>s.fecha&&s.seguidores!=null&&s.fecha<=t).sort((a,b)=>a.fecha.localeCompare(b.fecha));if(!sn.length)return{txt:"Sin datos: registrá tus seguidores totales en “Evolución por semana”.",p:null};
+    const u=sn[sn.length-1],a=sn[0];const falta=o.meta-u.seguidores;const dias=Math.max(0,Math.round((Date.parse(o.fecha)-Date.parse(t))/864e5));
+    let ritmo="";if(sn.length>=2&&u.fecha>a.fecha){const pd=(u.seguidores-a.seguidores)/Math.max(1,(Date.parse(u.fecha)-Date.parse(a.fecha))/864e5);ritmo=` Ritmo registrado: ${pd.toLocaleString("es-AR",{maximumFractionDigits:1})} por día (del ${dia(a.fecha)} al ${dia(u.fecha)}).`}
+    return{p:u.seguidores/o.meta,txt:`${me_n(u.seguidores)} de ${me_n(o.meta)} (registro del ${dia(u.fecha)}).${falta>0?` Faltan ${me_n(falta)} en ${dias} ${dias===1?"día":"días"}${dias?` (≈ ${(falta/dias).toLocaleString("es-AR",{maximumFractionDigits:1})} por día)`:""}.`:" Objetivo cumplido."}${ritmo}`}}
+  const k={alcance_mes:"alcance",guardados_mes:"guardados",envios_mes:"compartidos"}[o.metrica];const mes=String(o.fecha).slice(0,7);const l=f.filter(x=>(x.fecha||"").startsWith(mes)&&x[k]!=null);
+  if(!l.length)return{txt:`Sin datos cargados para ${mes.slice(5,7)}/${mes.slice(0,4)}.`,p:null};const v=l.reduce((s,x)=>s+(+x[k]||0),0);
+  return{p:v/o.meta,txt:`${me_n(v)} de ${me_n(o.meta)} · ${l.length} ${l.length===1?"pieza":"piezas"} del mes · ${me_origen(l)}.`}}
+function me_objetivos(f){const list=S.me_objetivos.slice().sort((a,b)=>String(a.fecha).localeCompare(String(b.fecha)));
+  return `<section class="panel"><div class="ph"><h2>Objetivos</h2></div><p class="me-sub">El progreso se calcula solo con datos cargados.</p>
+  <div class="list">${list.map(o=>{const g=me_progreso(o,f);return `<div class="row" style="flex-direction:column;align-items:stretch;gap:6px"><div class="ph"><b>${esc(me_lbl(ME_OBJ,o.metrica))}: ${me_n(o.meta)} al ${esc(dia(o.fecha))}</b><button class="link" data-me="borrarO" data-id="${esc(o.id)}">Quitar</button></div>${g.p!=null?`<div class="me-meter" role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(Math.min(1,g.p)*100)}" aria-label="Progreso"><i style="width:${(Math.min(1,g.p)*100).toFixed(1)}%"></i></div>`:""}<span class="small muted">${esc(g.txt)}</span></div>`}).join("")||`<div class="empty">Sin objetivos. Ej.: 500 seguidores a fin de mes.</div>`}</div>
+  <form data-meform="objetivo" class="fields" style="align-items:end"><label for="me-om">Métrica<select id="me-om">${opts(ME_OBJ,"seguidores")}</select></label><label for="me-ov">Meta<input id="me-ov" inputmode="numeric" placeholder="Ej.: 500"></label><label for="me-of">Fecha límite<input id="me-of" type="date" value="${esc(me_finMes())}"></label><button class="btn sm" style="align-self:end">Agregar objetivo</button></form></section>`}
+function me_informe(f){const hoy=todayAR(),desde=me_addD(hoy,-6);const l=f.filter(x=>x.fecha>=desde&&x.fecha<=hoy).sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  const L=[`Informe semanal · @${S.settings.igUser} · del ${dia(desde)} al ${dia(hoy)}`,`Fuente: ${me_origen(l)}. Solo datos observados; no hay estimaciones.`,""];
+  if(!l.length)L.push("Sin piezas publicadas y medidas en estos 7 días.");
+  else{const cnt=k=>l.filter(x=>x.formato===k).length;const sm=k=>{const v=me_sum(l,k);return v==null?"sin dato":me_n(v)};const g=me_pool(l,["guardados"]),e=me_pool(l,["compartidos"]);
+    L.push(`Piezas medidas: ${l.length} (reels ${cnt("reel")}, carruseles ${cnt("carrusel")}, publicaciones ${cnt("post")})`,`Alcance total: ${sm("alcance")}`,`Reproducciones: ${sm("reproducciones")}`,`Guardados: ${sm("guardados")}${g?` (${me_pct(g.t)} del alcance)`:""}`,`Envíos: ${sm("compartidos")}${e?` (${me_pct(e.t)} del alcance)`:""}`,`Seguidores ganados por las piezas: ${sm("seguidores")}`);
+    const re=me_rank(l,"compartidos")[0],rg=me_rank(l,"guardados")[0];if(re)L.push(`Más enviada: ${re.titulo} (${me_pct(re.t)})`);if(rg)L.push(`Más guardada: ${rg.titulo} (${me_pct(rg.t)})`)}
+  const sn=S.me_cuenta.filter(s=>s.fecha&&s.fecha<=hoy).sort((a,b)=>a.fecha.localeCompare(b.fecha));const ini=sn.filter(s=>s.fecha<desde).pop()||sn.find(s=>s.fecha>=desde),fin=sn[sn.length-1];
+  L.push(fin?`Seguidores de la cuenta (registro manual): ${ini&&ini!==fin?me_n(ini.seguidores)+" el "+dia(ini.fecha)+" → ":""}${me_n(fin.seguidores)} el ${dia(fin.fecha)}`:"Seguidores de la cuenta: sin registro esta semana");
+  if(S.me_objetivos.length){L.push("","Objetivos:");S.me_objetivos.forEach(o=>L.push(`- ${me_lbl(ME_OBJ,o.metrica)} ${me_n(o.meta)} al ${dia(o.fecha)}: ${me_progreso(o,f).txt}`))}
+  if(l.length){L.push("","Detalle:");l.forEach(x=>L.push(`- ${dia(x.fecha)} · ${me_lbl(ME_FMT,x.formato)} · ${x.titulo} · alcance ${me_n(x.alcance)} · guardados ${me_n(x.guardados)} · envíos ${me_n(x.compartidos)} · ${x.origen==="metricool"?"Metricool":"carga manual"}`))}
+  return L.join("\n")}
+function me_csvTexto(){const q=v=>{v=v==null?"":String(v);return /[;"\n]/.test(v)?`"${v.replace(/"/g,'""')}"`:v};const cab=["origen","pieza","titulo","formato","tema","publicado","enlace","momento","medido","alcance","reproducciones","me_gusta","comentarios","guardados","compartidos","seguidores_ganados","retencion_pct"];
+  const rows=S.me_metricas.slice().sort((a,b)=>me_ord(a).localeCompare(me_ord(b))).map(m=>["manual",m.pieza,m.titulo,m.formato,m.tema,m.publicadoEl,m.enlace,m.ventana,m.medidoEl,m.alcance,m.reproducciones,m.meGusta,m.comentarios,m.guardados,m.compartidos,m.seguidores,m.retencion==null?"":String(m.retencion).replace(".",",")]);
+  (S.metrics.rows||[]).forEach(r=>rows.push(["metricool","",r.text,me_fmtMC(r.type),"",me_mcFecha(r.date),r.url,"",me_fechaMs(S.metrics.at),r.reach,r.views,"","",r.saved,r.shares,r.follows,""]));
+  return [cab,...rows].map(r=>r.map(q).join(";")).join("\r\n")}
+async function me_exportar(){const csv=me_csvTexto();const name="clausula-metricas-"+todayAR()+".csv";
+  if(downloads){try{await downloads.save({filename:name,data:new Blob(["﻿"+csv],{type:"text/csv"})});toast("CSV descargado");return}catch(e){if(e?.code==="declined"){toast("Descarga cancelada");return}}}
+  me_csv=csv;render();setTimeout(()=>document.getElementById("me-csv")?.scrollIntoView({block:"center"}),50)}
+function me_vista(){const f=me_filas();const inf=me_informe(f);
+  return `<div class="head"><div><div class="eyebrow">Medir y aprender</div><h1>Resultados</h1><p>Solo números reales: los que trae Metricool o los que cargás a mano desde Instagram. Cada dato dice de dónde salió.</p></div>
+   <div class="btns"><button class="btn primary" data-me="ir">Cargar métricas</button><button class="btn" data-me="csv">Exportar CSV</button></div></div>
+  ${S.caps.db==="off"?`<div class="panel"><b>Esta vista no puede guardar datos.</b><span class="muted small">Abrí la app desde claude.ai con tu cuenta para cargar métricas.</span></div>`:""}
+  <div class="me-src"><span>Origen de los datos:</span>${me_chipO("manual")}<span>${S.me_metricas.length} ${S.me_metricas.length===1?"medición":"mediciones"}</span>${me_chipO("metricool")}<span>${S.caps.mcp==="ok"?(S.metrics.rows||[]).length+" publicaciones":"sin conexión"}</span></div>
+  ${me_resumenTiles(f)}
+  <div class="grid">${me_form()}${me_mediciones()}${me_metricool()}
+   ${me_evolucion(f)}${me_comparar(f)}${me_tasas(f)}${me_ranking(f)}${me_objetivos(f)}
+   <section class="panel"><div class="ph"><h2>Informe semanal</h2><button class="btn sm" data-me="copiarInf">Copiar</button></div><p class="me-sub">Texto plano para pegar en notas, WhatsApp o un mail.</p><textarea id="me-inf" class="me-txt" readonly aria-label="Informe semanal">${esc(inf)}</textarea></section>
+   ${me_csv!==null?`<section class="panel me-full"><div class="ph"><h2>CSV de métricas</h2><div class="btns"><button class="btn sm" data-me="copiarCsv">Copiar</button><button class="btn sm" data-me="cerrarCsv">Cerrar</button></div></div><p class="me-sub">La descarga no está disponible en esta vista: copiá el texto y pegalo en un archivo .csv o en una planilla (separador punto y coma).</p><textarea id="me-csv" class="me-txt" readonly aria-label="CSV">${esc(me_csv)}</textarea></section>`:""}
+  </div>`}
+
+/* ---------- Inicio: resumen manual cuando Metricool no está ---------- */
+function me_resumenPanel(){const f=me_filas().filter(x=>x.origen==="manual");
+  if(!f.length)return `<div class="empty"><span>Metricool no está conectado. Cargá a mano los números de cada pieza (Instagram → la publicación → Ver estadísticas) y acá vas a ver el resumen.</span><a class="btn sm primary" href="#resultados" style="align-self:flex-start;text-decoration:none">Cargar métricas</a></div>`;
+  const ult=f.map(x=>x.medidoEl).sort().pop();const re=me_rank(f,"compartidos")[0];
+  return `<div class="me-src">${me_chipO("manual")}<span>${f.length} ${f.length===1?"pieza medida":"piezas medidas"} · última medición ${esc(dia(ult))} · Metricool sin conexión</span></div>${me_resumenTiles(f)}
+  ${re?`<div class="small">Más enviada: <b>${esc(re.titulo)}</b> · ${me_pct(re.t)} de envíos sobre alcance</div>`:""}
+  <div class="btns"><a class="btn sm primary" href="#resultados" style="text-decoration:none">Cargar métricas</a><a class="btn sm" href="#resultados" style="text-decoration:none">Ver resultados</a></div>`}
+const _vPanelMe=vPanel;vPanel=()=>{const h=_vPanelMe();if(S.caps.mcp==="ok")return h;const mb=metricsBlock();const i=h.indexOf(mb,Math.max(0,h.indexOf("Rendimiento en Instagram")));return i<0?h:h.slice(0,i)+me_resumenPanel()+h.slice(i+mb.length)};
+
+/* ---------- Agentes: ven las métricas cargadas a mano, marcadas como tales ---------- */
+const _agentContextMe=agentContext;agentContext=function(agent){const base=_agentContextMe(agent);const f=me_filas().filter(x=>x.origen==="manual");if(!f.length)return base;
+  return base+`\nMétricas cargadas a mano por el responsable (datos observados, origen: carga manual; última medición de cada pieza, ${f.length} piezas):\n`+f.slice(0,25).map(x=>`- ${x.fecha} · ${me_lbl(ME_FMT,x.formato)} · ${x.titulo}${x.tema?" ["+x.tema+"]":""}: alcance ${x.alcance??"s/d"}, reproducciones ${x.reproducciones??"s/d"}, guardados ${x.guardados??"s/d"}, envíos ${x.compartidos??"s/d"}, seguidores ${x.seguidores??"s/d"} (medido ${x.medidoEl}, ${x.ventana})`).join("\n")+"\n"};
+
+/* ---------- Navegación ---------- */
+{const i=VIEWS.findIndex(v=>v[0]==="config");VIEWS.splice(i<0?VIEWS.length:i,0,["resultados","Resultados"]);SHORT.resultados="Result."}
+const _renderMe=render;render=function(){if(current!=="resultados")return _renderMe.apply(this,arguments);
+  renderNav();const v=$("#view");const a=document.activeElement;const fid=a&&v.contains(a)?a.id:"";let ss=null,se=null;try{ss=a.selectionStart;se=a.selectionEnd}catch(e){}
+  const y=window.scrollY;v.innerHTML=me_vista();if(render.keep!==false)window.scrollTo(0,y);render.keep=true;
+  if(fid){const n=document.getElementById(fid);if(n){n.focus({preventScroll:true});try{if(ss!=null)n.setSelectionRange(ss,se)}catch(e){}}}};
+let me_rw=innerWidth,me_rz=0;window.addEventListener("resize",()=>{clearTimeout(me_rz);me_rz=setTimeout(()=>{if(current==="resultados"&&innerWidth!==me_rw){me_rw=innerWidth;render()}},200)});
+
+/* ---------- Eventos ---------- */
+document.addEventListener("input",e=>{const t=e.target;if(t.dataset?.mef){me_draft[t.dataset.mef]=t.value;return}if(t.id==="me-apr")me_aprTxt=t.value});
+document.addEventListener("change",e=>{const t=e.target;if(t.dataset?.mef==="pieza"){me_draft.pieza=t.value;me_draft.tema="";render()}});
+document.addEventListener("click",async e=>{const el=e.target.closest("[data-me]");if(!el)return;const k=el.dataset.me;
+  try{switch(k){
+  case"ir":e.preventDefault();document.getElementById("me-cargar")?.scrollIntoView({behavior:"smooth",block:"start"});setTimeout(()=>document.getElementById("me-pieza")?.focus({preventScroll:true}),300);break;
+  case"otra":me_draft.pieza=el.dataset.k;me_draft.tema="";render();document.getElementById("me-cargar")?.scrollIntoView({behavior:"smooth",block:"start"});break;
+  case"borrar":case"borrarC":case"borrarO":if(el.dataset.confirm){await dbDelete({borrar:"me_metricas/",borrarC:"me_cuenta/",borrarO:"me_objetivos/"}[k]+el.dataset.id);toast("Borrado")}else{el.dataset.confirm="1";el.textContent="Tocá de nuevo para borrar"}break;
+  case"sugerir":{me_aprTxt=me_frase(me_filas(),el.dataset.k);render();const ta=document.getElementById("me-apr");if(ta){ta.scrollIntoView({behavior:"smooth",block:"center"});ta.focus({preventScroll:true})}toast("Sugerencia lista: revisala y editala antes de guardar");break}
+  case"copiarInf":copy($("#me-inf").value);break;
+  case"csv":await me_exportar();break;
+  case"copiarCsv":copy(me_csv||"");break;
+  case"cerrarCsv":me_csv=null;render();break;
+  }}catch(err){if(err?.message!=="no-db")console.error(err)}});
+document.addEventListener("submit",async e=>{const f=e.target;if(!f.dataset?.meform)return;e.preventDefault();
+  try{switch(f.dataset.meform){
+  case"medicion":await me_guardar();break;
+  case"cuenta":{const fe=$("#me-cfecha").value,n=me_numero($("#me-cseg").value);if(!fe||n==null||Number.isNaN(n)){toast("Poné la fecha y el total de seguidores");break}const id=newId("mec");await dbSet("me_cuenta/"+id,{id,fecha:fe,seguidores:n,origen:"manual",createdAt:Date.now(),by:S.uid||null});toast("Seguidores registrados");break}
+  case"objetivo":{const m=$("#me-om").value,v=me_numero($("#me-ov").value),fe=$("#me-of").value;if(!v||Number.isNaN(v)||!fe){toast("Poné la meta y la fecha límite");break}const id=newId("meo");await dbSet("me_objetivos/"+id,{id,metrica:m,meta:v,fecha:fe,createdAt:Date.now(),by:S.uid||null});toast("Objetivo agregado");break}
+  case"aprendizaje":{const t=$("#me-apr").value.trim();if(!t){toast("Escribí el aprendizaje");break}await saveSettings({memoria:[...(S.settings.memoria||[]),t].slice(-40)});me_aprTxt="";toast("Aprendizaje guardado: los agentes lo van a tener en cuenta");render();break}
+  }}catch(err){if(err?.message!=="no-db")console.error(err)}});
+
+render();
+</script>

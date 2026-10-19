@@ -1,0 +1,394 @@
+<style>
+/* ============ Experiencia (agente 5): paleta, borradores, restauración, tema, diagnóstico ============ */
+.ux-navcmd{margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;background:rgba(214,189,134,.08);border:1px solid rgba(214,189,134,.28);color:var(--side-ink);border-radius:7px;padding:8px 12px;font:600 13.5px var(--f-body);cursor:pointer;text-align:left}
+.ux-navcmd:hover{border-color:var(--oro)}
+.ux-kbd{font:500 11px var(--f-mono);border:1px solid currentColor;border-radius:4px;padding:0 5px;opacity:.8;white-space:nowrap}
+.ux-mcmd{flex:1 1 0;background:none;border:0;color:var(--side-muted);font:700 12px var(--f-body);padding:13px 4px;cursor:pointer;text-align:center}
+.ux-pal-bg{position:fixed;inset:0;z-index:60;background:rgba(10,18,30,.5);display:flex;justify-content:center;align-items:flex-start;padding:max(9vh,calc(16px + env(safe-area-inset-top,0px))) 16px 16px}
+.ux-pal{width:min(620px,100%);max-height:min(580px,82vh);background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:12px;box-shadow:0 18px 50px rgba(0,0,0,.35);display:flex;flex-direction:column;overflow:hidden}
+.ux-pal-in{display:flex;align-items:center;gap:8px;padding:8px 10px 8px 14px;border-bottom:1px solid var(--line)}
+.ux-pal-in input{border:0;background:transparent;font-size:16px;padding:9px 2px;flex:1}
+.ux-pal-in input:focus-visible{outline:none}
+.ux-pal-in:focus-within{box-shadow:inset 0 -2px 0 var(--oro)}
+.ux-pal-h{font-family:var(--f-display);font-weight:600;font-size:22px;margin:0;flex:1}
+.ux-pal ul{list-style:none;margin:0;padding:6px;overflow-y:auto;flex:1;min-height:0}
+.ux-opt{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 10px;border-radius:7px;cursor:pointer}
+.ux-opt[aria-selected="true"]{background:color-mix(in srgb,var(--oro) 22%,transparent)}
+.ux-ot{display:flex;flex-direction:column;min-width:0}.ux-ot b{font-weight:600;overflow-wrap:anywhere}
+.ux-g{font-size:11.5px;color:var(--muted);white-space:nowrap;font-weight:700}
+.ux-pal-empty{padding:16px;color:var(--muted);font-size:14px}
+.ux-pal-foot{border-top:1px solid var(--line);padding:8px 14px;font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 14px}
+.ux-keys{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px 16px;padding:14px 16px;margin:0;font-size:14px;overflow-y:auto}
+.ux-keys dt{white-space:nowrap}.ux-keys dd{margin:0}
+.ux-draftbar{border-color:var(--warn);gap:8px}
+.ux-drow{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between}
+.ux-drow>span:first-child{min-width:0;overflow-wrap:anywhere}
+.ux-dnote{border-color:var(--warn);padding:12px 14px;gap:8px}
+.ux-dirty{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px}
+.ux-note{font-size:13.5px;border-radius:8px;padding:10px 12px;background:var(--soft);display:flex;flex-direction:column;gap:8px}
+.ux-note.warn{background:color-mix(in srgb,var(--warn) 14%,transparent)}
+.ux-note.bad{background:color-mix(in srgb,var(--bad) 12%,transparent);color:var(--bad)}
+.ux-note.ok{background:color-mix(in srgb,var(--ok) 13%,transparent)}
+.ux-prev{display:flex;flex-direction:column;gap:10px;border:1px solid var(--line);border-radius:9px;padding:12px}
+.ux-modo{border:1px solid var(--line);border-radius:9px;padding:10px 12px;margin:0;display:flex;flex-direction:column;gap:10px;min-width:0}
+.ux-modo legend{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--oro-ink);font-weight:700;padding:0 6px}
+label.ux-radio{flex-direction:row;align-items:flex-start;gap:9px;color:var(--ink);font-weight:500;font-size:14px;cursor:pointer}
+label.ux-radio input{width:auto;margin-top:4px;accent-color:var(--oro-ink)}
+label.ux-radio span{display:flex;flex-direction:column}
+.ux-seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:8px;overflow:hidden;align-self:flex-start}
+.ux-seg button{border:0;border-left:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 16px;font:700 13px var(--f-body);cursor:pointer}
+.ux-seg button:first-child{border-left:0}
+.ux-seg button[aria-pressed="true"]{background:var(--noche);color:var(--marfil)}
+.ux-step{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;padding:10px 0;border-top:1px solid var(--line)}
+.ux-step:first-child{border-top:0}
+.ux-st{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
+.ux-st b{font-weight:600;overflow-wrap:anywhere}
+.ux-step.ok b{color:var(--muted);font-weight:500}
+.ux-mark{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--muted);flex:none;margin-top:3px;position:relative}
+.ux-mark.on{background:var(--ok);border-color:var(--ok)}
+.ux-mark.on::after{content:"";position:absolute;left:5px;top:1.5px;width:4px;height:8px;border:solid var(--surface);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.ux-prog{height:6px;background:var(--soft);border-radius:99px;overflow:hidden}
+.ux-prog i{display:block;height:100%;background:var(--ok);border-radius:99px}
+.ux-errs{display:flex;flex-direction:column;gap:6px;font-size:12.5px;max-height:220px;overflow:auto}
+.ux-errs code{font-family:var(--f-mono);font-size:11.5px;overflow-wrap:anywhere}
+.ux-nov ul{margin:4px 0 0;padding-left:18px;font-size:13.5px;display:flex;flex-direction:column;gap:3px}
+.ux-mono{font-family:var(--f-mono);font-size:12px}
+@media (max-width:860px){.ux-step{flex-wrap:wrap}.ux-step>.btns{margin-left:28px}}
+/* Oscuro: correcciones de colores fijos de tandas anteriores */
+html .salanote.warn{background:color-mix(in srgb,var(--warn) 18%,transparent)}
+:root[data-theme="dark"] .salatabs button.on{background:var(--oro);border-color:var(--oro);color:var(--noche)}
+:root[data-theme="dark"] .salatabs button.on span{background:var(--noche);color:var(--oro)}
+:root[data-theme="dark"] .ux-seg button[aria-pressed="true"]{background:var(--oro);color:var(--noche)}
+:root[data-theme="dark"] .toast{background:var(--ink);color:var(--bg)}
+@media (prefers-color-scheme:dark){
+ :root:not([data-theme="light"]) .salatabs button.on{background:var(--oro);border-color:var(--oro);color:var(--noche)}
+ :root:not([data-theme="light"]) .salatabs button.on span{background:var(--noche);color:var(--oro)}
+ :root:not([data-theme="light"]) .ux-seg button[aria-pressed="true"]{background:var(--oro);color:var(--noche)}
+ :root:not([data-theme="light"]) .toast{background:var(--ink);color:var(--bg)}}
+</style>
+<script>
+"use strict";
+/* ============ Experiencia (agente 5): copia y restauración, borradores automáticos, paleta de comandos,
+   tema, errores y diagnóstico, primeros pasos y novedades ============ */
+const UX_VERSION="Tanda 6 · octubre 2026";
+/* Editable: agregá una entrada ARRIBA por cada tanda nueva (la primera es la versión actual). */
+const UX_NOVEDADES=[
+ {version:UX_VERSION,fecha:"2026-10-18",items:[
+  "Paleta de comandos: Ctrl+K (⌘K en Mac) o el botón “Comandos” para ir a cualquier sección, crear piezas y buscar publicaciones, reels e historias.",
+  "Atajos de teclado: tocá ? para verlos. Ctrl+S (⌘S) guarda el editor abierto.",
+  "Borradores automáticos: si cerrás un editor sin guardar o se corta la página, los cambios quedan en este dispositivo y los recuperás con un toque.",
+  "Cada editor muestra si tiene cambios sin guardar.",
+  "Restaurar copia de seguridad desde el archivo o pegando el texto, con vista previa y confirmación antes de escribir.",
+  "Copia de seguridad como texto para copiar cuando la descarga no está disponible.",
+  "Tema claro, oscuro o el del sistema.",
+  "Primeros pasos en Inicio y panel de Diagnóstico en Ajustes para reportar problemas."]}];
+const ux_ls={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const ux_isMac=/Mac|iPhone|iPad/i.test(navigator.platform||navigator.userAgent||"");
+const ux_modK=ux_isMac?"⌘K":"Ctrl K", ux_modS=ux_isMac?"⌘S":"Ctrl S";
+const ux_hora=ms=>new Date(ms).toLocaleTimeString("es-AR",{timeZone:TZ,hour:"2-digit",minute:"2-digit"});
+const ux_stable=v=>JSON.stringify(v,(k,x)=>x&&typeof x==="object"&&!Array.isArray(x)?Object.keys(x).sort().reduce((o,kk)=>(o[kk]=x[kk],o),{}):x);
+
+/* ---------- Tema ---------- */
+const UX_TEMAS=[["light","Claro"],["dark","Oscuro"],["system","Sistema"]];
+let ux_tema="system";
+function ux_aplicarTema(t){ux_tema=UX_TEMAS.some(x=>x[0]===t)?t:"system";const r=document.documentElement;
+  if(ux_tema==="system")r.removeAttribute("data-theme");else r.setAttribute("data-theme",ux_tema);ux_ls.set("ux_tema",ux_tema)}
+ux_aplicarTema(ux_ls.get("ux_tema","system"));
+function ux_temaHTML(){const sis=(()=>{try{return matchMedia("(prefers-color-scheme: dark)").matches?"oscuro":"claro"}catch(e){return"claro"}})();
+  return `<section class="panel" id="uxTema"><h2>Apariencia</h2><p class="small muted" style="margin:0">Elegí cómo se ve la app en este dispositivo.</p>
+  <div class="ux-seg" role="group" aria-label="Tema de la app">${UX_TEMAS.map(([v,l])=>`<button type="button" data-uxtema="${v}" aria-pressed="${ux_tema===v}">${l}</button>`).join("")}</div>
+  <span class="small muted">${ux_tema==="system"?`Sigue la configuración de tu sistema (ahora: ${sis}).`:"Queda guardado en este navegador."}</span></section>`}
+
+/* ---------- Errores globales y diagnóstico ---------- */
+let ux_errs=ux_ls.get("ux_errores",[]);if(!Array.isArray(ux_errs))ux_errs=[];
+let ux_ultToast=0;const ux_vistos=new Set();
+function ux_registrarError(msg,src){msg=String(msg||"Error desconocido").slice(0,300);
+  if(/^no-db$|ResizeObserver loop/i.test(msg))return;
+  ux_errs.unshift({at:Date.now(),msg,src:String(src||"").slice(0,160),vista:typeof current==="string"?current:""});ux_errs=ux_errs.slice(0,20);ux_ls.set("ux_errores",ux_errs);
+  const now=Date.now();if(!ux_vistos.has(msg)&&now-ux_ultToast>8000){ux_vistos.add(msg);ux_ultToast=now;
+    try{toast("Algo no salió bien. Quedó anotado en Ajustes → Diagnóstico; si se repite, recargá la página.")}catch(e){}}
+  const d=document.getElementById("uxDiagErr");if(d)d.innerHTML=ux_errListHTML()}
+window.addEventListener("error",e=>{if(e.target&&e.target!==window)return;ux_registrarError(e.message||e.error?.message,((e.filename||"").split("/").pop()||"página")+(e.lineno?":"+e.lineno:""))});
+window.addEventListener("unhandledrejection",e=>{const r=e.reason;if(r&&(["cancelled","declined"].includes(r.code)||r.message==="no-db"))return;
+  ux_registrarError(r?.message||r?.code||String(r),"promesa sin manejar")});
+const ux_capTxt=k=>({ok:"activa",off:"no disponible",wait:"verificando"})[k]||String(k);
+function ux_caps(){return [["Datos guardados (db)",S.caps.db],["Agentes de Claude (sample)",S.caps.sample],["Metricool (mcp)",S.caps.mcp],
+  ["Imágenes (assets)",typeof assetsCap!=="undefined"&&assetsCap?"ok":"off"],["Descargas (downloads)",typeof dlOS!=="undefined"&&dlOS?"ok":"off"],["Usuario (user)",user?"ok":"off"]]}
+function ux_errListHTML(){return ux_errs.length?ux_errs.slice(0,10).map(e=>`<div><span class="small muted">${esc(new Date(e.at).toLocaleString("es-AR",{timeZone:TZ}))}${e.vista?" · "+esc(e.vista):""}</span><br><code>${esc(e.msg)}${e.src?" ("+esc(e.src)+")":""}</code></div>`).join(""):`<span class="small muted">Sin errores registrados en este dispositivo.</span>`}
+function ux_diagTexto(){return [`Cláusula Legal OS · ${UX_VERSION}`,`Fecha: ${new Date().toLocaleString("es-AR",{timeZone:TZ})}`,`Vista: ${current} · tema: ${ux_tema} · pantalla ${innerWidth}×${innerHeight}`,`Navegador: ${navigator.userAgent}`,
+  "Capacidades: "+ux_caps().map(([n,s])=>n+" "+ux_capTxt(s)).join(", "),
+  `Datos cargados: ${S.posts.length} publicaciones, ${(S.reels||[]).length} reels, ${(S.historias||[]).length} historias, ${S.approvals.length} aprobaciones, ${S.tasks.length} tareas`,
+  `Borradores locales: ${Object.keys(ux_borr).length}`,`Últimos errores (${ux_errs.length}):`,
+  ...ux_errs.slice(0,10).map(e=>`- ${new Date(e.at).toLocaleString("es-AR",{timeZone:TZ})} [${e.vista||""}] ${e.msg}${e.src?" ("+e.src+")":""}`)].join("\n")}
+function ux_diagHTML(){return `<section class="panel" id="uxDiag"><div class="ph"><h2>Diagnóstico</h2><span class="small muted ux-mono">${esc(UX_VERSION)}</span></div>
+  <p class="small muted" style="margin:0">Si algo falla, copiá este informe y mandalo junto con lo que estabas haciendo. No incluye tus publicaciones ni datos personales.</p>
+  <div class="list">${ux_caps().map(([n,s])=>`<div class="row"><span class="t small">${esc(n)}</span><span class="chip ${s==="ok"?"ok":s==="off"?"":"warn"}">${esc(ux_capTxt(s))}</span></div>`).join("")}</div>
+  <h3>Últimos errores</h3><div class="ux-errs" id="uxDiagErr">${ux_errListHTML()}</div>
+  <div class="btns"><button class="btn sm" data-uxdiag="copiar">Copiar diagnóstico</button>${ux_errs.length?`<button class="btn sm" data-uxdiag="borrar">Borrar registro</button>`:""}</div>
+  <details><summary>Ver el informe como texto</summary><textarea readonly aria-label="Informe de diagnóstico" class="ux-mono" style="min-height:140px;margin-top:8px">${esc(ux_diagTexto())}</textarea></details></section>`}
+
+/* ---------- Qué hay de nuevo ---------- */
+function ux_novHTML(){const nuevo=ux_ls.get("ux_novedad_vista","")!==(UX_NOVEDADES[0]||{}).version;
+  return `<section class="panel" id="uxNovedades"><div class="ph"><h2>Qué hay de nuevo</h2>${nuevo?`<span class="chip gold">Nuevo</span>`:""}</div>
+  ${UX_NOVEDADES.slice(0,3).map(n=>`<div class="ux-nov"><b class="small">${esc(n.version)}${n.fecha?" · "+esc(dia(n.fecha)):""}</b><ul>${(n.items||[]).map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>`).join("")}</section>`}
+
+/* ---------- Borradores automáticos de los editores ---------- */
+const ux_normGen=o=>{const c={...o};delete c.updatedAt;delete c._new;return ux_stable(c)};
+const UX_ED={
+  post:{lab:"Editor de publicación",de:"de la publicación",nom:"publicación",S:"posts",
+    snap(){if(!editing)return null;const p=JSON.parse(JSON.stringify(editing));
+      document.querySelectorAll("#drawerRoot [data-f]").forEach(el=>{p[el.dataset.f]=el.value});
+      document.querySelectorAll("#drawerRoot [data-slide]").forEach(el=>{const s=(p.slides||[])[+el.dataset.slide];if(s)s[el.dataset.sf]=el.value});return p},
+    norm(p){const o={};["title","format","stage","scheduledAt","objetivo","audiencia","slides","guionReel","caption","hashtags","cta","media","notas","verificar"].forEach(k=>o[k]=p[k]??"");o.media=String(o.media||"").trim();return ux_stable(o)},
+    tit:p=>p.title||"Pieza sin título",open(d,nuevo){editing=d;editing._new=!!nuevo;previewIdx=0;drawPost()}},
+  reel:{lab:"Editor de reel",de:"del reel",nom:"reel",S:"reels",snap:()=>reelEditing?JSON.parse(JSON.stringify(reelEditing)):null,norm:ux_normGen,
+    tit:r=>r.titulo||r.gancho||"Reel sin título",open(d){reelEditing=d;drawReel()}},
+  hist:{lab:"Secuencia de historias",de:"de la secuencia de historias",nom:"secuencia de historias",S:"historias",snap:()=>histEditing?JSON.parse(JSON.stringify(histEditing)):null,norm:ux_normGen,
+    tit:h=>"Historias "+dia(h.fecha)+" · "+rLabel(H_OBJ,h.objetivo),open(d){histEditing=d;drawHist()}},
+  lead:{lab:"Ficha de contacto",de:"de la ficha de contacto",nom:"ficha de contacto",S:"leads",
+    snap(){if(!leadEditing)return null;const l=JSON.parse(JSON.stringify(leadEditing));document.querySelectorAll("#drawerRoot [data-l]").forEach(el=>{l[el.dataset.l]=el.value});return l},
+    norm:ux_normGen,tit:l=>l.nombre||"Contacto sin nombre",open(d){leadEditing=d;drawLead()}}};
+const UX_COLK={posts:"post",reels:"reel",historias:"hist",leads:"lead"};
+let ux_borr=ux_ls.get("ux_borradores",{});if(!ux_borr||typeof ux_borr!=="object"||Array.isArray(ux_borr))ux_borr={};
+const ux_base={}, ux_propios=new Set(), ux_borrados=new Set();let ux_lsFalla=false, ux_tInp=0;
+function ux_borrSave(){ux_lsFalla=!ux_ls.set("ux_borradores",ux_borr)}
+const ux_stored=(kind,id)=>(S[UX_ED[kind].S]||[]).find(x=>x.id===id);
+function ux_edAbierto(){const d=document.querySelector("#drawerRoot .drawer[role=dialog]");if(!d)return null;const lab=d.getAttribute("aria-label");
+  const kind=Object.keys(UX_ED).find(k=>UX_ED[k].lab===lab);if(!kind)return null;let snap=null;try{snap=UX_ED[kind].snap()}catch(e){}
+  if(!snap||!snap.id)return null;return{kind,snap,key:kind+":"+snap.id}}
+function ux_estado(){const ed=ux_edAbierto();if(!ed)return null;const E=UX_ED[ed.kind];const n=E.norm(ed.snap);
+  if(!(ed.key in ux_base)){const st=ux_stored(ed.kind,ed.snap.id);ux_base[ed.key]=st?E.norm(st):ed.snap.source==="agente"?"__nuevo__":n}
+  return {...ed,dirty:!ux_borrados.has(ed.key)&&n!==ux_base[ed.key]}}
+function ux_tick(){const st=ux_estado();
+  if(st){if(st.dirty){const prev=ux_borr[st.key];const data=st.snap;delete data._new;
+      if(!prev||ux_stable(prev.data)!==ux_stable(data)){ux_borr[st.key]={kind:st.kind,id:data.id,tit:UX_ED[st.kind].tit(data),data,at:Date.now()};ux_propios.add(st.key);ux_borrSave()}}
+    else if(ux_borr[st.key]&&ux_propios.has(st.key)){delete ux_borr[st.key];ux_borrSave()}}
+  ux_indicador(st);return st}
+function ux_indicador(st){const d=document.querySelector("#drawerRoot .dhead");if(!d)return;let el=d.querySelector(".ux-dirty");
+  if(!st){if(el)el.remove();return}
+  if(!el){el=document.createElement("div");el.className="ux-dirty";el.setAttribute("aria-live","polite");(d.firstElementChild||d).appendChild(el)}
+  const b=ux_borr[st.key];
+  const html=(st.dirty?`<span class="chip warn">Cambios sin guardar</span>${ux_lsFalla?`<span class="small" style="color:var(--bad)">No se pudo guardar el borrador en este dispositivo</span>`:b&&ux_propios.has(st.key)?`<span class="small muted">Borrador en este dispositivo · ${ux_hora(b.at)}</span>`:""}`:`<span class="chip ok">Todo guardado</span>`)
+    +(!db?`<span class="small muted">Vista pública: no se guarda en la base</span>`:"");
+  if(el.dataset.h!==html){el.innerHTML=html;el.dataset.h=html}}
+function ux_avisoDrawer(st){const d=document.querySelector("#drawerRoot .drawer");if(!d||d.querySelector(".ux-dnote"))return;const b=ux_borr[st.key];if(!b||ux_propios.has(st.key))return;
+  const h=d.querySelector(".dhead");if(!h)return;
+  h.insertAdjacentHTML("afterend",`<div class="panel ux-dnote" role="status"><span><b>Tenés un borrador sin guardar ${esc(UX_ED[b.kind].de)}</b> <span class="small muted">(${esc(ago(b.at))})</span></span><div class="btns"><button class="btn sm primary" data-uxdr="rec" data-k="${esc(st.key)}">Recuperar borrador</button><button class="btn sm" data-uxdr="desc" data-k="${esc(st.key)}">Descartar</button></div></div>`)}
+function ux_onDrawer(){const st=ux_estado();ux_indicador(st);if(st)ux_avisoDrawer(st);if(!st)ux_pintarBarra()}
+new MutationObserver(ux_onDrawer).observe(document.getElementById("drawerRoot"),{childList:true});
+setInterval(()=>{if(document.querySelector("#drawerRoot .drawer"))ux_tick()},3000);
+document.addEventListener("input",e=>{if(!e.target.closest||!e.target.closest("#drawerRoot"))return;clearTimeout(ux_tInp);ux_tInp=setTimeout(ux_tick,700)});
+document.addEventListener("change",e=>{if(!e.target.closest||!e.target.closest("#drawerRoot"))return;clearTimeout(ux_tInp);ux_tInp=setTimeout(ux_tick,300)});
+window.addEventListener("pagehide",()=>{try{ux_tick()}catch(e){}});
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")try{ux_tick()}catch(e){}});
+function ux_visibles(){const ab=ux_edAbierto();const abierto=ab&&ab.key;const out=[];let cambio=false;
+  for(const [k,b] of Object.entries(ux_borr)){if(!b||!UX_ED[b.kind]||!b.data||Date.now()-(b.at||0)>45*864e5){delete ux_borr[k];cambio=true;continue}
+    if(k===abierto)continue;const E=UX_ED[b.kind];
+    if(S.loaded[E.S]&&b.kind!=="lead"){const st=ux_stored(b.kind,b.id);if(st&&E.norm(st)===E.norm(b.data)){delete ux_borr[k];cambio=true;continue}}
+    out.push([k,b])}
+  if(cambio)ux_borrSave();return out.sort((a,b)=>b[1].at-a[1].at)}
+function ux_barraHTML(){const v=ux_visibles();if(!v.length)return"";
+  return `<section class="panel ux-draftbar" aria-label="Borradores sin guardar">${v.slice(0,4).map(([k,b])=>`<div class="ux-drow"><span><b>Tenés un borrador sin guardar ${esc(UX_ED[b.kind].de)} «${esc(b.tit)}»</b><span class="small muted"> · ${esc(ago(b.at))}</span></span><span class="btns"><button class="btn sm primary" data-uxdr="rec" data-k="${esc(k)}">Recuperar</button><button class="btn sm" data-uxdr="desc" data-k="${esc(k)}">Descartar</button></span></div>`).join("")}
+  ${v.length>4?`<span class="small muted">Y ${v.length-4} más: recuperá o descartá estos primero.</span>`:""}
+  ${S.caps.db==="off"?`<span class="small muted">En esta vista no se puede guardar en la base: el borrador queda solo en este dispositivo.</span>`:""}</section>`}
+function ux_pintarBarra(){const v=document.getElementById("view");if(!v)return;const old=v.querySelector(":scope > .ux-draftbar");if(old)old.remove();
+  const h=ux_barraHTML();if(!h)return;const head=v.querySelector(":scope > .head");if(head)head.insertAdjacentHTML("afterend",h);else v.insertAdjacentHTML("afterbegin",h)}
+function ux_recuperar(key){const b=ux_borr[key];if(!b)return;const E=UX_ED[b.kind];
+  if(document.querySelector("#drawerRoot .drawer"))ux_tick();
+  const st=ux_stored(b.kind,b.id);ux_propios.add(key);ux_borrados.delete(key);ux_base[key]=st?E.norm(st):"__recuperado__";
+  E.open(JSON.parse(JSON.stringify(b.data)),!st);toast("Borrador recuperado: revisalo y tocá Guardar")}
+function ux_descartar(key){delete ux_borr[key];ux_borrSave();ux_propios.delete(key);
+  const ab=ux_edAbierto();if(ab&&ab.key===key){document.querySelector("#drawerRoot .ux-dnote")?.remove()}ux_pintarBarra();toast("Borrador descartado")}
+document.addEventListener("click",e=>{const el=e.target.closest("[data-uxdr]");if(!el)return;e.stopPropagation();const k=el.dataset.k;
+  if(el.dataset.uxdr==="rec")ux_recuperar(k);
+  else if(el.dataset.confirm)ux_descartar(k);else{el.dataset.confirm="1";el.textContent="Tocá de nuevo para descartar"}});
+/* guardar y borrar actualizan la referencia del borrador */
+const _ux_dbSet=dbSet;dbSet=async function(path,data){const r=await _ux_dbSet.apply(this,arguments);
+  try{const [col,id]=String(path).split("/");const kind=UX_COLK[col];if(kind&&id&&data){const key=kind+":"+id;ux_base[key]=UX_ED[kind].norm(data);ux_borrados.delete(key);
+    if(ux_borr[key]){delete ux_borr[key];ux_borrSave()}setTimeout(()=>ux_indicador(ux_estado()),0)}}catch(e){}return r};
+const _ux_dbDelete=dbDelete;dbDelete=async function(path){const r=await _ux_dbDelete.apply(this,arguments);
+  try{const [col,id]=String(path).split("/");const kind=UX_COLK[col];if(kind&&id){const key=kind+":"+id;ux_borrados.add(key);if(ux_borr[key]){delete ux_borr[key];ux_borrSave()}}}catch(e){}return r};
+const _ux_closeDrawer=closeDrawer;closeDrawer=function(){let st=null;try{st=ux_tick()}catch(e){}const r=_ux_closeDrawer.apply(this,arguments);
+  if(st&&st.dirty&&ux_borr[st.key])toast("Tus cambios quedaron como borrador en este dispositivo: los recuperás desde el aviso de arriba.");
+  ux_pintarBarra();return r};
+
+/* ---------- Copia de seguridad: descarga o texto, y restauración ---------- */
+let ux_bkTexto="";
+function ux_datosCopia(){const data={app:"Cláusula Legal OS",version:UX_VERSION,exportado:new Date().toISOString(),publicaciones:S.posts,reels:S.reels||[],historias:S.historias||[],aprobaciones:S.approvals,tareas:S.tasks,alertas:S.alertas||[],ajustes:S.settings};
+  const extra={};Object.keys(S).forEach(k=>{if(/^(sp|pr|ca|me|ux)_[a-z0-9_]+$/i.test(k)&&Array.isArray(S[k])&&S[k].every(d=>d&&typeof d==="object"&&typeof d.id==="string"))extra[k]=S[k]});
+  if(Object.keys(extra).length)data.extra=extra;return data}
+/* reemplaza a backupOS (tanda 3): misma descarga, suma alertas y colecciones de los módulos, y ofrece texto si no hay descargas */
+backupOS=async function(){if(typeof dlOS!=="undefined"&&dlOS){try{await dlOS.save({filename:"clausula-os-copia-"+todayAR()+".json",data:new Blob([JSON.stringify(ux_datosCopia(),null,2)],{type:"application/json"})});toast("Copia descargada");ux_marcarPaso("copia")}
+    catch(e){toast(e?.code==="declined"?"Descarga cancelada":"No se pudo descargar")}return}
+  ux_mostrarTexto()};
+function ux_mostrarTexto(){ux_bkTexto=JSON.stringify(ux_datosCopia(),null,2);
+  const go=()=>{const el=document.getElementById("uxCopiaTxt");if(el){el.scrollIntoView({behavior:"smooth",block:"start"});el.querySelector("textarea")?.focus({preventScroll:true})}};
+  if(current!=="config")location.hash="#config";else render();setTimeout(go,120)}
+function ux_bkHTML(){return `<section class="panel" id="uxCopiaTxt" style="grid-column:1/-1"><div class="ph"><h2>Copia como texto</h2><button class="link" data-uxbk="cerrar">Cerrar</button></div>
+  <p class="small muted" style="margin:0">${typeof dlOS!=="undefined"&&dlOS?"":"La descarga de archivos no está disponible en esta vista. "}Copiá todo este texto y guardalo en una nota o en un archivo terminado en <span class="ux-mono">.json</span>. Para recuperarlo, pegalo en “Restaurar copia”.</p>
+  <textarea readonly id="uxBkTxt" aria-label="Copia de seguridad en texto" class="ux-mono" style="min-height:170px">${esc(ux_bkTexto)}</textarea>
+  <div class="btns"><button class="btn sm primary" data-uxbk="copiar">Copiar todo</button><span class="small muted">${Math.round(ux_bkTexto.length/1024)} KB</span></div></section>`}
+const UX_MAPA=[["publicaciones","posts","Publicaciones"],["reels","reels","Reels"],["historias","historias","Historias"],["aprobaciones","approvals","Aprobaciones"],["tareas","tasks","Tareas"],["alertas","alertas","Alertas del Director"]];
+let ux_rs={modo:"agregar",txt:"",copia:null,error:"",confirmar:false,corriendo:false,resultado:"",prog:""};
+const ux_actuales=col=>({posts:S.posts,reels:S.reels,historias:S.historias,approvals:S.approvals,tasks:S.tasks,alertas:S.alertas})[col]||(Array.isArray(S[col])?S[col]:[]);
+function ux_leerCopia(txt,nombre){let o;try{o=JSON.parse(String(txt).replace(/^﻿/,""))}catch(e){return{error:"No se pudo leer: el contenido no es un JSON válido. Revisá que sea la copia completa."}}
+  if(!o||typeof o!=="object"||Array.isArray(o))return{error:"El contenido no tiene el formato de una copia de Cláusula Legal OS."};
+  const okDoc=d=>d&&typeof d==="object"&&!Array.isArray(d)&&typeof d.id==="string"&&/^[\w.-]{1,200}$/.test(d.id);
+  const cols=[];for(const [k,col,lab] of UX_MAPA){if(o[k]===undefined)continue;if(!Array.isArray(o[k]))return{error:`En la copia, “${k}” no es una lista.`};cols.push({col,lab,docs:o[k]})}
+  if(o.extra&&typeof o.extra==="object")for(const [col,docs] of Object.entries(o.extra))if(/^(sp|pr|ca|me|ux)_[a-z0-9_]+$/i.test(col)&&Array.isArray(docs))cols.push({col,lab:"Módulo: "+col,docs});
+  cols.forEach(c=>{const all=c.docs;c.docs=all.filter(okDoc);c.inval=all.length-c.docs.length;const cur=new Set(ux_actuales(c.col).map(x=>x.id));c.nuevos=c.docs.filter(d=>!cur.has(d.id)).length;c.exist=c.docs.length-c.nuevos});
+  const aj=o.ajustes&&typeof o.ajustes==="object"&&!Array.isArray(o.ajustes)?o.ajustes:null;
+  if(!cols.some(c=>c.docs.length)&&!aj)return{error:"La copia no trae elementos para restaurar."};
+  return{copia:{nombre,app:o.app||"",exportado:o.exportado||"",cols:cols.filter(c=>c.docs.length||c.inval),ajustes:aj}}}
+function ux_rsHTML(){const r=ux_rs,noDb=!db;let b=`<p class="small muted" style="margin:0">Elegí un archivo de copia (.json) bajado de esta app, o pegá su texto. Antes de escribir nada vas a ver qué trae y confirmar.</p>`;
+  if(noDb)b+=`<div class="ux-note warn">Esta vista no puede guardar datos (vista pública o sin conexión a la base). Abrí la app desde claude.ai con tu cuenta para restaurar una copia.</div>`;
+  if(!r.copia&&!r.corriendo){b+=`<label for="uxRsFile">Archivo de copia<input id="uxRsFile" type="file" accept="application/json,.json,text/plain" ${noDb?"disabled":""}></label>
+  <details${r.txt?" open":""}><summary>O pegá el texto de la copia</summary><div style="display:flex;flex-direction:column;gap:8px;padding-top:8px"><textarea id="uxRsTxt" aria-label="Texto de la copia" placeholder='{"app":"Cláusula Legal OS", …}' ${noDb?"disabled":""}>${esc(r.txt)}</textarea><button class="btn sm" data-uxrs="leer" ${noDb?"disabled":""} style="align-self:flex-start">Revisar el texto</button></div></details>`}
+  if(r.error)b+=`<div class="ux-note bad" role="alert">${esc(r.error)}</div>`;
+  if(r.copia){const c=r.copia;const tot=c.cols.reduce((s,x)=>s+x.docs.length,0),nue=c.cols.reduce((s,x)=>s+x.nuevos,0),ex=tot-nue;
+    let fecha="";try{fecha=c.exportado?new Date(c.exportado).toLocaleString("es-AR",{timeZone:TZ,day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}):""}catch(e){}
+    b+=`<div class="ux-prev" aria-live="polite"><div><b>${esc(c.nombre||"Copia")}</b>${fecha?`<span class="small muted"> · exportada ${esc(fecha)}</span>`:""}${c.app&&c.app!=="Cláusula Legal OS"?`<div class="small" style="color:var(--warn)">Esta copia dice venir de “${esc(c.app)}”.</div>`:""}</div>
+    <div class="tbl"><table><thead><tr><th>Qué trae</th><th class="n">Total</th><th class="n">Nuevos</th><th class="n">Ya están</th></tr></thead><tbody>${c.cols.map(x=>`<tr><td>${esc(x.lab)}${x.inval?`<br><span class="small muted">${x.inval} sin identificador válido: se ignoran</span>`:""}</td><td class="n">${x.docs.length}</td><td class="n">${x.nuevos}</td><td class="n">${x.exist}</td></tr>`).join("")}${c.ajustes?`<tr><td>Ajustes de la app</td><td class="n" colspan="3">${Object.keys(c.ajustes).length} campos</td></tr>`:""}</tbody></table></div>
+    ${r.corriendo?`<div class="status" role="status"><span class="spin"></span><span id="uxRsProg">${esc(r.prog||"Restaurando…")}</span></div>`:`
+    <fieldset class="ux-modo"><legend>Cómo restaurar</legend>
+     <label class="ux-radio"><input type="radio" name="uxRsModo" value="agregar" ${r.modo==="agregar"?"checked":""}><span><b>Solo agregar lo que falta</b><span class="small muted">Suma los ${nue} elementos que no tenés. Lo que ya está no se toca; de los ajustes solo se completan los vacíos.</span></span></label>
+     <label class="ux-radio"><input type="radio" name="uxRsModo" value="reemplazar" ${r.modo==="reemplazar"?"checked":""}><span><b>Reemplazar</b><span class="small muted">Los ${tot} elementos de la copia pisan a los actuales con el mismo identificador${c.ajustes?", y se reemplazan los ajustes":""}. No se borra nada que no esté en la copia.</span></span></label></fieldset>
+    ${r.confirmar?`<div class="ux-note warn" role="alertdialog" aria-labelledby="uxRsConfT" aria-describedby="uxRsConfD"><b id="uxRsConfT">¿Confirmás la restauración?</b><span id="uxRsConfD">${r.modo==="agregar"?`Se van a agregar hasta ${nue} ${nue===1?"elemento nuevo":"elementos nuevos"}${c.ajustes?" y completar ajustes vacíos":""}.`:`Se van a escribir ${tot} elementos${ex?`, pisando ${ex} que ya tenés`:""}${c.ajustes?", y se reemplazan los ajustes":""}. Esto no se puede deshacer: si dudás, descargá antes una copia de lo actual.`}</span>
+      <div class="btns"><button class="btn primary sm" data-uxrs="si">Sí, restaurar</button><button class="btn sm" data-uxrs="no">Cancelar</button></div></div>`
+    :`<div class="btns"><button class="btn primary sm" data-uxrs="pedir" ${noDb||(r.modo==="agregar"&&!nue&&!c.ajustes)?"disabled":""}>Restaurar…</button><button class="btn sm" data-uxrs="quitar">Elegir otra copia</button></div>${r.modo==="agregar"&&!nue&&!c.ajustes?`<span class="small muted">Ya tenés todo lo que trae esta copia.</span>`:""}`}`}</div>`}
+  if(r.resultado)b+=`<div class="ux-note ok" role="status">${esc(r.resultado)}</div>`;
+  return `<section class="panel" id="uxRestaurar"><h2>Restaurar copia</h2>${b}</section>`}
+function ux_pintarRs(){const p=document.getElementById("uxRestaurar");if(p)p.outerHTML=ux_rsHTML()}
+async function ux_restaurar(){const r=ux_rs,c=r.copia;if(!c||!db||r.corriendo)return;const modo=r.modo;r.confirmar=false;r.corriendo=true;r.resultado="";
+  let ok=0,salt=0,fall=0,ultErr="";const total=c.cols.reduce((s,x)=>s+x.docs.length,0);
+  const pint=()=>{r.prog=`Restaurando… ${ok+salt+fall} de ${total}`;const p=document.getElementById("uxRsProg");if(p)p.textContent=r.prog};ux_pintarRs();
+  for(const x of c.cols){const cur=new Set(ux_actuales(x.col).map(d=>d.id));
+    for(const d of x.docs){const path=x.col+"/"+d.id;
+      try{if(modo==="agregar"){if(cur.has(d.id)){salt++;pint();continue}try{const g=await db.doc(path).get();if(g&&g.exists){salt++;pint();continue}}catch(e){}}
+        await db.doc(path).set(JSON.parse(JSON.stringify(d)));ok++}catch(e){fall++;ultErr=dbMsg(e)}pint()}}
+  let aj="";if(c.ajustes&&S.loaded.settings){try{if(modo==="agregar"){const falt={};for(const [k,v] of Object.entries(c.ajustes)){const cv=S.settings[k];if(cv===undefined||cv===null||cv===""||(Array.isArray(cv)&&!cv.length))falt[k]=v}
+      if(Object.keys(falt).length){await saveSettings(falt);aj=` Ajustes completados: ${Object.keys(falt).length}.`}}else{await saveSettings(c.ajustes);aj=" Ajustes reemplazados."}}catch(e){fall++;ultErr=dbMsg(e)}}
+  r.corriendo=false;r.copia=null;r.prog="";r.txt="";
+  r.resultado=`Listo: ${ok} ${ok===1?"elemento guardado":"elementos guardados"}${salt?`, ${salt} ya estaban y no se tocaron`:""}${fall?`, ${fall} no se pudieron guardar (${ultErr})`:""}.${aj}`;
+  ux_pintarRs();toast(fall?"Restauración con errores: revisá el detalle":"Copia restaurada")}
+async function ux_leerArchivo(f){if(!f)return;if(f.size>20*1024*1024){ux_rs.error="El archivo es demasiado grande para ser una copia de esta app.";ux_pintarRs();return}
+  try{const t=await f.text();const res=ux_leerCopia(t,f.name);ux_rs.error=res.error||"";ux_rs.copia=res.copia||null;ux_rs.resultado="";ux_rs.confirmar=false}catch(e){ux_rs.error="No se pudo abrir el archivo."}ux_pintarRs()}
+document.addEventListener("change",e=>{const t=e.target;if(t.id==="uxRsFile")ux_leerArchivo(t.files&&t.files[0]);
+  if(t.name==="uxRsModo"){ux_rs.modo=t.value==="reemplazar"?"reemplazar":"agregar";ux_rs.confirmar=false;ux_pintarRs();document.querySelector(`#uxRestaurar input[value="${ux_rs.modo}"]`)?.focus()}});
+document.addEventListener("input",e=>{if(e.target.id==="uxRsTxt")ux_rs.txt=e.target.value});
+document.addEventListener("click",async e=>{const el=e.target.closest("[data-uxrs],[data-uxbk],[data-uxdiag],[data-uxtema]");if(!el)return;
+  if(el.dataset.uxtema){ux_aplicarTema(el.dataset.uxtema);const p=document.getElementById("uxTema");if(p){p.outerHTML=ux_temaHTML();document.querySelector(`[data-uxtema="${ux_tema}"]`)?.focus()}return}
+  const a=el.dataset.uxrs||el.dataset.uxbk||el.dataset.uxdiag;
+  if(el.dataset.uxrs){if(a==="leer"){const res=ux_leerCopia(ux_rs.txt||document.getElementById("uxRsTxt")?.value||"","Texto pegado");ux_rs.error=res.error||"";ux_rs.copia=res.copia||null;ux_rs.resultado=""}
+    if(a==="pedir"){ux_rs.confirmar=true;ux_pintarRs();document.querySelector('[data-uxrs="si"]')?.focus();return}
+    if(a==="no")ux_rs.confirmar=false;if(a==="quitar"){ux_rs.copia=null;ux_rs.error="";ux_rs.confirmar=false}
+    if(a==="si"){await ux_restaurar();return}ux_pintarRs();return}
+  if(el.dataset.uxbk){if(a==="texto")ux_mostrarTexto();if(a==="cerrar"){ux_bkTexto="";document.getElementById("uxCopiaTxt")?.remove()}
+    if(a==="copiar"){const ta=document.getElementById("uxBkTxt");try{await navigator.clipboard.writeText(ux_bkTexto);toast("Copia copiada: pegala en un lugar seguro");ux_marcarPaso("copia")}catch(_){if(ta){ta.focus();ta.select()}toast("Seleccionamos el texto: copialo con Ctrl+C (o Copiar en el celular)")}}return}
+  if(el.dataset.uxdiag){if(a==="copiar"){try{await navigator.clipboard.writeText(ux_diagTexto());toast("Diagnóstico copiado")}catch(_){const d=document.querySelector("#uxDiag details");if(d){d.open=true;const t=d.querySelector("textarea");t.value=ux_diagTexto();t.focus();t.select()}toast("Seleccioná el texto del informe y copialo a mano")}}
+    if(a==="borrar"){ux_errs=[];ux_ls.set("ux_errores",[]);ux_vistos.clear();const p=document.getElementById("uxDiag");if(p)p.outerHTML=ux_diagHTML()}}});
+
+/* ---------- Primeros pasos (Inicio) ---------- */
+const ux_pasos=()=>({...(ux_ls.get("ux_pasos",{})||{}),...((S.settings&&S.settings.ux_pasos)||{})});
+async function ux_marcarPaso(k,v=true){const l={...(ux_ls.get("ux_pasos",{})||{}),[k]:v};ux_ls.set("ux_pasos",l);
+  if(db&&S.loaded.settings){try{await saveSettings({ux_pasos:{...(S.settings.ux_pasos||{}),[k]:v}})}catch(e){}}else if(current==="panel")render()}
+function ux_listaPasos(){const m=ux_pasos(),st=S.settings||{};const ir=(h,t)=>`<a class="btn sm" href="#${h}" style="text-decoration:none">${t}</a>`;
+  return [{k:"marca",t:"Confirmá tu cuenta de Instagram y la marca de Metricool",d:"Revisá el usuario y el id de marca en Ajustes.",ok:!!m.marca,acc:ir("config","Revisar")+`<button class="btn sm" data-uxp="marca">Ya está</button>`},
+   {k:"pilares",t:"Definí tus pilares de contenido",d:"Son los temas que guían al piloto automático y a los agentes. Están en Director → Piloto automático.",ok:!!(st.piloto&&String(st.piloto.pilares||"").trim()),acc:ir("director","Definir")},
+   {k:"precios",t:"Cargá tus servicios y precios",d:"El agente de captación los usa para presupuestar. Sin lista, nunca inventa precios.",ok:!!String(st.precios||"").trim(),form:true},
+   {k:"bloques",t:"Armá tus bloques de hashtags y textos",d:"Se insertan con un toque al preparar cada publicación.",ok:Array.isArray(st.bloques)&&st.bloques.length>0,acc:ir("config","Armar")},
+   {k:"post",t:"Creá tu primera publicación",d:"Un carrusel o una publicación, aunque sea una idea.",ok:S.posts.length>0,acc:`<button class="btn sm" data-act="newPost">Crear</button>`},
+   {k:"reel",t:"Escribí tu primer reel",d:"Con guion por bloques y teleprompter.",ok:(S.reels||[]).length>0,acc:`<button class="btn sm" data-ract="new">Crear</button>`},
+   {k:"copia",t:"Guardá una copia de seguridad",d:"Un archivo (o texto) con todo tu trabajo, por las dudas.",ok:!!m.copia,acc:`<button class="btn sm" data-osbk="1">Hacer copia</button>`}]}
+function ux_pasosHTML(){if(db&&!S.loaded.settings)return"";const m=ux_pasos();if(m.oculto)return"";const L=ux_listaPasos();const n=L.filter(x=>x.ok).length;if(n===L.length)return"";
+  const form=`<details><summary class="small">Escribir la lista</summary><div style="display:flex;flex-direction:column;gap:8px;padding-top:8px"><textarea id="uxPrecios" aria-label="Servicios y precios" placeholder="Ej.: Contrato de locación de vivienda — $ …&#10;Revisión de contrato — $ …" ${db?"":"disabled"}>${esc(S.settings.precios||"")}</textarea><button class="btn sm" data-uxp="precios" ${db?"":"disabled"} style="align-self:flex-start">Guardar precios</button>${db?"":`<span class="small muted">En esta vista no se puede guardar.</span>`}</div></details>`;
+  return `<section class="panel" id="uxPasos" style="grid-column:1/-1" aria-labelledby="uxPasosT"><div class="ph"><h2 id="uxPasosT">Primeros pasos</h2><button class="link" data-uxp="ocultar">Ocultar</button></div>
+  <div class="ux-prog" role="progressbar" aria-label="Avance de la configuración" aria-valuemin="0" aria-valuemax="${L.length}" aria-valuenow="${n}"><i style="width:${Math.round(n/L.length*100)}%"></i></div>
+  <span class="small muted">${n} de ${L.length} listos. Cuando completes todo, este panel desaparece solo.</span>
+  <div class="list">${L.map(x=>`<div class="ux-step${x.ok?" ok":""}"><span class="ux-mark${x.ok?" on":""}" aria-hidden="true"></span><div class="ux-st"><b>${esc(x.t)}<span class="sr-only">${x.ok?" (listo)":" (pendiente)"}</span></b>${x.ok?"":`<span class="small muted">${esc(x.d)}</span>${x.form?form:""}`}</div>${x.ok?`<span class="chip ok">Listo</span>`:x.acc?`<span class="btns">${x.acc}</span>`:""}</div>`).join("")}</div></section>`}
+document.addEventListener("click",async e=>{const el=e.target.closest("[data-uxp]");if(!el)return;const k=el.dataset.uxp;
+  if(k==="precios"){const v=document.getElementById("uxPrecios")?.value.trim()||"";if(!v){toast("Escribí al menos un servicio con su precio");return}try{await saveSettings({precios:v});toast("Precios guardados")}catch(_){}return}
+  if(k==="ocultar"){await ux_marcarPaso("oculto");toast("Primeros pasos oculto. Lo volvés a ver desde la paleta de comandos.");return}
+  await ux_marcarPaso(k)});
+
+/* ---------- Paleta de comandos y atajos ---------- */
+let ux_pal=null;
+const UX_ATAJOS=[[ux_modK,"Abrir o cerrar la paleta de comandos"],["?","Ver estos atajos"],["/","Ir al buscador (en Inicio)"],[ux_modS,"Guardar el editor abierto"],["↑ ↓ · Enter","Moverse y ejecutar en la paleta"],["Esc","Cerrar la paleta, este diálogo o el editor"]];
+function ux_cerrarEditor(){if(document.getElementById("drawerRoot").innerHTML)closeDrawer()}
+function ux_irA(id){ux_cerrarEditor();const go=()=>{const el=document.getElementById(id);if(el){el.scrollIntoView({behavior:"smooth",block:"start"});el.querySelector("button,input,select,textarea,summary")?.focus({preventScroll:true})}};
+  if(current!=="config")location.hash="#config";setTimeout(go,140)}
+function ux_comandos(){const c=[];const nav=k=>()=>{ux_cerrarEditor();location.hash="#"+k};
+  c.push({t:"Nueva publicación",g:"Crear",k:"post carrusel pieza",run:()=>{location.hash="#publicaciones";openPost()}});
+  c.push({t:"Nuevo reel",g:"Crear",k:"video guion",run:()=>{location.hash="#reels";openReel()}});
+  c.push({t:"Nueva secuencia de historias",g:"Crear",k:"historia stories",run:()=>{location.hash="#historias";openHist()}});
+  c.push({t:"Nueva tarea para hoy",g:"Crear",k:"tarea pendiente hoy",run:()=>{ux_cerrarEditor();location.hash="#panel";setTimeout(()=>document.getElementById("taskText")?.focus(),140)}});
+  VIEWS.forEach(([k,l])=>c.push({t:"Ir a "+l,g:"Ir a",k:k+" "+(SHORT[k]||"")+" seccion vista",run:nav(k)}));
+  const bv=ux_visibles();if(bv.length)c.push({t:`Recuperar borrador: ${bv[0][1].tit}`,g:"Borradores",k:"borrador recuperar sin guardar",run:()=>ux_recuperar(bv[0][0])});
+  c.push({t:"Descargar copia de seguridad",g:"Datos",k:"backup respaldo exportar",run:()=>backupOS()});
+  c.push({t:"Copia de seguridad como texto",g:"Datos",k:"backup respaldo copiar json",run:()=>ux_mostrarTexto()});
+  c.push({t:"Restaurar copia de seguridad",g:"Datos",k:"importar backup recuperar respaldo",run:()=>ux_irA("uxRestaurar")});
+  if(S.caps.mcp==="ok")c.push({t:"Volver a consultar Metricool",g:"Datos",k:"metricas actualizar",run:()=>{loadMetrics(true);loadScheduled();toast("Consultando Metricool…")}});
+  UX_TEMAS.forEach(([v,l])=>c.push({t:"Tema "+l.toLowerCase()+(ux_tema===v?" (actual)":""),g:"Apariencia",k:"tema modo oscuro claro sistema dark light",run:()=>{ux_aplicarTema(v);toast("Tema: "+l.toLowerCase());const p=document.getElementById("uxTema");if(p)p.outerHTML=ux_temaHTML()}}));
+  if(ux_pasos().oculto)c.push({t:"Mostrar primeros pasos",g:"Ayuda",k:"configuracion checklist",run:()=>{ux_marcarPaso("oculto",false);location.hash="#panel";render()}});
+  c.push({t:"Atajos de teclado",g:"Ayuda",k:"teclas ayuda shortcuts",run:()=>ux_abrir("atajos")});
+  c.push({t:"Diagnóstico y errores",g:"Ayuda",k:"reportar version capacidades problema",run:()=>ux_irA("uxDiag")});
+  c.push({t:"Qué hay de nuevo",g:"Ayuda",k:"novedades version cambios",run:()=>ux_irA("uxNovedades")});
+  return c}
+function ux_ejecutarAttr(attr){const t=document.createElement("div");t.innerHTML=`<button type="button" ${attr}></button>`;const b=t.firstElementChild;b.hidden=true;document.body.appendChild(b);try{b.click()}finally{b.remove()}}
+function ux_filtrar(q){const n=normOS(q).trim();let cmds=ux_comandos();
+  if(n){const ws=n.split(/\s+/);cmds=cmds.filter(c=>{const h=normOS(c.t+" "+(c.k||"")+" "+c.g);return ws.every(w=>h.includes(w))});
+    const sc=c=>{const t=normOS(c.t);return t===n?0:t.startsWith(n)?1:t.endsWith(n)?2:t.includes(n)?3:4};cmds=cmds.map((c,i)=>[sc(c),i,c]).sort((a,b)=>a[0]-b[0]||a[1]-b[1]).map(x=>x[2])}
+  let piezas=[];try{piezas=n.length>=2&&typeof osBuscar==="function"?osBuscar(q).map(x=>({t:x.t,g:x.k,s:x.s,run:()=>ux_ejecutarAttr(x.attr)})):[]}catch(e){}
+  return [...cmds.slice(0,n?10:60),...piezas]}
+function ux_abrir(modo){const prev=ux_pal?ux_pal.prev:document.activeElement;ux_pal={modo,q:"",sel:0,items:[],prev};
+  let root=document.getElementById("uxPalRoot");if(!root){root=document.createElement("div");root.id="uxPalRoot";document.body.appendChild(root)}
+  if(modo==="atajos"){root.innerHTML=`<div class="ux-pal-bg" data-uxpal="bg"><div class="ux-pal" role="dialog" aria-modal="true" aria-labelledby="uxAtT"><div class="ux-pal-in"><h2 id="uxAtT" class="ux-pal-h">Atajos de teclado</h2><button type="button" class="btn sm" data-uxpal="close">Cerrar</button></div>
+    <dl class="ux-keys">${UX_ATAJOS.map(([k,d])=>`<dt><kbd class="ux-kbd">${esc(k)}</kbd></dt><dd>${esc(d)}</dd>`).join("")}</dl><div class="ux-pal-foot">Los atajos de una tecla no funcionan mientras escribís en un campo.</div></div></div>`;
+    root.querySelector('[data-uxpal="close"]').focus();return}
+  root.innerHTML=`<div class="ux-pal-bg" data-uxpal="bg"><div class="ux-pal" role="dialog" aria-modal="true" aria-label="Paleta de comandos"><div class="ux-pal-in"><label for="uxPalQ" class="sr-only">Buscar una acción, una sección o una pieza</label><input id="uxPalQ" type="text" role="combobox" aria-expanded="true" aria-controls="uxPalList" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Buscá una acción, una sección o una pieza…"><button type="button" class="btn sm" data-uxpal="close" aria-label="Cerrar la paleta">Esc</button></div>
+  <ul id="uxPalList" role="listbox" aria-label="Resultados"></ul><div class="ux-pal-foot"><span>↑ ↓ moverse</span><span>Enter ejecutar</span><span>Esc cerrar</span><span>? atajos</span></div></div></div>`;
+  ux_lista();document.getElementById("uxPalQ").focus()}
+function ux_lista(){const ul=document.getElementById("uxPalList");if(!ul||!ux_pal)return;ux_pal.items=ux_filtrar(ux_pal.q);ux_pal.sel=Math.max(0,Math.min(ux_pal.sel,ux_pal.items.length-1));
+  ul.innerHTML=ux_pal.items.length?ux_pal.items.map((c,i)=>`<li role="option" id="uxOpt${i}" class="ux-opt" data-uxi="${i}" aria-selected="${i===ux_pal.sel}"><span class="ux-ot"><b>${esc(c.t)}</b>${c.s?`<span class="small muted">${esc(c.s)}</span>`:""}</span><span class="ux-g">${esc(c.g)}</span></li>`).join("")
+    :`<li class="ux-pal-empty" role="presentation">Sin resultados para “${esc(ux_pal.q)}”.${normOS(ux_pal.q).trim().length<2?"":" Probá con otra palabra."}</li>`;
+  const q=document.getElementById("uxPalQ");if(q){if(ux_pal.items.length)q.setAttribute("aria-activedescendant","uxOpt"+ux_pal.sel);else q.removeAttribute("aria-activedescendant")}}
+function ux_mover(d,abs){const n=ux_pal.items.length;if(!n)return;ux_pal.sel=abs?d:(ux_pal.sel+d+n)%n;
+  document.querySelectorAll("#uxPalList .ux-opt").forEach((li,i)=>li.setAttribute("aria-selected",String(i===ux_pal.sel)));
+  document.getElementById("uxPalQ")?.setAttribute("aria-activedescendant","uxOpt"+ux_pal.sel);document.getElementById("uxOpt"+ux_pal.sel)?.scrollIntoView({block:"nearest"})}
+function ux_cerrar(volver){const r=document.getElementById("uxPalRoot");const prev=ux_pal&&ux_pal.prev;if(r)r.innerHTML="";ux_pal=null;
+  if(volver!==false&&prev&&document.contains(prev)){try{prev.focus()}catch(e){}}}
+function ux_ejecutar(i){const c=ux_pal&&ux_pal.items[i];if(!c)return;ux_cerrar(false);try{const r=c.run();if(r&&r.catch)r.catch(e=>{if(e?.message!=="no-db")console.error(e)})}catch(e){console.error(e);toast("No se pudo completar la acción")}}
+window.addEventListener("keydown",e=>{const k=e.key;const mod=(e.ctrlKey||e.metaKey)&&!e.altKey;
+  if(mod&&(k==="k"||k==="K")){e.preventDefault();e.stopPropagation();if(ux_pal&&ux_pal.modo==="cmd")ux_cerrar();else ux_abrir("cmd");return}
+  if(ux_pal){e.stopPropagation();
+    if(k==="Escape"){e.preventDefault();ux_cerrar();return}
+    if(k==="Tab"){const f=[...document.querySelectorAll("#uxPalRoot input,#uxPalRoot button")].filter(x=>!x.disabled);e.preventDefault();if(f.length){const i=f.indexOf(document.activeElement);f[e.shiftKey?(i<=0?f.length-1:i-1):(i<0||i>=f.length-1?0:i+1)].focus()}return}
+    if(ux_pal.modo==="cmd"){if(k==="ArrowDown"){e.preventDefault();ux_mover(1)}else if(k==="ArrowUp"){e.preventDefault();ux_mover(-1)}
+      else if(k==="PageDown"||(k==="End"&&e.ctrlKey)){e.preventDefault();ux_mover(ux_pal.items.length-1,true)}else if(k==="PageUp"||(k==="Home"&&e.ctrlKey)){e.preventDefault();ux_mover(0,true)}
+      else if(k==="Enter"&&document.activeElement&&document.activeElement.id==="uxPalQ"){e.preventDefault();ux_ejecutar(ux_pal.sel)}}
+    return}
+  if(mod&&(k==="s"||k==="S")){const b=document.querySelector('#drawerRoot [data-act="savePost"],#drawerRoot [data-ract="save"],#drawerRoot [data-hact="save"],#drawerRoot [data-act="saveLead"]');if(b){e.preventDefault();if(!b.disabled)b.click()}return}
+  const a=document.activeElement;const typing=a&&(/^(input|textarea|select)$/i.test(a.tagName)||a.isContentEditable);
+  if(k==="?"&&!typing&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!document.getElementById("prompter")){e.preventDefault();ux_abrir("atajos")}},true);
+document.addEventListener("click",e=>{const t=e.target;
+  if(t.closest("[data-uxcmd]")){e.preventDefault();ux_abrir("cmd");return}
+  if(!ux_pal)return;const o=t.closest("[data-uxi]");if(o){ux_ejecutar(+o.dataset.uxi);return}
+  const c=t.closest("[data-uxpal]");if(c&&(c.dataset.uxpal==="close"||(c.dataset.uxpal==="bg"&&t===c)))ux_cerrar()});
+document.addEventListener("input",e=>{if(e.target.id!=="uxPalQ"||!ux_pal)return;ux_pal.q=e.target.value;ux_pal.sel=0;ux_lista()});
+document.addEventListener("mousemove",e=>{if(!ux_pal)return;const o=e.target.closest&&e.target.closest("[data-uxi]");if(o&&+o.dataset.uxi!==ux_pal.sel)ux_mover(+o.dataset.uxi,true)});
+
+/* ---------- Envolturas de vistas ---------- */
+const _ux_renderNav=renderNav;renderNav=function(){_ux_renderNav.apply(this,arguments);
+  const n=document.getElementById("nav");if(n&&!n.querySelector(".ux-navcmd"))n.insertAdjacentHTML("beforeend",`<button type="button" class="ux-navcmd" data-uxcmd="1" aria-label="Abrir la paleta de comandos (${ux_modK})"><span>Comandos</span><kbd class="ux-kbd">${ux_modK}</kbd></button>`);
+  const m=document.getElementById("mnav");if(m&&!m.querySelector(".ux-mcmd"))m.insertAdjacentHTML("beforeend",`<button type="button" class="ux-mcmd" data-uxcmd="1" aria-label="Buscar y comandos">Buscar</button>`)};
+const _ux_vPanel=vPanel;vPanel=function(){const h=_ux_vPanel.apply(this,arguments);const g=`<div class="grid">`;const i=h.indexOf(g);const add=ux_pasosHTML();return i<0||!add?h:h.slice(0,i+g.length)+add+h.slice(i+g.length)};
+const _ux_vConfig=vConfig;vConfig=function(){let h=_ux_vConfig.apply(this,arguments);
+  h=h.replace(`<button class="btn sm" data-osbk="1" style="align-self:flex-start">Descargar copia</button>`,`<div class="btns"><button class="btn sm" data-osbk="1">Descargar copia</button><button class="btn sm" data-uxbk="texto">Ver como texto</button></div>`);
+  const add=(ux_bkTexto?ux_bkHTML():"")+ux_temaHTML()+ux_rsHTML()+ux_diagHTML()+ux_novHTML();
+  setTimeout(()=>ux_ls.set("ux_novedad_vista",(UX_NOVEDADES[0]||{}).version||""),0);
+  const j=h.lastIndexOf("</div>");return j<0?h+add:h.slice(0,j)+add+h.slice(j)};
+const _ux_render=render;render=function(){const r=_ux_render.apply(this,arguments);try{ux_pintarBarra()}catch(e){}return r};
+
+render();
+</script>

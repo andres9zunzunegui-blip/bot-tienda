@@ -1,0 +1,267 @@
+<style>
+/* ============ Modo sin Pro (agente 1 · prefijo sp) ============ */
+.sp-alt{border-top:1px dashed var(--line);padding-top:12px;display:flex;flex-direction:column;gap:10px}
+.sp-alt .sp-k{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sp-tag{font:500 11px var(--f-mono);letter-spacing:.06em;color:var(--oro-ink);text-transform:uppercase}
+.sp-note{font-size:12.5px;color:var(--muted);margin:0}
+.sp-modo{gap:10px}
+.sp-modo .sp-chips{display:flex;flex-wrap:wrap;gap:6px;min-width:0}.sp-modo .sp-chips .chip{white-space:normal}
+.sp-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.sp-col{border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;min-width:0;background:var(--bg)}
+.sp-col h3{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.sp-col ul{margin:0;padding-left:18px;font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:3px}
+.sp-lit{border-color:var(--oro)!important;background:color-mix(in srgb,var(--oro) 7%,transparent)}
+.sp-lit textarea{font-family:var(--f-display);font-size:17px;line-height:1.45}
+@media (max-width:860px){.sp-alt .btns .btn{flex:1 1 auto}}
+</style>
+<script>
+"use strict";
+/* ============ Modo sin Pro: motor local de plantillas y reglas (sin Claude ni Metricool) ============ */
+const SP_WA="2920 60-2681";
+const SP_DISC="Contenido informativo: no reemplaza el asesoramiento de un abogado matriculado.";
+const SP_TAGS="#ClausulaLegal #CodigoCivil #Contratos #DerechoArgentino #Alquileres";
+const SP_KW={"1":"BUENAFE","2":"ABUSO","3":"ADHESION","4":"ERROR","5":"DOLO","6":"LESION","7":"FIRMA","8":"LETRACHICA","9":"SEÑA","10":"RESOLUCION"};
+const sp_ai=()=>!!sample&&S.caps.sample==="ok";
+const sp_off=()=>S.caps.sample==="off";
+const sp_norm=s=>String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+const sp_seed=()=>Number(todayAR().replace(/-/g,""))||0;
+const sp_rot=(list,n)=>list.length?list.map((_,i)=>list[(i+n)%list.length]):[];
+function sp_pilares(){return String(pilot().pilares||"").split(/\n+/).map(s=>s.trim()).filter(Boolean)}
+function sp_kwFrom(t){const w=sp_norm(t).replace(/[^a-z\s]/g," ").split(/\s+/).filter(x=>x.length>4&&!/^(sobre|antes|despues|cuando|donde|tengo|puedo|pueden|meses|contrato)$/.test(x)).sort((a,b)=>b.length-a.length)[0];return (w||"contrato").slice(0,12).toUpperCase()}
+function sp_caption(gancho,cuerpo,kw){return [gancho,cuerpo,"Guardalo y mandáselo a quien esté por firmar un contrato.",`Comentá ${kw} si querés que lo profundice.`,SP_DISC].filter(Boolean).join("\n\n")}
+const sp_hasPh=s=>/\[[^\]]+\]/.test(String(s||""));
+
+/* ---------- (b) Guion de reel por bloques ---------- */
+function sp_reel(fmt,ep,tema){const e=T1.find(x=>x[0]===String(ep||""));const arts=e?e[1]:"";const artTxt=arts?"art. "+arts:"[número de artículo]";
+  const titulo=e?`Ep. ${e[0]} · ${e[2]}`:(tema||"Reel");
+  const gancho=e?e[2]:(tema?(/\?$/.test(tema)?tema:"¿"+tema.replace(/^¿/,"")+"?"):"[Pregunta que la persona reconoce como propia]");
+  const kw=e?SP_KW[e[0]]:sp_kwFrom(tema);const cta="Mandáselo a quien esté por firmar un contrato.";
+  const ley=(pantalla)=>({tiempo:"",pantalla,voz:"",sp_ley:true});
+  let bloques=[],musica="Música instrumental suave, sin letra, por debajo de la voz";
+  if(fmt==="personajes"){musica="Sonido original suave; bajarlo cuando habla La Voz de la ley";
+    bloques=[{tiempo:"0-3 s",pantalla:`Escritorio de madera con lámpara de bronce. Texto grande: “${gancho}”`,voz:gancho},
+      {tiempo:"3-8 s",pantalla:`Codiguito se abre: las páginas pasan solas y se detienen en el ${artTxt}.`,voz:`Código Civil y Comercial, ${artTxt}.`},
+      {tiempo:"8-30 s",pantalla:"Inciso y Clausulo actúan el conflicto: [describí la situación cotidiana en 2 o 3 acciones].",voz:"[Diálogo breve entre Inciso y Clausulo: el problema contado como le pasa a cualquiera.]"},
+      {...ley(`La Voz de la ley lee el ${artTxt}. En pantalla, el texto literal con subtítulos palabra por palabra.`),tiempo:"30-48 s"},
+      {tiempo:"48-55 s",pantalla:"Resaltato subraya en amarillo la frase clave del artículo.",voz:"[Una frase de Clausulo que lo baja a tierra, sin consejo para un caso concreto.]"},
+      {tiempo:"55-60 s",pantalla:"Resaltato a cámara: “¡Queda resaltado!”. El último cuadro empalma con el primero (loop).",voz:"¡Queda resaltado! "+cta}]}
+  else if(fmt==="resaltador"){bloques=[{tiempo:"0-3 s",pantalla:`Plano cenital: la mano sobre un contrato impreso. Texto: “${gancho}”`,voz:gancho},
+      {tiempo:"3-12 s",pantalla:"La mano recorre el contrato y se detiene en una cláusula.",voz:"[Contá en una frase qué cláusula es y por qué conviene leerla.]"},
+      {tiempo:"12-25 s",pantalla:"El resaltador amarillo marca la cláusula trampa, palabra por palabra.",voz:"[Explicá qué dice la cláusula y cuál es el riesgo, sin nombrar casos reales.]"},
+      {...ley(`Lectura del ${artTxt}: el texto literal aparece sobreimpreso.`),tiempo:"25-42 s"},
+      {tiempo:"42-52 s",pantalla:"La mano escribe al margen qué revisar.",voz:"[Qué mirar en tu contrato: 1 a 3 puntos.]"},
+      {tiempo:"52-58 s",pantalla:"Texto: ¡Queda resaltado! · Mandáselo a quien vaya a firmar.",voz:"¡Queda resaltado! "+cta}]}
+  else if(fmt==="respondo"){bloques=[{tiempo:"0-3 s",pantalla:`Captura de la pregunta del seguidor (sin datos personales): “${gancho}”`,voz:gancho},
+      {tiempo:"3-15 s",pantalla:"Respuesta corta en texto grande.",voz:"[Respuesta directa en 2 frases.]"},
+      {tiempo:"15-35 s",pantalla:arts?`Qué dice el ${artTxt} (con número en pantalla).`:"Por qué: [norma o cláusula que lo explica, con su número].",voz:"[Explicación con un ejemplo cotidiano.]"},
+      {tiempo:"35-45 s",pantalla:"Texto: Ojo con…",voz:"[El error más común en esta situación.]"},
+      {tiempo:"45-50 s",pantalla:"Texto: ¿Tenés otra pregunta? Dejala en comentarios.",voz:cta+" Y dejame tu pregunta en comentarios."}]}
+  else{bloques=[{tiempo:"0-3 s",pantalla:`Texto grande: “${gancho}”`,voz:gancho},
+      {tiempo:"3-12 s",pantalla:"Imagen simple de la situación cotidiana.",voz:"[El caso en una frase: a quién le pasa y cuándo.]"},
+      ...(arts||fmt==="articulo"?[{...ley(`Texto literal del ${artTxt} en pantalla, con el número bien visible.`),tiempo:"12-30 s"}]:[]),
+      {tiempo:"30-45 s",pantalla:"Texto grande: qué significa en la práctica.",voz:"[Qué significa para el día a día, sin consejo para un caso concreto.]"},
+      {tiempo:"45-55 s",pantalla:"Texto: qué revisar antes de firmar.",voz:"[1 a 3 cosas para revisar.]"},
+      {tiempo:"55-60 s",pantalla:"Texto: ¡Queda resaltado! · Mandáselo a quien lo necesite.",voz:"¡Queda resaltado! "+cta}]}
+  const cuerpo=(e?`Temporada 1 · Episodio ${e[0]}: ${e[2]}. Código Civil y Comercial, ${artTxt}.`:tema?`Hoy: ${tema}.`:"")+"\n[Completá en 2 o 3 líneas qué muestra el reel, sin dar consejo para un caso puntual.]";
+  const verificar=[arts?`Copiar el texto literal vigente del ${artTxt} desde InfoLEG (texto actualizado) y confirmar la numeración`:"Confirmar en InfoLEG el número y el texto vigente de cada artículo que se mencione","Completar lo que está entre corchetes antes de grabar"];
+  return{titulo,gancho,bloques,musica,cta,palabraClave:kw,caption:sp_caption(gancho,cuerpo,kw),hashtags:SP_TAGS,articulos:arts,verificar,estado:"guion",formato:fmt,episodio:e?e[0]:"",sp_literal:"",source:"plantilla"}}
+
+/* ---------- (a) Ideas y plan desde los pilares y la temporada ---------- */
+function sp_slides(kind,titulo){const fin={titulo:"¿Te sirvió?",texto:`Guardalo y mandáselo a quien esté por firmar. Consultas por WhatsApp: ${SP_WA}.`};
+  if(kind==="post")return[{titulo,texto:"[Respuesta breve en 2 o 3 líneas, sin consejo para un caso concreto.]"}];
+  if(kind==="errores")return[{titulo,texto:"Deslizá: los 3 que más se repiten."},{titulo:"Error 1",texto:"[Qué se hace mal y qué conviene hacer.]"},{titulo:"Error 2",texto:"[Qué se hace mal y qué conviene hacer.]"},{titulo:"Error 3",texto:"[Qué se hace mal y qué conviene hacer.]"},{titulo:"Qué dice la norma",texto:"[Artículo con su número; verificá el texto vigente en InfoLEG.]"},fin];
+  if(kind==="check")return[{titulo,texto:"Revisalo antes de firmar."},{titulo:"1. Partes y objeto",texto:"[Qué tiene que figurar.]"},{titulo:"2. Plazo y precio",texto:"[Qué tiene que figurar.]"},{titulo:"3. Actualización",texto:"[Qué tiene que figurar.]"},{titulo:"4. Garantías",texto:"[Qué tiene que figurar.]"},fin];
+  return[{titulo,texto:"[En una línea, el problema que la persona reconoce como propio.]"},{titulo:"El problema",texto:"[La situación cotidiana en 2 líneas.]"},{titulo:"Qué dice la norma",texto:"[Artículo con su número; verificá el texto vigente en InfoLEG.]"},{titulo:"Qué mirar en tu contrato",texto:"[1 a 3 puntos concretos.]"},{titulo:"Error frecuente",texto:"[El error que más se repite y cómo evitarlo.]"},fin]}
+function sp_ideaFrom(base,ang,pilar){const titulo=ang.t.replace("{P}",base).replace("{p}",base.charAt(0).toLowerCase()+base.slice(1));const kw=sp_kwFrom(base);
+  const gancho=ang.g.replace("{p}",base.charAt(0).toLowerCase()+base.slice(1));
+  return{titulo,formato:ang.f,objetivo:ang.o,audiencia:"Propietarios, inquilinos e inmobiliarias de Argentina",gancho,slides:sp_slides(ang.k,titulo),guion_reel:"",
+    caption:sp_caption(gancho,"[Desarrollá en 3 o 4 líneas lo que muestra la pieza.]",kw),hashtags:SP_TAGS,cta:`Mandáselo a quien esté por firmar · comentá ${kw}`,
+    recursos:ang.f==="post"?"Plantilla de publicación de marca":"Plantilla de carrusel de marca (azul noche y marfil)",
+    justificacion:(pilar?`Pilar del piloto: «${pilar}». `:"")+(ang.f==="carrusel"?"El carrusel es el formato que más se guarda.":"Formato simple para preguntas frecuentes."),
+    afirmaciones_a_verificar:["Verificar en InfoLEG cualquier artículo o norma que se cite antes de publicar"],sp_local:true}}
+const SP_ANG=[{t:"Guía rápida: {P}",f:"carrusel",k:"guia",o:"Educar",g:"¿Sabés qué mirar en {p}?"},{t:"3 errores comunes: {P}",f:"carrusel",k:"errores",o:"Educar",g:"3 errores que se repiten en {p}"},{t:"Pregunta frecuente: {P}",f:"post",k:"post",o:"Responder dudas",g:"La pregunta que más me hacen sobre {p}"},{t:"Checklist: {P}",f:"carrusel",k:"check",o:"Guardar y compartir",g:"Antes de firmar, revisá esto"},{t:"{P}, explicado con un caso",f:"carrusel",k:"guia",o:"Educar",g:"Te lo cuento con un caso de todos los días"}];
+function sp_ideas(tema){const used=new Set(S.posts.map(p=>sp_norm(p.title)));const n=sp_seed();const out=[];
+  if(tema){SP_ANG.forEach(a=>out.push(sp_ideaFrom(tema,a,"")));return out}
+  const pil=sp_rot(sp_pilares(),n%Math.max(1,sp_pilares().length));const angs=sp_rot(SP_ANG,n%SP_ANG.length);
+  for(const [i,p] of pil.entries()){if(out.length>=3)break;let k=0;let x;do{x=sp_ideaFrom(p,angs[(i+k)%angs.length],p);k++}while(used.has(sp_norm(x.titulo))&&k<SP_ANG.length);if(!used.has(sp_norm(x.titulo)))out.push(x)}
+  const hechos=new Set((S.reels||[]).map(r=>String(r.episodio||"")));
+  for(const e of T1){if(out.length>=5)break;if(hechos.has(e[0])||used.has(sp_norm(`Ep. ${e[0]} · ${e[2]}`)))continue;const r=sp_reel("personajes",e[0],"");
+    out.push({titulo:r.titulo,formato:"reel",objetivo:"Alcance (serie del Código)",audiencia:"Público general",gancho:r.gancho,slides:[],guion_reel:reelPlain(r),caption:r.caption,hashtags:r.hashtags,cta:r.cta,recursos:"Serie animada: Codiguito, Inciso, Clausulo, Resaltato y La Voz de la ley",justificacion:`Episodio ${e[0]} de la Temporada 1 todavía sin reel.`,afirmaciones_a_verificar:r.verificar,sp_local:true})}
+  for(const [i,p] of pil.entries()){if(out.length>=5)break;const x=sp_ideaFrom(p,angs[(i+3)%angs.length],p);if(!out.some(o=>o.titulo===x.titulo)&&!used.has(sp_norm(x.titulo)))out.push(x)}
+  return out.slice(0,5)}
+function sp_plan(){const hora=pilot().hora||"19:00";const pil=sp_rot(sp_pilares(),sp_seed()%Math.max(1,sp_pilares().length));const hechos=new Set((S.reels||[]).map(r=>String(r.episodio||"")));const eps=T1.filter(e=>!hechos.has(e[0]));
+  const out=[];let pi=0,ei=0,si=0;const objs=["Educativo","Comercial","Preguntas frecuentes"];
+  for(let k=1;k<=16&&out.length<6;k++){const d=addDaysAR(todayAR(),k);const dow=new Date(d+"T12:00:00-03:00").getUTCDay();if(![1,3,5].includes(dow))continue;const i=out.length;const obj=objs[i%3];
+    if(i%3===1&&eps.length){const e=eps[ei++%eps.length];out.push({fecha:d,hora,formato:"reel",titulo:`Ep. ${e[0]} · ${e[2]}`,objetivo:"Alcance (serie del Código)",tema:"Arts. "+e[1],cta:"Mandáselo a quien esté por firmar"})}
+    else if(obj==="Comercial"){const s=SERVICES[si++%(SERVICES.length-1)];out.push({fecha:d,hora,formato:"post",titulo:"Cómo trabajo: "+s,objetivo:"Comercial",tema:s,cta:pilot().cta})}
+    else{const p=pil[pi++%Math.max(1,pil.length)]||"Contratos de alquiler";out.push({fecha:d,hora,formato:obj==="Educativo"?"carrusel":"post",titulo:(obj==="Educativo"?"Guía rápida: ":"Pregunta frecuente: ")+p,objetivo:obj,tema:p,cta:"Guardalo y compartilo"})}}
+  return out}
+function sp_develop(p){const kw=sp_kwFrom(p.title);const cambios=[];const o={caption:p.caption||"",hashtags:p.hashtags||SP_TAGS,cta:p.cta||"",slides:arr(p.slides).filter(s=>(s.titulo||"").trim()||(s.texto||"").trim()),guion_reel:p.guionReel||"",afirmaciones_a_verificar:["Verificar en InfoLEG cualquier artículo o norma citada"]};
+  if(!o.caption.trim()){o.caption=sp_caption(p.title||"[Gancho]","[Desarrollá en 3 o 4 líneas lo que muestra la pieza.]",kw);cambios.push("armé el texto con gancho, llamada a enviar, palabra clave y aclaración legal")}
+  else if(!o.caption.includes(SP_DISC)){o.caption=o.caption.trimEnd()+"\n\n"+SP_DISC;cambios.push("agregué la aclaración legal al final")}
+  if(!o.cta){o.cta=`Mandáselo a quien esté por firmar · comentá ${kw}`;cambios.push("sumé la llamada a la acción")}
+  if(!p.hashtags){cambios.push("puse los hashtags base")}
+  if(p.format==="carrusel"&&o.slides.length<3){o.slides=sp_slides("guia",p.title||"Título");cambios.push("armé 6 diapositivas con la estructura problema → norma → qué mirar → error → cierre")}
+  else if(p.format==="post"&&!o.slides.length){o.slides=sp_slides("post",p.title||"Título");cambios.push("armé el texto de la imagen")}
+  if(["reel","guion"].includes(p.format)&&!o.guion_reel.trim()){o.guion_reel=reelPlain(sp_reel("articulo","",p.title||""));cambios.push("armé un guion por bloques")}
+  o.cambios=cambios.length?"Sin IA: "+cambios.join("; ")+". Completá lo que está entre corchetes.":"La pieza ya tenía lo básico: solo revisá las advertencias del editor.";return o}
+
+/* ---------- (c) Secuencia de historias ---------- */
+function sp_hist(obj,tema){const hoy=todayAR();const hp=S.posts.find(p=>(p.scheduledAt||"").startsWith(hoy));const hr=(S.reels||[]).find(r=>(r.scheduledAt||"").startsWith(hoy));
+  const t=(tema||hp?.title||hr?.titulo||sp_pilares()[sp_seed()%Math.max(1,sp_pilares().length)]||"tu contrato de alquiler").slice(0,90);const tl=t.charAt(0).toLowerCase()+t.slice(1);
+  const cut=s=>s.length>60?s.slice(0,57).trimEnd()+"…":s;
+  const fin={tipo:"link",kicker:"Consultas",titulo:"¿Dudas con tu contrato?",texto:`Escribime por WhatsApp al ${SP_WA} o por mensaje privado.`,opciones:""};
+  const F={post:[{tipo:"texto",kicker:"Hoy en el feed",titulo:cut("¿Te pasó con "+tl+"?"),texto:"Lo explico en la publicación de hoy.",opciones:""},{tipo:"encuesta",kicker:"Contame",titulo:"¿Te pasó alguna vez?",texto:"",opciones:"Sí / Todavía no"},{tipo:"texto",kicker:"Adelanto",titulo:"Lo que casi nadie revisa",texto:"[Un dato del post, en una línea.]",opciones:""},{tipo:"link",kicker:"Miralo completo",titulo:cut(hp?.title||hr?.titulo||t),texto:"Tocá para verlo en el perfil.",opciones:""},fin],
+    educar:[{tipo:"texto",kicker:"Dato útil",titulo:cut("¿Sabés esto sobre "+tl+"?"),texto:"",opciones:""},{tipo:"quiz",kicker:"Probá",titulo:"¿Cuál es la correcta?",texto:"",opciones:"[Opción A] / [Opción B] / [Opción C]"},{tipo:"texto",kicker:"La respuesta",titulo:"[La opción correcta]",texto:"[Por qué, con el número de artículo. Verificalo en InfoLEG.]",opciones:""},{tipo:"pregunta",kicker:"Tu turno",titulo:"¿Qué otra duda tenés?",texto:"",opciones:"Preguntame sobre "+t.slice(0,40)},fin],
+    interactuar:[{tipo:"encuesta",kicker:"Encuesta",titulo:"¿Leíste tu contrato antes de firmar?",texto:"",opciones:"Todo / Por arriba / Nada"},{tipo:"quiz",kicker:"Quiz",titulo:cut("¿Qué sabés de "+tl+"?"),texto:"",opciones:"[Opción A] / [Opción B]"},{tipo:"pregunta",kicker:"Preguntas",titulo:"Preguntame lo que quieras",texto:"Respondo las más repetidas en un reel.",opciones:"Tu duda sobre contratos"},{tipo:"texto",kicker:"Resultado",titulo:"[Comentá el resultado de la encuesta]",texto:"",opciones:""},fin],
+    vender:[{tipo:"texto",kicker:"Cláusula Legal",titulo:"Contratos claros, sin vueltas",texto:"Modalidad digital para todo el país.",opciones:""},{tipo:"texto",kicker:"Qué hago",titulo:"Servicios",texto:SERVICES.filter(s=>s!=="Otro").slice(0,4).join(" · "),opciones:""},{tipo:"encuesta",kicker:"Contame",titulo:"¿Estás por firmar un contrato?",texto:"",opciones:"Sí, pronto / Más adelante"},{tipo:"texto",kicker:"Cómo trabajo",titulo:"Me pasás los datos y lo armamos",texto:"Revisión documental e informativa: no reemplaza el asesoramiento de un abogado matriculado.",opciones:""},fin],
+    detras:[{tipo:"texto",kicker:"Detrás de escena",titulo:"Así preparo el contenido",texto:"[Foto o video del escritorio.]",opciones:""},{tipo:"texto",kicker:"Hoy",titulo:cut("Estoy con "+tl),texto:"",opciones:""},{tipo:"encuesta",kicker:"Elegí",titulo:"¿Qué tema querés que siga?",texto:"",opciones:"[Tema A] / [Tema B]"},{tipo:"pregunta",kicker:"Preguntas",titulo:"¿Qué te gustaría ver?",texto:"",opciones:"Proponé un tema"},fin]};
+  return{objetivo:obj,frames:(F[obj]||F.post).map(f=>({...f})),source:"plantilla",tema:t,verificar:["Completar lo que está entre corchetes antes de subir"]}}
+
+/* ---------- (d) Captación por tipo de consulta ---------- */
+const SP_TIPOS=[["auto","Detectar en el mensaje"],["precio","Precio"],["plazos","Plazos"],["modalidad","Modalidad"],["urgencia","Urgencia"]];
+function sp_detect(m){const s=sp_norm(m);const t=[];if(/precio|cuanto (sale|cuesta|cobr)|valor|costo|presupuesto|tarifa|honorario/.test(s))t.push("precio");if(/plazo|cuanto tard|demora|para cuando|cuantos dias|cuando estaria|entrega/.test(s))t.push("plazos");
+  if(/modalidad|presencial|virtual|online|a distancia|otra provincia|de donde sos|viaj|zoom|videollamada|donde atend/.test(s))t.push("modalidad");if(/urgent|urgencia|\bhoy\b|manana|ya mismo|cuanto antes|lo antes posible|rapido/.test(s))t.push("urgencia");return t}
+function sp_servicio(m){const s=sp_norm(m);return /temporari|turist|vacacion/.test(s)?"Contrato de locación temporaria":/comercial|local|negocio|oficina/.test(s)?"Contrato de locación comercial":/revis|leer|chequear|mirar el contrato/.test(s)?"Revisión de contrato":/modelo|plantilla/.test(s)?"Modelo de contrato":/actualiz|aumento|indice|icl|ipc/.test(s)?"Aviso de actualizaciones":/alquil|vivienda|depto|departamento|casa|inquilin|propietari/.test(s)?"Contrato de locación de vivienda":"Otro"}
+function sp_captacion(msg,forz){const tipos=forz&&forz!=="auto"?[forz]:sp_detect(msg);const precios=String(S.settings.precios||"").trim();const plazo=String(S.settings.sp_plazo||"").trim();const serv=sp_servicio(msg);
+  const nom=(String(msg).match(/(?:soy|me llamo|mi nombre es)\s+([A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)/)||[])[1]||"";
+  const P=[`¡Hola${nom?" "+nom:""}! Gracias por escribir a Cláusula Legal.`];
+  if(tipos.includes("precio"))P.push(precios?`Te paso los valores vigentes:\n${precios}\nSi me contás qué contrato necesitás, te confirmo el presupuesto.`:"El valor queda a definir según el tipo de contrato y lo que haga falta. Si me contás qué necesitás, te paso el presupuesto.");
+  if(tipos.includes("plazos"))P.push(plazo?`El plazo habitual es ${plazo}, desde que tengo todos los datos.`:"El plazo queda a definir: depende del tipo de contrato y de tener todos los datos. Apenas los tenga, te confirmo la fecha.");
+  if(tipos.includes("modalidad"))P.push("Trabajo de forma digital para todo el país: me pasás los datos por WhatsApp o mensaje, preparo el documento y lo revisamos juntos.");
+  if(tipos.includes("urgencia"))P.push("Entiendo que es urgente. Para avanzar lo antes posible, mandame ya los datos de abajo y te digo con honestidad si llegamos con los tiempos.");
+  if(!tipos.length)P.push("Contame un poco más así te oriento: ¿qué tipo de contrato necesitás y para cuándo?");
+  P.push(`Para empezar necesito: tipo de contrato, datos de las partes, dirección del inmueble, plazo, monto y forma de actualización.\nPodés escribirme por WhatsApp al ${SP_WA}.`,"La revisión es documental e informativa: no reemplaza el asesoramiento de un abogado matriculado.");
+  return{nombre_detectado:nom||"Contacto de Instagram",servicio:serv,prioridad:tipos.includes("urgencia")?"alta":tipos.includes("precio")?"media":"baja",motivo_prioridad:tipos.includes("urgencia")?"El mensaje marca urgencia.":tipos.includes("precio")?"Pregunta por precio: hay intención de contratar.":"Consulta general.",
+    resumen:"Consulta por "+(tipos.length?tipos.join(", "):"información general")+" · "+serv+" (clasificación por reglas, revisala).",preguntas_calificacion:["¿Qué tipo de contrato necesitás?","¿Sos propietario, inquilino o inmobiliaria?","¿Para cuándo lo necesitás?","¿En qué provincia está el inmueble?"],
+    borrador_respuesta:P.join("\n\n"),siguiente_paso:tipos.includes("precio")&&!precios?"Cargar tus precios en Ajustes para responder más rápido":"Esperar los datos y registrar el contacto",datos_para_contrato:["Partes","Inmueble","Plazo","Monto","Índice y frecuencia de actualización","Garantías"]}}
+function sp_bienvenida(){const precios=String(S.settings.precios||"").trim();const plazo=String(S.settings.sp_plazo||"").trim();
+  return{bienvenida:[`¡Hola! Gracias por escribir a Cláusula Legal. Contame qué contrato necesitás y te oriento. También podés escribirme por WhatsApp al ${SP_WA}.`,"¡Hola! Qué bueno que escribas. ¿Sos propietario, inquilino o inmobiliaria? Así te digo cómo te puedo ayudar.","¡Hola! Trabajo de forma digital para todo el país. Contame tu caso en pocas líneas y te respondo a la brevedad."],
+    respuestas_rapidas:[{pregunta:"Precio",respuesta:precios?"Los valores vigentes son:\n"+precios:"El valor queda a definir según el contrato. Contame qué necesitás y te paso el presupuesto."},{pregunta:"Plazos",respuesta:plazo?`El plazo habitual es ${plazo}, desde que tengo todos los datos.`:"El plazo queda a definir: depende del contrato y de tener todos los datos."},{pregunta:"Modalidad",respuesta:"Es todo digital y para todo el país: datos por WhatsApp o mensaje, documento por correo y revisión juntos."},{pregunta:"Urgencia",respuesta:"Si es urgente, mandame ya los datos y te digo con honestidad si llegamos con los tiempos."}]}}
+
+/* ---------- Crecimiento sin IA: solo hechos de Metricool o de tu carga ---------- */
+function sp_growth(){const rows=S.metrics.rows||[];const tot=k=>rows.reduce((s,r)=>s+(+r[k]||0),0);
+  if(!rows.length)return{observado:[S.caps.mcp==="ok"?"Metricool no registra publicaciones en los últimos 90 días.":"Metricool no está conectado: no hay datos observados. Sin datos no hay conclusiones."],hipotesis:[],recomendaciones:sp_prodRecs(),experimentos:[],datos_suficientes:false};
+  const top=k=>rows.slice().filter(r=>r[k]!=null).sort((a,b)=>(b[k]||0)-(a[k]||0))[0];const obs=[`${rows.length} publicaciones en 90 días · alcance total ${tot("reach")} · guardados ${tot("saved")} · compartidos ${tot("shares")} · seguidores ganados ${tot("follows")}.`];
+  [["reach","alcance"],["saved","guardados"],["shares","compartidos"]].forEach(([k,l])=>{const t=top(k);if(t)obs.push(`Más ${l}: “${t.text.slice(0,60)}” (${t.dateLabel}, ${t[k]}).`)});
+  const byT={};rows.forEach(r=>{(byT[r.type]=byT[r.type]||[]).push(+r.reach||0)});Object.entries(byT).forEach(([t,v])=>obs.push(`${t}: ${v.length} publicaciones, alcance promedio ${Math.round(v.reduce((a,b)=>a+b,0)/v.length)}.`));
+  return{observado:obs,hipotesis:rows.length<10?[]:["Comparar formatos por alcance promedio es orientativo: depende del tema y del horario."],recomendaciones:sp_prodRecs(),experimentos:[],datos_suficientes:rows.length>=10}}
+function sp_prodRecs(){const r=[];const rs=(S.reels||[]).filter(x=>x.estado!=="publicado");const sinKw=rs.filter(x=>!x.palabraClave).length;if(sinKw)r.push(`${sinKw} reels sin palabra clave para comentar.`);
+  const rev=S.posts.filter(p=>p.stage==="revision").length;if(rev)r.push(`${rev} publicaciones esperan tu revisión.`);if(!r.length)r.push("La producción no tiene pendientes evidentes. Usá el Director por reglas para un control completo.");return r}
+function sp_perfil(bio){const b=String(bio||"");const pr=[];if(b.length>150)pr.push(`Tiene ${b.length} caracteres: Instagram corta en 150.`);
+  if(/abogad|\bdr\.?\s|\bdoctor|matricul/i.test(b))pr.push("Menciona abogado, doctor o matrícula: todavía no corresponde.");if(!/whats|wa\.me|2920|mensaje|escrib/i.test(sp_norm(b)))pr.push("No dice cómo contactarte (WhatsApp o mensaje).");
+  if(!/contrat|alquil|locaci/i.test(sp_norm(b)))pr.push("No dice qué hacés (contratos de alquiler).");if(!/pais|digital|online|todo el/i.test(sp_norm(b)))pr.push("No aclara que trabajás de forma digital para todo el país.");
+  return{problemas:pr.length?pr:["La bio cumple los controles básicos."],propuestas:["Contratos de alquiler claros · Vivienda, temporarios y comerciales · Digital, todo el país · WhatsApp 2920 60-2681","Documentación contractual sin vueltas · Estudiante avanzado de Derecho · Consultas por WhatsApp 2920 60-2681","Antes de firmar, leé esto · Contratos de locación · Todo el país · Escribime 2920 60-2681"].map(s=>s.slice(0,150)),
+    enlace_recomendado:"Enlace directo a WhatsApp: https://wa.me/5492920602681",justificacion:"Controles por reglas: largo, contacto, qué hacés, alcance y reglas de marca. Las propuestas son plantillas para ajustar."}}
+
+/* ---------- Ejecutar el motor local en el mismo formato que los agentes ---------- */
+async function sp_runLocal(agent,task){let out,label,extra={};
+  if(agent==="contenido"&&task==="ideas"){const tema=$("#tc-tema")?.value.trim();out=sp_ideas(tema);label="Proponer 5 ideas"+(tema?": "+tema:"")}
+  else if(agent==="contenido"&&task==="plan"){out=sp_plan();label="Plan editorial de 2 semanas"}
+  else if(agent==="contenido"&&task==="desarrollar"){const p=S.posts.find(x=>x.id===$("#tc-post")?.value);if(!p){toast("Elegí una pieza del Estudio");return}out=sp_develop(p);label="Desarrollar: "+(p.title||"pieza");extra={postId:p.id}}
+  else if(agent==="crecimiento"&&task==="analizar"){out=sp_growth();label="Resumen de rendimiento"}
+  else if(agent==="crecimiento"&&task==="perfil"){const bio=$("#tg-bio")?.value.trim();if(!bio){toast("Pegá la biografía actual del perfil");return}out=sp_perfil(bio);label="Revisar perfil"}
+  else if(agent==="captacion"&&task==="atender"){const msg=$("#ts-msg")?.value.trim();if(!msg){toast("Pegá el mensaje recibido");return}const lid=$("#ts-lead")?.value||null;out=sp_captacion(msg,$("#sp-captipo")?.value);label="Preparar respuesta";extra={leadId:lid,mensaje:msg}}
+  else if(agent==="captacion"&&task==="bienvenida"){out=sp_bienvenida();label="Mensajes de bienvenida"}
+  else return;
+  label+=" (sin IA)";let runId=null;if(db){try{runId=await logRun(agent,label,summarize(agent,task,out),out)}catch(_){}}
+  S.agentOut[agent]={task,label,out,runId,extra,sp_local:true};toast("Listo con plantillas: revisá y completá lo que está entre corchetes");render();
+  setTimeout(()=>document.getElementById("out-"+agent)?.scrollIntoView({behavior:"smooth",block:"start"}),40)}
+
+/* ---------- (3) Director por reglas ---------- */
+function sp_rules(){const now=Date.now(),D=864e5,hoy=todayAR();const out=[];const add=(clave,tipo,prioridad,titulo,detalle)=>out.push({clave,tipo,prioridad,titulo:titulo.slice(0,80),detalle:detalle.slice(0,300)});
+  const last=x=>Math.max(x.updatedAt||0,x.createdAt||0,...arr(x.history).map(h=>h.at||0));
+  S.posts.filter(p=>p.stage==="revision").forEach(p=>{const d=Math.floor((now-last(p))/D);if(d>3)add("rev:p:"+p.id,"alerta",d>7?"alta":"media",`En revisión hace ${d} días: ${p.title||"Sin título"}`,`La publicación está en revisión desde hace ${d} días. Aprobala, devolvela a guion o descartala.`)});
+  (S.reels||[]).filter(r=>r.estado==="revision"||(r.video&&r.video.url&&(r.sala||"revision")==="revision"&&r.estado!=="publicado")).forEach(r=>{const d=Math.floor((now-last(r))/D);if(d>3)add("rev:r:"+r.id,"alerta",d>7?"alta":"media",`Reel en revisión hace ${d} días: ${r.titulo||"Sin título"}`,`El reel espera tu revisión desde hace ${d} días. Miralo en la Sala y aprobalo o dejalo en espera con una nota.`)});
+  const dias=[...Array(7)].map((_,i)=>addDaysAR(hoy,i));const con=new Set([...S.posts.map(p=>(p.scheduledAt||"").slice(0,10)),...(S.reels||[]).map(r=>(r.scheduledAt||"").slice(0,10)),...(S.historias||[]).map(h=>String(h.fecha||"").slice(0,10))]);
+  const vac=dias.filter(d=>!con.has(d));if(vac.length)add("vacios:"+hoy+":"+vac.join(","),"recomendacion",vac.length>=5?"alta":"media",`${vac.length} ${vac.length===1?"día":"días"} sin nada programado en los próximos 7`,"Sin publicación, reel ni historias: "+vac.map(d=>new Date(d+"T12:00:00-03:00").toLocaleDateString("es-AR",{timeZone:TZ,weekday:"short",day:"numeric"})).join(", ")+". Asigná fecha a alguna pieza o armá historias.");
+  (S.reels||[]).filter(r=>r.estado!=="publicado"&&r.sala!=="publicado").forEach(r=>{const f=[];if(!(r.gancho||"").trim())f.push("gancho");if(!r.palabraClave)f.push("palabra clave");if(!/mand[aá]|envi[aá]|compart/i.test((r.cta||"")+vozTotal(r)))f.push("pedido de envío");
+    if(f.length)add("reelfalta:"+r.id+":"+f.join(","),"alerta",f.includes("gancho")?"alta":"media",`Reel sin ${f.join(", ")}: ${r.titulo||"Sin título"}`,`Al reel le falta ${f.join(", ")}. Son las señales que más ayudan a que se vea hasta el final y se envíe.`);
+    const s=+(r.video&&r.video.dur)||segs(r);if(s>75)add("reellargo:"+r.id,"alerta","media",`Reel de ${s} s: ${r.titulo||"Sin título"}`,`Dura ${s} segundos. Apuntá a 45 a 60: recortá bloques o acortá la voz en off.`)});
+  const eps=new Map();(S.reels||[]).filter(r=>r.episodio).forEach(r=>{const k=String(r.episodio);if(!eps.has(k)||(r.orden&&!eps.get(k).orden))eps.set(k,r)});
+  const sin=T1.filter(e=>!eps.has(e[0])).map(e=>e[0]);if(sin.length)add("t1sin:"+sin.join(","),"recomendacion",sin.length>6?"media":"baja",`Temporada 1: ${sin.length} episodios sin empezar`,"Episodios sin reel todavía: "+sin.map(n=>"Ep. "+n).join(", ")+". Podés armar el guion sin IA desde Reels.");
+  eps.forEach(r=>{if(r.estado==="publicado"||r.sala==="publicado")return;const d=Math.floor((now-last(r))/D);if(d>=7)add("t1quieto:"+r.id,"recomendacion","media",`Ep. ${r.episodio} sin avances hace ${d} días`,`“${r.titulo||"Sin título"}” sigue en ${rLabel(R_ESTADOS,r.estado||"idea").toLowerCase()} sin cambios desde hace ${d} días.`)});
+  const hh=(S.historias||[]).filter(h=>String(h.fecha||"").slice(0,10)===hoy);
+  if(hh.some(h=>!["lista","publicada"].includes(h.estado)))add("histhoy:"+hoy,"alerta","alta","Las historias de hoy no están listas",`${hh.filter(h=>!["lista","publicada"].includes(h.estado)).length} ${hh.length===1?"secuencia":"secuencias"} de hoy en borrador. Completalas y marcalas “Lista para subir”.`);
+  else if(!hh.length)add("histnone:"+hoy,"recomendacion","media","No hay historias armadas para hoy","Armá la secuencia del día desde Historias (también funciona sin IA).");
+  const ver=[...S.posts.filter(p=>p.stage!=="publicado"&&arr(p.verificar).length).map(p=>[p.id,p.title||"Publicación",arr(p.verificar).length]),...(S.reels||[]).filter(r=>r.estado!=="publicado"&&arr(r.verificar).length).map(r=>[r.id,r.titulo||"Reel",arr(r.verificar).length]),...(S.historias||[]).filter(h=>h.estado!=="publicada"&&arr(h.verificar).length).map(h=>[h.id,"Historias "+dia(h.fecha),arr(h.verificar).length])];
+  if(ver.length){const n=ver.reduce((s,x)=>s+x[2],0);add("verif:"+ver.map(x=>x[0]+"="+x[2]).sort().join(","),"alerta",n>5?"alta":"media",`${n} afirmaciones sin verificar en ${ver.length} ${ver.length===1?"pieza":"piezas"}`,"Revisalas en fuentes oficiales antes de publicar: "+ver.slice(0,6).map(x=>`${x[1]} (${x[2]})`).join(" · "))}
+  return out}
+let sp_dirBusy=false;
+async function sp_directorRun(){if(!db){toast("Esta vista no puede guardar alertas");return}if(sp_dirBusy)return;sp_dirBusy=true;
+  try{const found=sp_rules();const abiertas=new Set((S.alertas||[]).filter(a=>!a.leida&&a.sp_clave).map(a=>a.sp_clave));const nuevas=found.filter(a=>!abiertas.has(a.clave)).slice(0,12);const now=Date.now();
+    for(const [i,a] of nuevas.entries()){const id="al-sp-"+now.toString(36)+i;await dbSet("alertas/"+id,{id,tipo:a.tipo,titulo:a.titulo,detalle:a.detalle,prioridad:a.prioridad,origen:"reglas",leida:false,createdAt:now+i,sp_clave:a.clave})}
+    const resumen=found.length?`${found.length} controles con observaciones; ${nuevas.length} ${nuevas.length===1?"alerta nueva":"alertas nuevas"} (las demás ya estaban sin leer).`:"Todos los controles por reglas dieron bien.";
+    await logRun("director","Análisis por reglas (sin IA)",resumen,{resumen,alertas:nuevas});toast(nuevas.length?resumen:found.length?"Sin alertas nuevas: las que hay siguen sin leer":"Todo en orden según las reglas")}
+  catch(e){if(e?.message!=="no-db")toast("No se pudo completar el análisis por reglas")}finally{sp_dirBusy=false;render()}}
+
+/* ---------- Texto literal del artículo en el editor de reels ---------- */
+const sp_wc=s=>String(s||"").split(/\s+/).filter(Boolean).length;
+function sp_literalUI(){const r=reelEditing;if(!r)return;const i=(r.bloques||[]).findIndex(b=>b.sp_ley);if(i<0&&r.sp_literal===undefined)return;
+  const fs=[...document.querySelectorAll("#drawerRoot .cform fieldset")].find(f=>f.querySelector("legend")?.textContent==="Bloques");if(!fs||document.getElementById("sp-literal"))return;
+  const lit=r.sp_literal??(i>=0?r.bloques[i].voz:"")??"";const box=document.createElement("fieldset");box.className="sp-lit";
+  box.innerHTML=`<legend>Texto literal del artículo</legend><p class="sp-note">La Voz de la ley lee SOLO el texto literal. Copialo de InfoLEG (texto actualizado) y pegalo tal cual: la app no lo escribe ni lo resume.</p>
+  <label for="sp-literal">${esc(r.articulos?"Art. "+r.articulos:"Artículo")}<textarea id="sp-literal" data-sp-literal="1" style="min-height:120px" placeholder="Pegá acá el texto literal del artículo…">${esc(lit)}</textarea></label><span class="small muted" id="sp-litc">${sp_litInfo(lit,i)}</span>`;
+  fs.parentNode.insertBefore(box,fs);if(i>=0){const v=document.getElementById(`rf-bloques-${i}-voz`);if(v){v.readOnly=true;v.placeholder="Se completa con el texto literal de arriba";v.title="Editalo en «Texto literal del artículo»"}}}
+function sp_litInfo(t,i){const n=sp_wc(t);return n?`${n} palabras · unos ${Math.round(n/2.6)} s de lectura`+(i<0?" · no hay bloque de La Voz de la ley: agregá uno o pegá el texto en un bloque":""):"Todavía no pegaste el texto literal."}
+document.addEventListener("input",ev=>{const t=ev.target;if(!t.dataset||!t.dataset.spLiteral||!reelEditing)return;const r=reelEditing;r.sp_literal=t.value;const i=(r.bloques||[]).findIndex(b=>b.sp_ley);
+  if(i>=0){r.bloques[i].voz=t.value;const v=document.getElementById(`rf-bloques-${i}-voz`);if(v)v.value=t.value}const c=$("#sp-litc");if(c)c.textContent=sp_litInfo(t.value,i);
+  clearTimeout(sp_literalUI.t);sp_literalUI.t=setTimeout(()=>{const s=$("#reelSide");if(s)s.innerHTML=reelSide()},300)});
+
+/* ---------- Envolturas ---------- */
+const sp_drawReelO=drawReel;drawReel=function(keep){sp_drawReelO(keep);try{sp_literalUI()}catch(e){console.error(e)}};
+const sp_reelChecksO=reelChecks;reelChecks=r=>{const c=sp_reelChecksO(r);const b=(r.bloques||[]).find(x=>x.sp_ley);
+  if(b&&!String(b.voz||"").trim())c.push(["warn","Falta pegar el texto literal del artículo para La Voz de la ley"]);
+  if((r.caption||"").trim()&&!(r.caption||"").trim().endsWith(SP_DISC))c.push(["warn","La descripción tiene que terminar con: "+SP_DISC]);
+  if(sp_hasPh(r.gancho)||(r.bloques||[]).some(x=>sp_hasPh(x.voz)||sp_hasPh(x.pantalla))||sp_hasPh(r.caption))c.push(["warn","Quedan partes entre corchetes para completar"]);
+  return c};
+function sp_altBlock(k){const B=(t,l,p)=>`<button class="btn sm${p?" primary":""}" data-sp="run" data-spa="${k}" data-spt="${t}">${esc(l)}</button>`;const off=sp_off();
+  const body={contenido:`<div class="btns">${B("ideas","5 ideas sin IA",off)}${B("plan","Plan de 2 semanas sin IA")}${B("desarrollar","Desarrollar pieza sin IA")}</div><p class="sp-note">Usa el tema de arriba (si lo escribís), los pilares del piloto y la Temporada 1. Deja entre corchetes lo que tenés que completar vos.</p>`,
+    crecimiento:`<div class="btns">${B("analizar","Resumen de métricas sin IA",off)}${B("perfil","Revisar perfil sin IA")}</div><p class="sp-note">Solo muestra datos que vienen de Metricool. Sin Metricool, no hay números.</p>`,
+    captacion:`<label for="sp-captipo">Tipo de consulta<select id="sp-captipo">${opts(SP_TIPOS,"auto")}</select></label><div class="btns">${B("atender","Respuesta sin IA",off)}${B("bienvenida","Respuestas rápidas sin IA")}</div><p class="sp-note">Usa tus precios y tu plazo de Ajustes; si no están, dice “a definir”.</p>`}[k];
+  if(!body)return"";return `<div class="sp-alt"><div class="sp-k"><span class="sp-tag">Sin IA · plantillas y reglas</span>${off?`<span class="chip warn">Claude no disponible</span>`:sp_ai()?`<span class="chip ok">También podés usar Claude</span>`:""}</div>${body}</div>`}
+const sp_agentCardO=agentCard;agentCard=(k,a)=>{let h=sp_agentCardO(k,a);if(sp_off())h=h.replace(/data-act="run"/g,'data-act="run" disabled title="Necesita Claude"');
+  const alt=sp_altBlock(k);if(!alt)return h;const i=h.indexOf("<details>");return i<0?h.replace(/<\/section>\s*$/,alt+"</section>"):h.slice(0,i)+alt+h.slice(i)};
+const sp_vReelsO=vReels;vReels=()=>{let h=sp_vReelsO();const off=sp_off();
+  h=h.replace(/(<button class="btn primary" data-ract="agent"[^>]*>)(Escribir guion)(<\/button>)/,(m,a,b,c)=>`<div class="btns">${off?a.replace('class="btn primary"','class="btn"').replace(">"," disabled title=\"Necesita Claude\">"):a}${b} con IA${c}<button class="btn${off?" primary":""}" data-sp="reel">Escribir guion sin IA</button></div><p class="sp-note">${off?"Claude no está disponible: el guion sin IA sale de plantillas por formato. ":""}En la serie animada: gancho → se abre el Código → actúan los personajes → La Voz de la ley lee el artículo literal (lo pegás vos) → “¡Queda resaltado!” y loop.</p>`);
+  return h};
+const sp_vHistO=vHistorias;vHistorias=()=>{let h=sp_vHistO();const off=sp_off();
+  h=h.replace(/(<button class="btn primary" data-hact="agent"[^>]*>)(Armar la secuencia del día)(<\/button>)/,(m,a,b,c)=>`<div class="btns">${off?a.replace('class="btn primary"','class="btn"').replace(">"," disabled title=\"Necesita Claude\">"):a}${b} con IA${c}<button class="btn${off?" primary":""}" data-sp="hist">Armar secuencia sin IA</button></div><p class="sp-note">Sin IA: 4 a 6 historias según el objetivo, con un sticker interactivo y cierre a WhatsApp ${SP_WA}.</p>`);
+  return h};
+const sp_vDirO=vDirector;vDirector=()=>{let h=sp_vDirO();const off=sp_off();
+  h=h.replace(/(<button class="btn primary" data-dact="analyze"[^>]*>Analizar ahora<\/button>)/,m=>(off?m.replace('class="btn primary"','class="btn"').replace(">Analizar ahora"," disabled title=\"Necesita Claude\">Analizar con IA"):m.replace(">Analizar ahora",">Analizar con IA"))+`<button class="btn${off?" primary":""}" data-sp="dir" ${sp_dirBusy?"disabled":""}>Analizar por reglas</button>`);
+  (S.alertas||[]).filter(a=>a.origen==="reglas").forEach(a=>{const mark=`data-dact="del" data-id="${esc(a.id)}"`;const j=h.indexOf(mark);if(j<0)return;const s=h.lastIndexOf(`<div class="row"`,j);if(s<0)return;h=h.slice(0,s)+h.slice(s,j).replace("análisis de la cuenta","reglas automáticas (sin IA)")+h.slice(j)});
+  h+=agentCard("captacion",AGENTS.captacion)+(S.agentOut.captacion?outBlock("captacion"):"");
+  return h};
+
+/* ---------- (4) Indicador: qué funciona sin Pro ---------- */
+function sp_capChip(st,on,off){return `<span class="chip ${st==="ok"?"ok":st==="off"?"warn":""}">${st==="ok"?on:st==="off"?off:"Verificando"}</span>`}
+function sp_modoPanel(full){const cl=S.caps.sample,mc=S.caps.mcp;const im=typeof assetsCap!=="undefined"&&assetsCap,dl=typeof downloads!=="undefined"&&downloads;const pro=cl==="ok"&&mc==="ok";
+  const titulo=pro?"Modo completo":cl==="wait"||mc==="wait"?"Verificando conexiones":"Modo sin Pro";
+  const siempre=["Guiones de reels por plantilla, con campo para el texto literal","Secuencias de historias con sticker y cierre a WhatsApp","Ideas y plan de 2 semanas desde tus pilares y la Temporada 1","Respuestas de captación con tus precios (o “a definir”)","Director por reglas: trabas, días vacíos, reels incompletos","Teleprompter, controles de marca y copiar textos"];
+  const claude=["Redacción completa de guiones, ideas e historias","Director con análisis y criterio","Desarrollo de piezas a partir de un borrador"];
+  const metri=["Métricas reales de Instagram y mejores horarios","Programar en Metricool tras tu aprobación","Verificar que la publicación salió"];
+  if(!full)return `<section class="panel sp-modo" style="grid-column:1/-1"><div class="ph"><h2>${titulo}</h2><a href="#config">Qué incluye</a></div>
+    <div class="sp-chips"><span class="chip ok">Sin IA: guiones, historias, ideas, captación y Director por reglas</span>${sp_capChip(cl,"Claude encendido","Claude apagado")}${sp_capChip(mc,"Metricool encendido","Metricool apagado")}</div>
+    ${pro?"":`<p class="small muted" style="margin:0">La app sigue funcionando con plantillas y reglas: en cada sección hay botones “sin IA”. ${cl==="off"?"Cuando Claude esté disponible, se suman los agentes que redactan. ":""}${mc==="off"?"Con Metricool se encienden las métricas reales y la programación.":""}</p>`}</section>`;
+  const col=(t,chip,items)=>`<div class="sp-col"><h3>${t}${chip}</h3><ul>${items.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`;
+  return `<section class="panel sp-modo" style="grid-column:1/-1"><div class="ph"><h2>${titulo}: qué funciona hoy</h2></div>
+  <div class="sp-cols">${col("Siempre (sin Pro)",`<span class="chip ok">Activo</span>`,siempre)}${col("Con Claude",sp_capChip(cl,"Encendido","Apagado"),claude)}${col("Con Metricool",sp_capChip(mc,"Encendido","Apagado"),metri)}${col("Imágenes y descargas",`<span class="chip ${im&&dl?"ok":im||dl?"":"warn"}">${im&&dl?"Encendido":im||dl?"Parcial":"Apagado"}</span>`,["Imágenes con la plantilla de marca","Descargar zip y copia de seguridad","Sin esto: copiá los textos y diseñá con tu plantilla"])}</div>
+  <h3>Datos para las respuestas sin IA</h3><div class="fields"><label for="sp-precios">Servicios y precios (uno por línea)<textarea id="sp-precios" style="min-height:80px" placeholder="Ej.: Contrato de locación de vivienda: $…">${esc(S.settings.precios||"")}</textarea></label><label for="sp-plazo">Plazo habitual de entrega<input id="sp-plazo" value="${esc(S.settings.sp_plazo||"")}" placeholder="Ej.: 48 a 72 horas hábiles"></label></div>
+  <span class="small muted">Si los dejás vacíos, las respuestas dicen “a definir”. Nunca se inventa un precio ni un plazo.</span><button class="btn sm primary" data-sp="cfg" style="align-self:flex-start">Guardar</button></section>`}
+const sp_vPanelO=vPanel;vPanel=()=>{const h=sp_vPanelO();const g=`<div class="grid">`;const i=h.indexOf(g);return i<0?h+sp_modoPanel(false):h.slice(0,i+g.length)+sp_modoPanel(false)+h.slice(i+g.length)};
+const sp_vConfigO=vConfig;vConfig=()=>{const h=sp_vConfigO();const g=`<div class="grid">`;const i=h.indexOf(g);return i<0?h+sp_modoPanel(true):h.slice(0,i+g.length)+sp_modoPanel(true)+h.slice(i+g.length)};
+
+/* ---------- Eventos ---------- */
+document.addEventListener("click",async ev=>{const el=ev.target.closest("[data-sp]");if(!el)return;const k=el.dataset.sp;
+  try{switch(k){
+  case"run":await sp_runLocal(el.dataset.spa,el.dataset.spt);break;
+  case"reel":{const fmt=$("#rfFmt")?.value||"personajes",ep=$("#rfEp")?.value||"",tema=($("#rfTema")?.value||"").trim();if(!ep&&!tema){toast("Elegí un episodio o escribí un tema");break}
+    openReel(null,sp_reel(fmt,ep,tema));toast("Guion armado con plantilla: pegá el texto literal y completá lo que está entre corchetes");break}
+  case"hist":{const obj=$("#hfObj")?.value||"post",tema=($("#hfTema")?.value||"").trim();openHist(null,sp_hist(obj,tema));toast("Secuencia armada con plantilla: revisala y guardala");break}
+  case"dir":await sp_directorRun();break;
+  case"cfg":await saveSettings({precios:$("#sp-precios").value.trim(),sp_plazo:$("#sp-plazo").value.trim()});toast("Datos guardados");render();break;
+  }}catch(e){if(e?.message!=="no-db"){console.error(e);toast("No se pudo completar la acción")}}});
+
+render();
+</script>

@@ -1,0 +1,1071 @@
+{
+  "episodio": 3,
+  "slug": "ep03_957_1015",
+  "titulo": "¿Un apretón de manos es un contrato?",
+  "clausulo_variante": "anteojos",
+  "caso": "Inciso le vende su bici a Codiguito en $50.000 con un apretón de manos.",
+  "articulos": [
+    {
+      "numero": 957,
+      "epigrafe": "Definición",
+      "texto": "Contrato es el acto jurídico mediante el cual dos o más partes manifiestan su consentimiento para crear, regular, modificar, transferir o extinguir relaciones jurídicas patrimoniales."
+    },
+    {
+      "numero": 1015,
+      "epigrafe": "Libertad de formas",
+      "texto": "Sólo son formales los contratos a los cuales la ley les impone una forma determinada."
+    }
+  ],
+  "concordancias": [
+    {
+      "numero": 1123,
+      "epigrafe": "Definición",
+      "texto": "Hay compraventa si una de las partes se obliga a transferir la propiedad de una cosa y la otra a pagar un precio en dinero.",
+      "uso": "dato extra: la venta de la bici es una compraventa"
+    },
+    {
+      "numero": 1017,
+      "epigrafe": "Escritura pública",
+      "texto": "Deben ser otorgados por escritura pública: a) los contratos que tienen por objeto la adquisición, modificación o extinción de derechos reales sobre inmuebles. Quedan exceptuados los casos en que el acto es realizado mediante subasta proveniente de ejecución judicial o administrativa; b) los contratos que tienen por objeto derechos dudosos o litigiosos sobre inmuebles; c) todos los actos que sean accesorios de otros contratos otorgados en escritura pública; d) los demás contratos que, por acuerdo de partes o disposición de la ley, deben ser otorgados en escritura pública.",
+      "uso": "excepción: inmuebles (el holograma de la casa con sello)"
+    },
+    {
+      "numero": 1188,
+      "epigrafe": "Forma. Oponibilidad",
+      "texto": "El contrato de locación de cosa inmueble o mueble registrable, de una universalidad que incluya a alguna de ellas, o de parte material de un inmueble, debe ser hecho por escrito. Esta regla se aplica también a sus prórrogas y modificaciones.",
+      "uso": "excepción: alquiler"
+    },
+    {
+      "numero": 1019,
+      "epigrafe": "Medios de prueba",
+      "texto": "Los contratos pueden ser probados por todos los medios aptos para llegar a una razonable convicción según las reglas de la sana crítica, y con arreglo a lo que disponen las leyes procesales, excepto disposición legal que establezca un medio especial. Los contratos que sea de uso instrumentar no pueden ser probados exclusivamente por testigos.",
+      "uso": "control: no afirmar en ninguna pieza que 'alcanza con un testigo'"
+    }
+  ],
+  "segmentos": [
+    {
+      "id": "s01_gancho",
+      "tipo": "dialogo",
+      "personaje": "clausulo",
+      "texto": "¿Un apretón de manos… es un contrato?",
+      "tts": "¿Un apretón de manos... es un contrato?",
+      "resaltar": [
+        "contrato"
+      ],
+      "planos": [
+        {
+          "img": "k01_apreton",
+          "parte": 0.45,
+          "z": [
+            1.18,
+            1.38
+          ],
+          "foco": [
+            [
+              0.47,
+              0.6
+            ],
+            [
+              0.45,
+              0.6
+            ]
+          ],
+          "fx": [
+            {
+              "tipo": "destello",
+              "t": 0.15,
+              "pos": [
+                0.46,
+                0.6
+              ]
+            }
+          ]
+        },
+        {
+          "img": "k02_clausulo_pregunta",
+          "parte": 0.55,
+          "z": [
+            1.75,
+            1.95
+          ],
+          "foco": [
+            [
+              0.52,
+              0.42
+            ],
+            [
+              0.52,
+              0.41
+            ]
+          ]
+        }
+      ],
+      "sfx": [
+        {
+          "t": 0.0,
+          "s": "apreton"
+        },
+        {
+          "t": 0.12,
+          "s": "brillo"
+        },
+        {
+          "t": 0.45,
+          "s": "whoosh"
+        }
+      ]
+    },
+    {
+      "id": "s02_apertura",
+      "tipo": "apertura",
+      "articulo": 957,
+      "dur": 2.4,
+      "sfx": [
+        {
+          "t": 0.0,
+          "s": "golpe_libro"
+        },
+        {
+          "t": 0.55,
+          "s": "pagina"
+        },
+        {
+          "t": 1.2,
+          "s": "brillo"
+        }
+      ]
+    },
+    {
+      "id": "s03_inciso_ofrece",
+      "tipo": "dialogo",
+      "personaje": "inciso",
+      "texto": "¡Te vendo mi bici! Cincuenta mil pesos y es tuya.",
+      "tts": "¡Te vendo mi bici! Cincuenta mil pesos y es tuya.",
+      "resaltar": [
+        "Cincuenta mil pesos"
+      ],
+      "planos": [
+        {
+          "img": "k04_inciso_ofrece",
+          "parte": 0.45,
+          "z": [
+            1.05,
+            1.15
+          ],
+          "foco": [
+            [
+              0.55,
+              0.6
+            ],
+            [
+              0.58,
+              0.6
+            ]
+          ]
+        },
+        {
+          "img": "k04_inciso_ofrece",
+          "parte": 0.55,
+          "z": [
+            1.7,
+            1.85
+          ],
+          "foco": [
+            [
+              0.74,
+              0.62
+            ],
+            [
+              0.76,
+              0.62
+            ]
+          ]
+        }
+      ],
+      "sfx": [
+        {
+          "t": 0.0,
+          "s": "timbre_bici"
+        },
+        {
+          "t": 0.45,
+          "s": "pop"
+        }
+      ]
+    },
+    {
+      "id": "s04_codiguito_duda",
+      "tipo": "dialogo",
+      "personaje": "codiguito",
+      "texto": "Pará, pará…",
+      "tts": "Pará, pará...",
+      "resaltar": [],
+      "planos": [
+        {
+          "img": "k05_codiguito_duda",
+          "parte": 1.0,
+          "z": [
+            1.3,
+            1.5
+          ],
+          "foco": [
+            [
+              0.52,
+              0.55
+            ],
+            [
+              0.52,
+              0.54
+            ]
+          ]
+        }
+      ],
+      "sfx": [
+        {
+          "t": 0.0,
+          "s": "freno"
+        }
+      ]
+    },
+    {
+      "id": "s05_que_lo_diga",
+      "tipo": "dialogo",
+      "personaje": "clausulo",
+      "texto": "Que lo diga la ley.",
+      "tts": "Que lo diga la ley.",
+      "resaltar": [
+        "la ley"
+      ],
+      "planos": [
+        {
+          "img": "k06_clausulo_ley",
+          "parte": 1.0,
+          "z": [
+            1.15,
+            1.32
+          ],
+          "foco": [
+            [
+              0.55,
+              0.52
+            ],
+            [
+              0.6,
+              0.52
+            ]
+          ],
+          "fx": [
+            {
+              "tipo": "brillo_zona",
+              "pos": [
+                0.71,
+                0.59
+              ],
+              "radio": 0.16,
+              "color": [
+                255,
+                200,
+                120
+              ]
+            }
+          ]
+        }
+      ],
+      "sfx": [
+        {
+          "t": 0.0,
+          "s": "whoosh"
+        },
+        {
+          "t": 0.2,
+          "s": "brillo"
+        }
+      ]
+    },
+    {
+      "id": "s06_957",
+      "tipo": "ley",
+      "articulo": 957,
+      "frases": [
+        {
+          "texto": "ARTÍCULO 957.-",
+          "tts": "Artículo novecientos cincuenta y siete.",
+          "resaltar": [],
+          "planos": [
+            {
+              "img": "@pagina",
+              "parte": 1.0
+            }
+          ],
+          "sfx": [
+            {
+              "t": 0.0,
+              "s": "pagina"
+            }
+          ]
+        },
+        {
+          "texto": "Definición.",
+          "tts": "Definición.",
+          "resaltar": [
+            "Definición"
+          ],
+          "planos": [
+            {
+              "img": "k06_clausulo_ley",
+              "parte": 1.0,
+              "z": [
+                1.9,
+                2.05
+              ],
+              "foco": [
+                [
+                  0.62,
+                  0.52
+                ],
+                [
+                  0.64,
+                  0.53
+                ]
+              ],
+              "fx": [
+                {
+                  "tipo": "brillo_zona",
+                  "pos": [
+                    0.71,
+                    0.59
+                  ],
+                  "radio": 0.18,
+                  "color": [
+                    255,
+                    200,
+                    120
+                  ]
+                }
+              ]
+            }
+          ],
+          "sfx": [
+            {
+              "t": 0.0,
+              "s": "whoosh"
+            },
+            {
+              "t": 0.15,
+              "s": "brillo"
+            }
+          ]
+        },
+        {
+          "texto": "Contrato es el acto jurídico",
+          "tts": "Contrato es el acto jurídico",
+          "resaltar": [
+            "Contrato",
+            "acto jurídico"
+          ],
+          "planos": [
+            {
+              "img": "k07_holograma_contrato",
+              "parte": 1.0,
+              "z": [
+                1.12,
+                1.28
+              ],
+              "foco": [
+                [
+                  0.5,
+                  0.55
+                ],
+                [
+                  0.5,
+                  0.62
+                ]
+              ],
+              "fx": [
+                {
+                  "tipo": "brillo_zona",
+                  "pos": [
+                    0.52,
+                    0.34
+                  ],
+                  "radio": 0.22,
+                  "color": [
+                    150,
+                    210,
+                    255
+                  ]
+                }
+              ]
+            }
+          ],
+          "sfx": [
+            {
+              "t": 0.0,
+              "s": "holograma"
+            }
+          ]
+        },
+        {
+          "texto": "mediante el cual dos o más partes",
+          "tts": "mediante el cual dos o más partes",
+          "resaltar": [
+            "dos o más partes"
+          ],
+          "planos": [
+            {
+              "img": "k08_dos_partes",
+              "parte": 1.0,
+              "z": [
+                1.06,
+                1.16
+              ],
+              "foco": [
+                [
+                  0.5,
+                  0.6
+                ],
+                [
+                  0.5,
+                  0.6
+                ]
+              ],
+              "tarjeta": "arriba"
+            }
+          ],
+          "sfx": [
+            {
+              "t": 0.0,
+              "s": "reflector"
+            },
+            {
+              "t": 0.35,
+              "s": "reflector"
+            }
+          ]
+        },
+        {
+          "texto": "manifiestan su consentimiento",
+          "tts": "manifiestan su consentimiento",
+          "resaltar": [
+            "consentimiento"
+          ],
+          "planos": [
+            {
+              "img": "k01_apreton",
+              "parte": 1.0,
+              "z": [
+                1.55,
+                1.75
+              ],
+              "foco": [
+                [
+                  0.42,
+                  0.6
+                ],
+                [
+                  0.44,
+                  0.6
+                ]
+              ],
+              "fx": [
+                {
+                  "tipo": "destello",
+                  "t": 0.3,
+                  "pos": [
+                    0.46,
+                    0.6
+                  ]
+                }
+              ]
+            }
+          ],
+          "sfx": [
+            {
+              "t": 0.0,
+              "s": "apreton"
+            },
+            {
+              "t": 0.3,
+              "s": "brillo"
+            }
+          ]
+        },
+        {
+          "texto": "para crear, regular, modificar, transferir o extinguir",
+          "tts": "para crear, regular, modificar, transferir o extinguir",
+          "resaltar": [
+            "transferir"
+          ],
+          "planos": [
+            {
+              "img": "k09_intercambio",
+              "parte": 0.5,
+              "z": [
+                1.08,
+                1.18
+              ],
+              "foco": [
+                [
+                  0.5,
+                  0.6
+                ],
+                [
+                  0.52,
+                  0.6
+                ]
+              ],
+              "tarjeta": "arriba"
+            },
+            {
+              "img": "k09_intercambio",
+              "parte": 0.5,
+              "z": [
+                1.75,
+                1.9
+              ],
+              "foco": [
+                [
+                  0.5,
+                  0.56
+                ],
+                [
+                  0.52,
+                  0.56
+                ]
+              ],
+              "fx": [
+                {
+                  "tipo": "destello",
+                  "t": 0.2,
+                  "pos": [
+                    0.57,
+                    0.53
+                  ]
+                }
+              ]
+            }
+          ],
+          "sfx": [
+            {
+              "t": 0.0,
+              "s": "whoosh"
+            },
+            {
+              "t": 0.5,
+              "s": "pop"
+            },
+            {
+              "t": 1.4,
+              "s": "ding"
+            }
+          ]
+        },
+        {
+          "texto": "relaciones jurídicas patrimoniales.",
+          "tts": "relaciones jurídicas patrimoniales.",
+          "resaltar": [
+            "patrimoniales"
+          ],
+          "planos": [
+            {
+              "img": "k10_pedalea",
+              "parte": 1.0,
+              "z": [
+                1.12,
+                1.3
+              ],
+              "foco": [
+                [
+                  0.42,
+                  0.58
+                ],
+                [
+                  0.5,
+                  0.58
+                ]
+              ]
+            }
+          ],
+          "sfx": [
+            {
+              "t": 0.0,
+              "s": "timbre_bici"
+            }
+          ]
+        }
+      ],
+      "continuo": true
+    },
+    {
+      "id": "s07_papeles",
+      "tipo": "accion",
+      "dur": 2.4,
+      "planos": [
+        {
+          "img": "k11_pila_papeles",
+          "parte": 1.0,
+          "z": [
+            1.05,
+            1.22
+          ],
+          "foco": [
+            [
+              0.42,
+              0.55
+            ],
+            [
+              0.5,
+              0.55
+            ]
+          ],
+          "tambaleo": 1.0
+        }
+      ],
+      "sfx": [
+        {
+          "t": 0.0,
+          "s": "papeles"
+        },
+        {
+          "t": 0.6,
+          "s": "boing"
+        },
+        {
+          "t": 1.4,
+          "s": "papeles"
+        }
+      ]
+    },
+    {
+      "id": "s08_mil_quince",
+      "tipo": "accion",
+      "dur": 1.5,
+      "nota": "Sin voz por ahora: ElevenLabs bloqueó la cuenta gratuita antes de generar esta línea.",
+      "planos": [
+        {
+          "img": "k12_clausulo_1015",
+          "parte": 1.0,
+          "z": [
+            1.45,
+            1.65
+          ],
+          "foco": [
+            [
+              0.48,
+              0.46
+            ],
+            [
+              0.48,
+              0.45
+            ]
+          ],
+          "fx": [
+            {
+              "tipo": "destello",
+              "t": 0.2,
+              "pos": [
+                0.29,
+                0.49
+              ]
+            }
+          ]
+        }
+      ],
+      "sfx": [
+        {
+          "t": 0.0,
+          "s": "whoosh"
+        },
+        {
+          "t": 0.2,
+          "s": "brillo"
+        }
+      ]
+    },
+    {
+      "id": "s09_1015",
+      "tipo": "ley",
+      "articulo": 1015,
+      "frases": [
+        {
+          "texto": "ARTÍCULO 1015.-",
+          "tts": "Artículo mil quince.",
+          "resaltar": [],
+          "planos": [
+            {
+              "img": "@pagina",
+              "parte": 1.0
+            }
+          ],
+          "sfx": [
+            {
+              "t": 0.0,
+              "s": "pagina"
+            }
+          ]
+        },
+        {
+          "texto": "Libertad de formas.",
+          "tts": "Libertad de formas.",
+          "resaltar": [
+            "Libertad de formas"
+          ],
+          "planos": [
+            {
+              "img": "k13_papeles_vuelan",
+              "parte": 1.0,
+              "z": [
+                1.05,
+                1.2
+              ],
+              "foco": [
+                [
+                  0.5,
+                  0.55
+                ],
+                [
+                  0.5,
+                  0.45
+                ]
+              ]
+            }
+          ],
+          "sfx": [
+            {
+              "t": 0.0,
+              "s": "papeles"
+            },
+            {
+              "t": 0.1,
+              "s": "whoosh"
+            }
+          ]
+        },
+        {
+          "texto": "Sólo son formales los contratos",
+          "tts": "Sólo son formales los contratos",
+          "resaltar": [
+            "formales"
+          ],
+          "planos": [
+            {
+              "img": "k14_holo_formas",
+              "parte": 1.0,
+              "z": [
+                1.06,
+                1.16
+              ],
+              "foco": [
+                [
+                  0.5,
+                  0.52
+                ],
+                [
+                  0.52,
+                  0.5
+                ]
+              ],
+              "fx": [
+                {
+                  "tipo": "brillo_zona",
+                  "pos": [
+                    0.76,
+                    0.41
+                  ],
+                  "radio": 0.16,
+                  "color": [
+                    120,
+                    220,
+                    255
+                  ]
+                }
+              ]
+            }
+          ],
+          "sfx": [
+            {
+              "t": 0.0,
+              "s": "holograma"
+            }
+          ]
+        },
+        {
+          "texto": "a los cuales la ley les impone una forma determinada.",
+          "tts": "a los cuales la ley les impone una forma determinada.",
+          "resaltar": [
+            "la ley les impone"
+          ],
+          "planos": [
+            {
+              "img": "k14_holo_formas",
+              "parte": 0.5,
+              "z": [
+                1.3,
+                1.4
+              ],
+              "foco": [
+                [
+                  0.62,
+                  0.5
+                ],
+                [
+                  0.64,
+                  0.5
+                ]
+              ],
+              "fx": [
+                {
+                  "tipo": "brillo_zona",
+                  "pos": [
+                    0.76,
+                    0.41
+                  ],
+                  "radio": 0.16,
+                  "color": [
+                    120,
+                    220,
+                    255
+                  ]
+                }
+              ]
+            },
+            {
+              "img": "k14_holo_formas",
+              "parte": 0.5,
+              "z": [
+                1.85,
+                1.95
+              ],
+              "foco": [
+                [
+                  0.76,
+                  0.5
+                ],
+                [
+                  0.76,
+                  0.49
+                ]
+              ],
+              "fx": [
+                {
+                  "tipo": "brillo_zona",
+                  "pos": [
+                    0.76,
+                    0.41
+                  ],
+                  "radio": 0.16,
+                  "color": [
+                    120,
+                    220,
+                    255
+                  ]
+                },
+                {
+                  "tipo": "destello",
+                  "t": 0.3,
+                  "pos": [
+                    0.81,
+                    0.37
+                  ]
+                }
+              ]
+            }
+          ],
+          "sfx": [
+            {
+              "t": 0.0,
+              "s": "whoosh"
+            },
+            {
+              "t": 2.4,
+              "s": "sello"
+            }
+          ]
+        }
+      ],
+      "continuo": true
+    },
+    {
+      "id": "s10_cierre_a",
+      "tipo": "dialogo",
+      "personaje": "clausulo",
+      "texto": "Para vender una bici, la ley no impone ninguna forma.",
+      "tts": "Para vender una bici, la ley no impone ninguna forma.",
+      "resaltar": [
+        "ninguna forma"
+      ],
+      "planos": [
+        {
+          "img": "k15_cierre_grupo",
+          "parte": 0.5,
+          "z": [
+            1.05,
+            1.12
+          ],
+          "foco": [
+            [
+              0.5,
+              0.55
+            ],
+            [
+              0.5,
+              0.55
+            ]
+          ],
+          "tarjeta": "arriba"
+        },
+        {
+          "img": "k15_cierre_grupo",
+          "parte": 0.5,
+          "z": [
+            1.7,
+            1.85
+          ],
+          "foco": [
+            [
+              0.47,
+              0.42
+            ],
+            [
+              0.48,
+              0.42
+            ]
+          ]
+        }
+      ],
+      "sfx": [
+        {
+          "t": 0.0,
+          "s": "timbre_bici"
+        },
+        {
+          "t": 1.9,
+          "s": "pop"
+        }
+      ]
+    },
+    {
+      "id": "s11_cierre_b",
+      "tipo": "dialogo",
+      "personaje": "clausulo",
+      "texto": "Si están de acuerdo, ya hay contrato.",
+      "tts": "Si están de acuerdo, ya hay contrato.",
+      "resaltar": [
+        "ya hay contrato"
+      ],
+      "planos": [
+        {
+          "img": "k15_cierre_grupo",
+          "parte": 1.0,
+          "z": [
+            1.55,
+            1.7
+          ],
+          "foco": [
+            [
+              0.25,
+              0.55
+            ],
+            [
+              0.26,
+              0.54
+            ]
+          ]
+        }
+      ],
+      "sfx": [
+        {
+          "t": 0.0,
+          "s": "whoosh"
+        },
+        {
+          "t": 0.3,
+          "s": "pop"
+        }
+      ]
+    },
+    {
+      "id": "s12_queda_resaltado",
+      "tipo": "final",
+      "personaje": "clausulo",
+      "texto": "¡Queda resaltado!",
+      "tts": "¡Queda resaltado!",
+      "resaltar": [],
+      "cola": 1.1,
+      "planos": [
+        {
+          "img": "k16_queda_resaltado",
+          "parte": 1.0,
+          "z": [
+            1.02,
+            1.1
+          ],
+          "foco": [
+            [
+              0.5,
+              0.55
+            ],
+            [
+              0.5,
+              0.55
+            ]
+          ],
+          "fx": [
+            {
+              "tipo": "brillo_zona",
+              "pos": [
+                0.66,
+                0.79
+              ],
+              "radio": 0.2,
+              "color": [
+                255,
+                235,
+                90
+              ]
+            }
+          ]
+        }
+      ],
+      "sfx": [
+        {
+          "t": 0.0,
+          "s": "ding"
+        },
+        {
+          "t": 0.35,
+          "s": "marcador"
+        }
+      ]
+    },
+    {
+      "id": "s13_loop",
+      "tipo": "loop",
+      "dur": 0.5,
+      "sfx": [
+        {
+          "t": 0.0,
+          "s": "whoosh"
+        }
+      ]
+    }
+  ],
+  "publicacion": {
+    "mini_historia": "Inciso le ofrece su bici a Codiguito: $50.000 y un apretón de manos. Codiguito frena todo — ¿no hacen falta papeles? Clausulo abre el Código y la ley responde.",
+    "dato_extra": {
+      "texto": "¿Y qué contrato hicieron? Una compraventa. Así la define el Código:",
+      "articulo": 1123
+    },
+    "excepcion": {
+      "texto": "Ojo: no es igual para todo. Hay contratos a los que la ley sí les impone una forma. Por ejemplo, el alquiler de una casa o un departamento:",
+      "articulo": 1188
+    },
+    "hashtags": [
+      "#CodigoCivilYComercial",
+      "#Derecho",
+      "#Contratos",
+      "#DerechoArgentino",
+      "#ClausulaLegal"
+    ]
+  }
+}

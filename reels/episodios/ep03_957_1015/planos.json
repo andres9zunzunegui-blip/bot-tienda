@@ -1,0 +1,117 @@
+[
+  {
+    "id": "k01_apreton",
+    "personajes": [
+      "codiguito",
+      "inciso"
+    ],
+    "accion": "Extreme close-up, low angle: the book's glove shakes the mate's glove in the center; a red bicycle out of focus behind; sparkle where the hands meet."
+  },
+  {
+    "id": "k02_clausulo_pregunta",
+    "personajes": [
+      "clausulo"
+    ],
+    "accion": "Medium shot: he looks into the camera with a curious raised eyebrow, hand on chin."
+  },
+  {
+    "id": "k04_inciso_ofrece",
+    "personajes": [
+      "codiguito",
+      "inciso"
+    ],
+    "accion": "Wide shot: the mate proudly presents a shiny red bicycle like a salesman; the book looks at it curious."
+  },
+  {
+    "id": "k05_codiguito_duda",
+    "personajes": [
+      "codiguito"
+    ],
+    "accion": "Medium shot: the book raises a glove palm forward in a 'wait, wait' gesture, skeptical frown."
+  },
+  {
+    "id": "k06_clausulo_ley",
+    "personajes": [
+      "clausulo"
+    ],
+    "accion": "He presents the plain red hardcover book, glowing with golden light, with an elegant gesture."
+  },
+  {
+    "id": "k07_holograma_contrato",
+    "personajes": [
+      "codiguito",
+      "inciso"
+    ],
+    "accion": "A blue-gold hologram of two luminous clasped hands floats above; book and mate look up amazed."
+  },
+  {
+    "id": "k08_dos_partes",
+    "personajes": [
+      "codiguito",
+      "inciso"
+    ],
+    "accion": "Dimmed stage lights: each character under its own spotlight, facing each other, pointing proudly at themselves."
+  },
+  {
+    "id": "k09_intercambio",
+    "personajes": [
+      "codiguito",
+      "inciso"
+    ],
+    "accion": "The mate hands the bicycle by the handlebar to the book, the book hands a plain brown envelope; sparkle trail."
+  },
+  {
+    "id": "k10_pedalea",
+    "personajes": [
+      "codiguito",
+      "inciso"
+    ],
+    "accion": "The book happily rides the red bicycle; the mate waves goodbye holding the plain envelope."
+  },
+  {
+    "id": "k11_pila_papeles",
+    "personajes": [
+      "clausulo",
+      "codiguito"
+    ],
+    "accion": "The book wobbles carrying an absurdly tall stack of blank papers; the man looks amused, hand on hip."
+  },
+  {
+    "id": "k12_clausulo_1015",
+    "personajes": [
+      "clausulo"
+    ],
+    "accion": "He raises his index finger with a knowing smile, golden sparkle at the fingertip."
+  },
+  {
+    "id": "k13_papeles_vuelan",
+    "personajes": [
+      "codiguito"
+    ],
+    "accion": "Blank papers fly away like a flock of birds toward the window; the book raises both gloves in relief."
+  },
+  {
+    "id": "k14_holo_formas",
+    "personajes": [
+      "clausulo"
+    ],
+    "accion": "He gestures to a hologram: a small glowing house with a red wax seal on top, a glowing bicycle floating free below."
+  },
+  {
+    "id": "k15_cierre_grupo",
+    "personajes": [
+      "clausulo",
+      "codiguito",
+      "inciso"
+    ],
+    "accion": "Group shot: the man explains to camera, the book sits on the bicycle, the mate gives a thumbs up."
+  },
+  {
+    "id": "k16_queda_resaltado",
+    "personajes": [
+      "clausulo",
+      "resaltato"
+    ],
+    "accion": "The man points up triumphantly; the highlighter stands fully in frame with a thumbs up and a glowing yellow streak on the floor; empty space above for the card."
+  }
+]

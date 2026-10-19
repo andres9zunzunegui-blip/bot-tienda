@@ -1,0 +1,301 @@
+<style>
+/* ============ Estudio de producción de la serie animada (agente 2 · .pr-) ============ */
+.pr-prod{display:flex;flex-direction:column;gap:14px;border-top:2px solid var(--oro);padding-top:18px;scroll-margin-top:12px}
+.pr-cols{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));align-items:start}
+.pr-sh{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;min-width:0}
+.pr-step{border-top:1px solid var(--line);padding:10px 0 4px;display:flex;flex-direction:column;gap:8px}
+.pr-step:first-of-type{border-top:0;padding-top:0}
+.pr-step b{font-size:14px}
+.pr-n{font:500 12px var(--f-mono);color:var(--oro-ink);margin-right:6px}
+.pr-sub{font-size:12px;color:var(--muted);font-weight:500}
+.pr-step select{width:auto;max-width:150px;padding:6px 8px;font-size:13px}
+.pr-sx{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.3fr) minmax(0,1fr);gap:8px}
+.pr-sx input{padding:7px 9px;font-size:13.5px}
+.pr-art{border:1px solid var(--line);border-radius:9px;padding:12px;display:flex;flex-direction:column;gap:8px;background:var(--bg);min-width:0}
+.pr-two{display:grid;grid-template-columns:120px minmax(0,1fr);gap:8px}
+.pr-chips{display:flex;flex-wrap:wrap;gap:5px}
+.pr-chips .chip{white-space:normal}
+.pr-chk{flex-direction:row!important;align-items:center;gap:8px!important;font-weight:600!important;color:var(--ink)!important;font-size:13px!important}
+.pr-chk input{width:auto;flex:none}
+.pr-diff{font-family:var(--f-display);font-size:17px;line-height:1.65;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;overflow-wrap:anywhere}
+.pr-diff del{color:var(--bad);text-decoration:line-through;background:color-mix(in srgb,var(--bad) 9%,transparent);border-radius:3px;padding:0 2px}
+.pr-diff ins{text-decoration:none;color:var(--bad);font-weight:700;background:color-mix(in srgb,var(--bad) 20%,transparent);border-radius:3px;padding:0 2px}
+.pr-seg{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line);padding-top:10px}
+.pr-seg:first-child{border-top:0;padding-top:0}
+.pr-cmd{font:500 12.5px var(--f-mono);background:var(--soft);color:var(--ink);border-radius:6px;padding:4px 8px;overflow-wrap:anywhere}
+.pr-eps{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr))}
+.pr-ep{border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px;background:var(--surface);min-width:0}
+.pr-ep.pr-next{border-color:var(--oro);box-shadow:inset 3px 0 0 var(--oro)}
+.pr-ep b.pr-t{font-weight:700;overflow-wrap:anywhere}
+.pr-bar{display:flex;gap:3px}
+.pr-bar i{flex:1;height:7px;border-radius:99px;background:var(--soft);display:block}
+.pr-bar i.on{background:var(--ok)}.pr-bar i.now{background:var(--oro)}.pr-bar i.blk{background:var(--bad)}.pr-bar i.na{background:transparent;box-shadow:inset 0 0 0 1px var(--line)}
+.pr-cast{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:13.5px}
+.pr-ok{color:var(--ok);font-weight:700}
+@media (max-width:600px){.pr-sx{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.pr-sx .pr-nota{grid-column:1/-1}.pr-two{grid-template-columns:minmax(0,1fr)}}
+</style>
+<script>
+"use strict";
+/* ============ Estudio de producción de la serie animada (agente 2 · prefijo pr_) ============ */
+const PR_PASOS=[["verificacion","0","Verificación jurídica","Texto vigente en InfoLEG o SAIJ, concordancias y excepciones"],["planos","1","Planos clave en Floot","Con las imágenes base del elenco"],["veo","2","Animación con Veo","Opcional"],["voces","3","Voces","2 tomas por línea, verificadas con el transcriptor"],["render","5","Composición y render","1080x1920, de 45 a 60 s"],["contacto","6","Hoja de contacto","Revisión cuadro por cuadro"],["descripcion","7","Descripción y primer comentario","Con las fuentes"]];
+const PR_EST=[["pendiente","Pendiente"],["curso","En curso"],["hecho","Hecho"],["bloqueado","Bloqueado"],["na","No aplica"]];
+const PR_PLAN=[{slug:"957_1015",arts:"957 y 1015",clausulo:"anteojos"},{slug:"959",arts:"959",clausulo:"lentes oscuros"},{slug:"985",arts:"985",clausulo:"anteojos"},{slug:"988",arts:"988",clausulo:"anteojos"},{slug:"984",arts:"984",clausulo:"lentes oscuros"},{slug:"1061",arts:"1061",clausulo:"anteojos"},{slug:"1088",arts:"1088",clausulo:"lentes oscuros"},{slug:"332",arts:"332",clausulo:"anteojos"}];
+const PR_VAR=[["anteojos","Anteojos dorados"],["lentes oscuros","Lentes oscuros"]];
+const PR_DISC="Contenido informativo: no reemplaza el asesoramiento de un abogado matriculado.";
+const PR_INFOLEG="http://servicios.infoleg.gob.ar/infolegInternet/anexos/235000-239999/235975/norma.htm";
+const PR_LEY_RE=/^\s*[\[(]?\s*(?:la\s+)?voz\s+de\s+la\s+ley\s*[\])]?\s*[:：—–-]\s*([\s\S]+)$/i;
+S.pr_plan=[];const pr_draft={};let pr_t=0;
+
+/* ---------- utilidades ---------- */
+const pr_norm=s=>String(s??"").normalize("NFC").replace(/[\s  -​  　]+/g," ").trim();
+const pr_toks=s=>pr_norm(s).split(" ").filter(Boolean);
+const pr_unq=s=>String(s).replace(/^[\s«"“'‘]+/,"").replace(/[\s»"”'’]+$/,"");
+const pr_nums=s=>(String(s||"").match(/\d+/g)||[]).map(Number);
+const pr_key=s=>[...new Set(pr_nums(s))].sort((a,b)=>a-b).join("_");
+function pr_expand(s){const out=[];String(s||"").replace(/(\d+)\s*(?:a|al|-|–)\s*(\d+)|(\d+)/g,(m,a,b,c)=>{if(c)out.push(+c);else{a=+a;b=+b;if(b>a&&b-a<=12)for(let i=a;i<=b;i++)out.push(i);else out.push(a,b)}return m});return[...new Set(out)]}
+const pr_paso=(r,k)=>(r.pr_pasos&&r.pr_pasos[k])||{};
+const pr_est=(r,k)=>pr_paso(r,k).estado||"pendiente";
+function pr_ef(r,k){const e=pr_est(r,k);if(e==="pendiente"&&k==="render"&&r.video&&r.video.url)return"hecho";if(e==="pendiente"&&k==="veo")return"opc";return e}
+function pr_actual(r){const p=PR_PASOS.find(([k])=>!["hecho","na","opc"].includes(pr_ef(r,k)));return p||null}
+const pr_slugOf=r=>pr_norm(r.pr_slug)||pr_key(r.articulos);
+function pr_t1(arts){const ns=pr_nums(arts);return(typeof T1!=="undefined"?T1:[]).find(([,a])=>pr_expand(a).some(n=>ns.includes(n)))||null}
+const pr_planAll=()=>{const seen=new Set(PR_PLAN.map(p=>p.slug));return[...PR_PLAN,...S.pr_plan.filter(p=>p&&p.slug&&!seen.has(p.slug)).sort((a,b)=>(a.createdAt||0)-(b.createdAt||0)).map(p=>({...p,custom:true}))]};
+function pr_reelDe(p){const rs=S.reels||[];return rs.find(r=>pr_norm(r.pr_slug)===p.slug)||rs.find(r=>!pr_norm(r.pr_slug)&&r.articulos&&pr_key(r.articulos)===p.slug)||null}
+const pr_chips=list=>list.map(([k,t])=>`<span class="chip ${k}">${esc(t)}</span>`).join("");
+
+/* ---------- La Voz de la ley contra el texto literal ---------- */
+function pr_leySegs(r){const segs=[];
+  const fromText=(t,where)=>String(t||"").split(/\n/).forEach(l=>{const m=l.match(PR_LEY_RE);if(m&&m[1].trim())segs.push({txt:pr_unq(m[1].trim()),where})});
+  (r.bloques||[]).forEach((b,i)=>{const w=`Bloque ${i+1}${b.tiempo?" ("+b.tiempo+")":""}`;const v=String(b.voz||"").trim();
+    if(b.pr_ley){if(v){const m=v.match(PR_LEY_RE);segs.push({txt:pr_unq(m?m[1]:v),where:w})}}else fromText(v,w)});
+  ["guionTexto","guion"].forEach(f=>{if(typeof r[f]==="string")fromText(r[f],"Guion")});
+  if(Array.isArray(r.escenas))r.escenas.forEach((e,i)=>{if(!e||typeof e!=="object")return;const quien=String(e.personaje||e.quien||"");const t=e.texto||e.linea||e.voz||e.dialogo||"";
+    if(typeof t!=="string")return;if(/voz\s+de\s+la\s+ley/i.test(quien)&&t.trim())segs.push({txt:pr_unq(t.trim()),where:"Escena "+(i+1)});else fromText(t,"Escena "+(i+1))});
+  return segs.filter(s=>pr_norm(s.txt))}
+function pr_align(a,b){const m=a.length,n=b.length;const D=[];for(let i=0;i<=m;i++){const row=new Uint16Array(n+1);row[0]=i;D.push(row)}
+  for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)D[i][j]=Math.min(D[i-1][j-1]+(a[i-1]===b[j-1]?0:1),D[i-1][j]+1,D[i][j-1]+1);
+  let bj=0;for(let j=1;j<=n;j++)if(D[m][j]<D[m][bj])bj=j;
+  const ops=[];let i=m,j=bj;
+  while(i>0){if(j>0&&D[i][j]===D[i-1][j-1]+(a[i-1]===b[j-1]?0:1)){ops.push(a[i-1]===b[j-1]?["eq",a[i-1]]:["sub",b[j-1],a[i-1]]);i--;j--}
+    else if(D[i][j]===D[i-1][j]+1){ops.push(["ins",a[i-1]]);i--}else{ops.push(["del",b[j-1]]);j--}}
+  ops.reverse();return{cost:D[m][bj],ops,start:j,end:bj,n}}
+function pr_check(r){const arts=(r.pr_articulos||[]).filter(a=>pr_norm(a.texto));const segs=pr_leySegs(r);
+  const out=segs.map(s=>{const a=pr_toks(s.txt);let best=null;
+    arts.forEach(art=>{const base=pr_toks(art.texto);const cands=[base];
+      if(/^art/i.test(a[0]||"")){const ep=pr_norm(art.epigrafe);cands.push([...pr_toks(`Artículo ${pr_norm(art.num)}.${ep?" "+ep.replace(/\.?$/,"."):""}`),...base])}
+      cands.forEach(b=>{const al=pr_align(a,b);if(!best||al.cost<best.cost)best={...al,art,b}})});
+    const warns=[];if(best&&best.cost===0){const b=best.b;
+      if(best.start>0&&!/[.:;]$/.test(b[best.start-1]))warns.push("Empieza a mitad de oración: revisá que no falte el comienzo.");
+      if(best.end<b.length&&!/[.:;]$/.test(b[best.end-1]))warns.push("Corta a mitad de oración: revisá que no falte el final.")}
+    return{...s,len:a.length,best,warns,ok:!!best&&best.cost===0,lejos:!!best&&best.cost>Math.max(3,a.length*.5)}});
+  const diffs=out.reduce((t,s)=>t+(s.best?s.best.cost:0),0);
+  return{segs:out,arts,diffs,ok:out.length>0&&arts.length>0&&out.every(s=>s.ok)}}
+function pr_cambios(ops){const out=[];let cur=null;const flush=()=>{if(cur){out.push(cur);cur=null}};
+  ops.forEach(o=>{if(o[0]==="eq"){flush();return}cur=cur||{lit:[],gui:[]};if(o[0]==="sub"){cur.lit.push(o[1]);cur.gui.push(o[2])}else if(o[0]==="del")cur.lit.push(o[1]);else cur.gui.push(o[1])});flush();
+  return out.map(c=>c.lit.length&&c.gui.length?`Cambia «${c.lit.join(" ")}» por «${c.gui.join(" ")}»`:c.lit.length?`Falta «${c.lit.join(" ")}»`:`Sobra «${c.gui.join(" ")}»`)}
+function pr_diffHtml(ops){return ops.map(o=>o[0]==="eq"?esc(o[1]):o[0]==="sub"?`<del>${esc(o[1])}</del> <ins>${esc(o[2])}</ins>`:o[0]==="del"?`<del>${esc(o[1])}</del>`:`<ins>${esc(o[1])}</ins>`).join(" ")}
+function pr_matchInner(r){const m=pr_check(r);const bl=r.bloques||[];
+  const head=!m.segs.length?`<div class="pr-chips"><span class="chip warn">No encontré líneas de la Voz de la ley en el guion</span></div><p class="small muted" style="margin:0">Escribilas en la voz en off empezando con “Voz de la ley:”, o marcá abajo los bloques que lee la Voz de la ley.</p>`
+    :!m.arts.length?`<div class="pr-chips"><span class="chip warn">Hay ${m.segs.length} ${m.segs.length===1?"línea":"líneas"} de la Voz de la ley, pero falta pegar el texto literal del artículo</span></div>`
+    :`<div class="pr-chips">${m.ok?`<span class="chip ok">Coincide palabra por palabra con el texto literal</span>`:`<span class="chip bad">${m.diffs} ${m.diffs===1?"diferencia":"diferencias"} con el texto literal: corregí el guion, no el artículo</span>`}</div>`;
+  const segs=m.arts.length?m.segs.map(s=>{const b=s.best;if(!b)return"";const ch=pr_cambios(b.ops);
+    return `<div class="pr-seg"><div class="pr-sh"><span class="small"><b>${esc(s.where)}</b> · contra el art. ${esc(pr_norm(b.art.num)||"?")}</span>${s.ok?`<span class="chip ok">Literal</span>`:`<span class="chip bad">${b.cost} ${b.cost===1?"diferencia":"diferencias"}</span>`}</div>
+    ${s.lejos?`<span class="small" style="color:var(--bad)">No se parece a ningún artículo cargado: ¿pegaste el artículo correcto?</span>`:""}
+    <div class="pr-diff">${pr_diffHtml(b.ops)}</div>
+    ${ch.length?`<ul class="small" style="margin:0;padding-left:18px;color:var(--bad)">${ch.slice(0,8).map(c=>`<li>${esc(c)}</li>`).join("")}${ch.length>8?`<li>y ${ch.length-8} más</li>`:""}</ul>`:""}
+    ${s.warns.map(w=>`<span class="chip warn" style="white-space:normal;align-self:flex-start">${esc(w)}</span>`).join("")}</div>`}).join(""):"";
+  return `<div class="ph"><h3>La Voz de la ley contra el texto literal</h3><span class="small muted">Se ignoran solo los espacios</span></div>${head}
+  ${m.segs.length&&m.arts.length?`<span class="small muted">Tachado: lo que dice el artículo. Resaltado en rojo: lo que dice el guion.</span>`:""}${segs}
+  ${bl.length?`<details${bl.some(b=>b.pr_ley)?" open":""}><summary>Bloques que lee la Voz de la ley (${bl.filter(b=>b.pr_ley).length})</summary><div style="display:flex;flex-direction:column;gap:6px;padding-top:8px">${bl.map((b,i)=>`<label class="pr-chk"><input type="checkbox" data-prley="${i}" ${b.pr_ley?"checked":""}><span>Bloque ${i+1}${b.tiempo?" ("+esc(b.tiempo)+")":""}: <span class="muted" style="font-weight:500">${esc(String(b.voz||"sin voz").slice(0,70))}${String(b.voz||"").length>70?"…":""}</span></span></label>`).join("")}</div></details>`:""}`}
+
+/* ---------- Descripción y primer comentario (reglas fijas, sin IA) ---------- */
+const pr_lit=t=>String(t||"").replace(/[ \t ]+/g," ").replace(/\s*\n\s*/g,"\n").trim();
+function pr_genCap(r){const arts=(r.pr_articulos||[]).filter(a=>pr_norm(a.texto));const parts=[];
+  const h=String(r.pr_historia||"").trim()||String(r.gancho||"").trim();if(h)parts.push(h);
+  if(arts.length)parts.push(`${arts.length>1?"Lo que dicen los artículos":"Lo que dice el artículo"} del Código Civil y Comercial:\n\n`+arts.map(a=>`Artículo ${pr_norm(a.num)}${pr_norm(a.epigrafe)?". "+pr_norm(a.epigrafe).replace(/\.$/,""):""}\n“${pr_lit(a.texto)}”`).join("\n\n"));
+  if(r.pr_datoOk&&pr_norm(r.pr_dato))parts.push("Dato extra: "+pr_norm(r.pr_dato));
+  if(pr_norm(r.cta))parts.push(pr_norm(r.cta));
+  parts.push(PR_DISC);return parts.join("\n\n")}
+function pr_genFc(r){const arts=(r.pr_articulos||[]).filter(a=>pr_norm(a.num));const L=["Fuentes:"];
+  arts.forEach(a=>L.push(`• Art. ${pr_norm(a.num)} del Código Civil y Comercial de la Nación (Ley 26.994)${pr_norm(a.fuente)?": "+pr_norm(a.fuente):""}${a.verificado?` · texto vigente verificado el ${dia(a.verificado)}`:""}`));
+  if(pr_norm(r.pr_concordancias))L.push("Concordancias: "+pr_norm(r.pr_concordancias));
+  if(pr_norm(r.pr_excepciones))L.push("Excepciones: "+pr_norm(r.pr_excepciones));
+  if(r.pr_datoOk&&pr_norm(r.pr_dato)&&pr_norm(r.pr_datoFuente))L.push("Dato extra: "+pr_norm(r.pr_datoFuente));
+  return L.join("\n")}
+const pr_titulo=v=>/\bdra?\.|\bdoctora?\b|matr[ií]cul/i.test(String(v||"").split(PR_DISC).join(" "));
+function pr_capChecks(r,cap){const w=[];const tot=cap.length+(pr_norm(r.hashtags)?2+String(r.hashtags).length:0);
+  if(!pr_norm(cap))return[["warn","Todavía no hay descripción. Tocá “Generar”."]];
+  if(tot>2200)w.push(["bad",`${tot} caracteres con los hashtags: Instagram permite hasta 2.200.`]);
+  if(pr_titulo(cap))w.push(["bad","Menciona “Dr.”, “Doctor” o una matrícula: no corresponde."]);
+  if(!pr_norm(cap).endsWith(PR_DISC))w.push(["bad","Tiene que terminar con: "+PR_DISC]);
+  (r.pr_articulos||[]).filter(a=>pr_norm(a.num)||pr_norm(a.texto)).forEach(a=>{if(!pr_norm(a.texto))w.push(["bad",`El art. ${pr_norm(a.num)||"?"} no tiene texto literal cargado.`]);else if(!pr_norm(cap).includes(pr_norm(a.texto)))w.push(["bad",`El texto del art. ${pr_norm(a.num)||"?"} no está igual al literal.`])});
+  if(!(r.pr_articulos||[]).some(a=>pr_norm(a.texto)))w.push(["warn","No hay artículos literales cargados."]);
+  return w}
+function pr_fcChecks(r,fc){const w=[];if(!pr_norm(fc))return[["warn","Todavía no hay primer comentario."]];
+  if(fc.length>2200)w.push(["bad",`${fc.length} caracteres: Instagram permite hasta 2.200.`]);
+  if(pr_titulo(fc))w.push(["bad","Menciona “Dr.”, “Doctor” o una matrícula: no corresponde."]);
+  (r.pr_articulos||[]).filter(a=>pr_norm(a.num)).forEach(a=>{if(!pr_norm(a.fuente))w.push(["warn",`Falta la fuente del art. ${pr_norm(a.num)}.`])});
+  return w}
+function pr_chkHtml(list,n,extra){return `<div class="pr-chips" aria-live="polite"><span class="small muted" style="width:100%">${n} / 2.200 caracteres${extra||""}</span>${list.length?pr_chips(list):`<span class="chip ok">Sin problemas</span>`}</div>`}
+const pr_capBox=(r,cap)=>pr_chkHtml(pr_capChecks(r,cap),cap.length+(pr_norm(r.hashtags)?2+String(r.hashtags).length:0),pr_norm(r.hashtags)?" (con los hashtags)":"");
+const pr_fcBox=(r,fc)=>pr_chkHtml(pr_fcChecks(r,fc),fc.length);
+
+/* ---------- Sección "Producción" dentro del editor de reel ---------- */
+function pr_artWarns(a){const w=[];if(!pr_norm(a.texto))w.push(["bad","Falta el texto literal"]);else if(/^art[ií]culo\s+\d/i.test(pr_norm(a.texto)))w.push(["warn","Pegá solo el texto: número y epígrafe van en sus campos"]);
+  if(!pr_norm(a.fuente))w.push(["warn","Sin fuente"]);else if(!/infoleg|saij/i.test(a.fuente))w.push(["warn","La fuente no es InfoLEG ni SAIJ"]);
+  if(!a.verificado)w.push(["warn","Sin fecha de verificación"]);else if(Date.now()-Date.parse(a.verificado+"T12:00:00-03:00")>180*864e5)w.push(["warn","Verificado hace más de 6 meses: revisá que siga vigente"]);
+  return w}
+function pr_section(r){const pas=r.pr_pasos||{};const arts=r.pr_articulos||[];const slug=pr_slugOf(r);const done=PR_PASOS.filter(([k])=>["hecho","na"].includes(pr_ef(r,k))).length;
+  const plan=pr_planAll().find(p=>p.slug===slug);const variante=r.pr_clausulo||(plan&&plan.clausulo)||"";
+  const cap=pr_draft[r.id]?pr_draft[r.id].cap:(r.caption||"");const fc=pr_draft[r.id]?pr_draft[r.id].fc:(r.primerComentario||"");
+  const fromField=pr_expand(r.articulos).filter(n=>!arts.some(a=>pr_nums(a.num)[0]===n));
+  return `<section class="pr-prod" id="pr-prod" aria-label="Producción">
+  <div class="pr-sh"><div><div class="eyebrow">Estudio de producción · Serie animada</div><h2>Producción</h2></div><button class="btn primary" data-pract="save">Guardar</button></div>
+  <div class="fields"><label for="pr-slug">Slug del episodio<input id="pr-slug" data-prp="pr_slug" value="${esc(r.pr_slug||"")}" placeholder="${esc(pr_key(r.articulos)||"Ej.: 959")}"></label>
+   <label for="pr-var">Clausulo en este episodio<select id="pr-var" data-prp="pr_clausulo"><option value="">${plan?"Según el plan: "+esc(plan.clausulo):"Elegí"}</option>${opts(PR_VAR,r.pr_clausulo||"")}</select></label></div>
+  <div class="pr-sh"><span class="small">Comando: <code class="pr-cmd" id="pr-cmd">./producir.sh ${esc(slug||"<slug>")}</code>${variante?` · Clausulo con ${esc(variante)}`:""}</span><button class="btn sm" data-pract="cmdReel">Copiar comando</button></div>
+  <div class="pr-cols">
+   <div class="panel"><div class="ph"><h3>Pipeline del episodio</h3><span class="chip ${done===PR_PASOS.length?"ok":""}">${done} de ${PR_PASOS.length}</span></div>
+    ${PR_PASOS.map(([k,n,l,sub])=>{const p=pas[k]||{};const ef=pr_ef(r,k);return `<div class="pr-step"><div class="pr-sh"><span><span class="pr-n">${n}</span><b>${esc(l)}</b><br><span class="pr-sub">${esc(sub)}${ef==="hecho"&&pr_est(r,k)==="pendiente"?" · ya hay video cargado":""}</span></span>
+     <select aria-label="Estado: ${esc(l)}" data-prp="pr_pasos.${k}.estado">${opts(PR_EST,p.estado||"pendiente")}</select></div>
+     <div class="pr-sx"><input class="pr-nota" aria-label="Nota: ${esc(l)}" data-prp="pr_pasos.${k}.nota" value="${esc(p.nota||"")}" placeholder="${p.estado==="bloqueado"?"¿Qué lo bloquea?":"Nota"}"><input type="date" aria-label="Fecha: ${esc(l)}" data-prp="pr_pasos.${k}.fecha" value="${esc(p.fecha||"")}"><input aria-label="Quién: ${esc(l)}" data-prp="pr_pasos.${k}.quien" value="${esc(p.quien||"")}" placeholder="Quién"></div></div>`}).join("")}
+   </div>
+   <div class="panel"><div class="ph"><h3>Artículos literales</h3><span class="small muted">${arts.length} ${arts.length===1?"artículo":"artículos"}</span></div>
+    <p class="small muted" style="margin:0">Pegá el texto vigente tal cual figura en InfoLEG o SAIJ. La app nunca completa texto legal por vos.</p>
+    ${arts.map((a,i)=>`<div class="pr-art"><div class="pr-two"><label for="pr-a${i}n">Artículo<input id="pr-a${i}n" data-prp="pr_articulos.${i}.num" value="${esc(a.num||"")}" inputmode="numeric"></label><label for="pr-a${i}e">Epígrafe<input id="pr-a${i}e" data-prp="pr_articulos.${i}.epigrafe" value="${esc(a.epigrafe||"")}" placeholder="Ej.: Definición"></label></div>
+     <label for="pr-a${i}t">Texto literal<textarea id="pr-a${i}t" data-prp="pr_articulos.${i}.texto" spellcheck="false" style="min-height:110px" placeholder="Pegá acá el texto del artículo, sin modificarlo">${esc(a.texto||"")}</textarea></label>
+     <div class="pr-two"><label for="pr-a${i}v">Verificado el<input id="pr-a${i}v" type="date" data-prp="pr_articulos.${i}.verificado" value="${esc(a.verificado||"")}"></label><label for="pr-a${i}f">Fuente (URL de InfoLEG o SAIJ)<input id="pr-a${i}f" type="url" data-prp="pr_articulos.${i}.fuente" value="${esc(a.fuente||"")}" placeholder="https://servicios.infoleg.gob.ar/…"></label></div>
+     <div class="pr-chips" id="pr-aw${i}">${pr_chips(pr_artWarns(a))}</div>
+     <div class="btns"><a class="link" href="${PR_INFOLEG}" target="_blank" rel="noopener">Abrir el Código en InfoLEG</a><button class="link" data-pract="hoy" data-i="${i}">Verificado hoy</button><button class="link" data-pract="delArt" data-i="${i}">Quitar</button></div></div>`).join("")}
+    <div class="btns"><button class="btn sm" data-pract="addArt">Agregar artículo</button>${fromField.length?`<button class="btn sm" data-pract="fromField">Crear filas para art. ${esc(fromField.join(", "))}</button>`:""}</div>
+    <label for="pr-conc">Concordancias<textarea id="pr-conc" data-prp="pr_concordancias" style="min-height:56px" placeholder="Ej.: arts. 958, 959 y 1015 a 1018">${esc(r.pr_concordancias||"")}</textarea></label>
+    <label for="pr-exc">Excepciones<textarea id="pr-exc" data-prp="pr_excepciones" style="min-height:56px" placeholder="Ej.: contratos que exigen forma escrita">${esc(r.pr_excepciones||"")}</textarea></label>
+   </div></div>
+  <div class="panel" id="pr-match">${pr_matchInner(r)}</div>
+  <div class="panel"><div class="ph"><h3>Descripción y primer comentario</h3><span class="small muted">Con reglas fijas, sin IA</span></div>
+   <label for="pr-hist">Mini historia (2 a 4 líneas; si la dejás vacía, se usa el gancho)<textarea id="pr-hist" data-prp="pr_historia" style="min-height:70px" placeholder="Ej.: Inciso le vendió su bici a Resaltato con un apretón de manos. Al otro día, se arrepintió…">${esc(r.pr_historia||"")}</textarea></label>
+   <div class="fields"><label for="pr-dato">Dato extra (opcional)<input id="pr-dato" data-prp="pr_dato" value="${esc(r.pr_dato||"")}"></label><label for="pr-datof">Fuente del dato extra<input id="pr-datof" data-prp="pr_datoFuente" value="${esc(r.pr_datoFuente||"")}" placeholder="URL o norma"></label></div>
+   <label class="pr-chk"><input type="checkbox" data-prp="pr_datoOk" ${r.pr_datoOk?"checked":""}><span>Verifiqué el dato extra en una fuente oficial (si no, no se incluye)</span></label>
+   <button class="btn primary" data-pract="gen" style="align-self:flex-start">Generar descripción y primer comentario</button>
+   <label for="pr-cap">Descripción del reel<textarea id="pr-cap" style="min-height:220px">${esc(cap)}</textarea></label><div id="pr-capchk">${pr_capBox(r,cap)}</div>
+   <label for="pr-fc">Primer comentario (fuentes)<textarea id="pr-fc" style="min-height:110px">${esc(fc)}</textarea></label><div id="pr-fcchk">${pr_fcBox(r,fc)}</div>
+   <div class="btns"><button class="btn" data-pract="copyCap">Copiar descripción</button><button class="btn" data-pract="copyFc">Copiar comentario</button><button class="btn primary" data-pract="saveTxt">Guardar en el reel</button></div>
+   <span class="small muted">Se guardan como descripción y primer comentario del reel: los mismos que usa la Sala de reels. Los hashtags van aparte, como siempre.</span></div>
+  </section>`}
+function pr_refresh(){const r=reelEditing;if(!r||!$("#pr-prod"))return;
+  const m=$("#pr-match");if(m){const op=m.querySelector("details")?.open;m.innerHTML=pr_matchInner(r);const d=m.querySelector("details");if(d&&op)d.open=true}
+  (r.pr_articulos||[]).forEach((a,i)=>{const w=document.getElementById("pr-aw"+i);if(w)w.innerHTML=pr_chips(pr_artWarns(a))});
+  const c=$("#pr-cmd");if(c)c.textContent="./producir.sh "+(pr_slugOf(r)||"<slug>");
+  const cap=$("#pr-cap"),fc=$("#pr-fc");if(cap)$("#pr-capchk").innerHTML=pr_capBox(r,cap.value);if(fc)$("#pr-fcchk").innerHTML=pr_fcBox(r,fc.value);
+  const s=$("#reelSide");if(s)s.innerHTML=reelSide()}
+const pr_later=()=>{clearTimeout(pr_t);pr_t=setTimeout(pr_refresh,250)};
+
+/* envolver el editor de reel */
+const pr_drawReel0=drawReel;drawReel=function(keep){const d0=$(".drawer");const st=keep&&d0?d0.scrollTop:0;pr_drawReel0(keep);
+  const dr=$("#drawerRoot .drawer");if(!dr||!reelEditing)return;
+  dr.querySelector(":scope > .btns")?.insertAdjacentHTML("beforeend",`<button class="btn" data-pract="goProd">Producción</button>`);
+  dr.insertAdjacentHTML("beforeend",pr_section(reelEditing));if(keep)dr.scrollTop=st};
+const pr_reelChecks0=reelChecks;reelChecks=r=>{const c=pr_reelChecks0(r);try{const m=pr_check(r);
+  if(m.segs.length&&!m.arts.length)c.push(["warn","Hay líneas de la Voz de la ley: falta pegar el texto literal en Producción"]);
+  else if(m.segs.length)c.push(m.ok?["ok","La Voz de la ley coincide palabra por palabra con el texto literal"]:["bad",`La Voz de la ley no coincide con el texto literal: ${m.diffs} ${m.diffs===1?"diferencia":"diferencias"} (mirá Producción)`]);
+  else if(m.arts.length)c.push(["warn","Cargaste el artículo, pero no hay líneas de la Voz de la ley en el guion"]);
+  const b=PR_PASOS.find(([k])=>pr_est(r,k)==="bloqueado");if(b)c.push(["bad",`Producción bloqueada en “${b[2]}”${pr_paso(r,b[0]).nota?": "+pr_paso(r,b[0]).nota:""}`])}catch(e){}return c};
+const pr_pasoDe0=pasoDe;pasoDe=r=>{const p=pr_pasoDe0(r);if(pr_est(r,"voces")==="hecho"){p.voces=true;p.guion=true}return p};
+
+/* ---------- Tablero "Serie animada" ---------- */
+function pr_bloqueos(r,p){const b=[];
+  if(!r){b.push(["warn","Todavía no tiene reel en la app"]);return b}
+  PR_PASOS.forEach(([k,,l])=>{if(pr_est(r,k)==="bloqueado")b.push(["bad",`${l}: ${pr_paso(r,k).nota||"bloqueado"}`])});
+  const vozOk=["hecho","na"].includes(pr_est(r,"voces"));
+  if(!vozOk&&pr_est(r,"voces")!=="bloqueado"&&pr_ef(r,"render")==="hecho")b.push(["bad","Faltan voces"]);
+  const arts=r.pr_articulos||[];if(!arts.length)b.push(["warn","Faltan los artículos literales"]);else arts.forEach(a=>{if(!pr_norm(a.texto))b.push(["bad",`Falta el texto literal del art. ${pr_norm(a.num)||"?"}`])});
+  try{const m=pr_check(r);if(m.segs.length&&m.arts.length&&!m.ok)b.push(["bad",`La Voz de la ley no coincide (${m.diffs})`])}catch(e){}
+  if(pr_est(r,"verificacion")!=="hecho")b.push(["warn","Falta la verificación jurídica"]);
+  if(pr_ef(r,"render")==="hecho"&&!pr_norm(r.caption))b.push(["warn","Falta la descripción"]);
+  return b}
+function pr_barra(r){return `<div class="pr-bar" aria-label="Avance del pipeline">${PR_PASOS.map(([k,,l])=>{const e=r?pr_ef(r,k):"pendiente";const now=r&&pr_actual(r)&&pr_actual(r)[0]===k;
+  return `<i class="${e==="hecho"?"on":e==="bloqueado"?"blk":e==="na"||e==="opc"?"na":now?"now":""}" title="${esc(l)}"></i>`}).join("")}</div>`}
+function pr_siguiente(){return pr_planAll().map(p=>({p,r:pr_reelDe(p)})).find(x=>!x.r||pr_actual(x.r))||null}
+function pr_epCard(p,isNext){const r=pr_reelDe(p);const t1=pr_t1(p.arts);const act=r?pr_actual(r):PR_PASOS[0];const var_=(r&&r.pr_clausulo)||p.clausulo;
+  return `<article class="pr-ep${isNext?" pr-next":""}"><div class="pr-sh"><span class="tep">${esc(p.slug)}</span><span class="chip gold">Clausulo: ${esc(var_)}</span></div>
+  <b class="pr-t">${esc(r?(r.titulo||"Reel sin título"):"Art. "+p.arts)}</b>
+  <span class="small muted">Art. ${esc(p.arts)}${t1?` · T1 · Ep. ${esc(t1[0])}: ${esc(t1[2])}`:""}${p.nota?` · ${esc(p.nota)}`:""}</span>
+  ${pr_barra(r)}
+  <span class="small">${act?`Paso actual: <b>${esc(act[1])} · ${esc(act[2])}</b>`:`<span class="pr-ok">Pipeline completo</span>`}</span>
+  <div class="pr-chips">${pr_chips(pr_bloqueos(r,p))}</div>
+  <div class="pr-sh"><code class="pr-cmd">./producir.sh ${esc(p.slug)}</code><button class="btn sm" data-pract="cmd" data-slug="${esc(p.slug)}">Copiar</button></div>
+  <div class="btns">${r?`<button class="btn sm primary" data-ract="open" data-id="${esc(r.id)}">Abrir reel</button>`:`<button class="btn sm primary" data-pract="crear" data-slug="${esc(p.slug)}">Crear reel con estos datos</button>`}${p.custom?`<button class="btn sm danger" data-pract="delPlan" data-slug="${esc(p.slug)}">Quitar del plan</button>`:""}</div></article>`}
+function pr_vista(){const plan=pr_planAll();const nx=pr_siguiente();const comp=plan.filter(p=>{const r=pr_reelDe(p);return r&&!pr_actual(r)}).length;
+  const otros=(S.reels||[]).filter(r=>(r.pr_pasos||r.pr_articulos||r.formato==="personajes")&&!plan.some(p=>pr_reelDe(p)===r));
+  return `<div class="head"><div><div class="eyebrow">Serie animada · Clausulo, Codiguito, Inciso y Resaltato</div><h1>Estudio de producción</h1><p>Cada episodio con su paso del pipeline, la variante de Clausulo, lo que lo bloquea y el comando para producirlo. El detalle de cada paso se completa en la sección “Producción” del reel.</p></div>
+  <div class="btns"><button class="btn" data-pract="copyAll">Copiar comandos pendientes</button></div></div>
+  ${nx?`<section class="panel next"><span class="eyebrow">Lo próximo en la serie</span><div class="nrow"><b>Art. ${esc(nx.p.arts)}: ${nx.r?esc((pr_actual(nx.r)||["",""," "])[2].toLowerCase()):"crear el reel"}</b>${nx.r?`<button class="btn primary sm" data-ract="open" data-id="${esc(nx.r.id)}">Abrir</button>`:`<button class="btn primary sm" data-pract="crear" data-slug="${esc(nx.p.slug)}">Crear</button>`}</div><span class="small muted">Comando: <code class="pr-cmd">./producir.sh ${esc(nx.p.slug)}</code> · Clausulo con ${esc((nx.r&&nx.r.pr_clausulo)||nx.p.clausulo)}</span></section>`:""}
+  <section class="panel"><div class="ph"><h2>Episodios planificados</h2><span class="small muted">${comp} de ${plan.length} con el pipeline completo</span></div>
+   <div class="pr-eps">${plan.map(p=>pr_epCard(p,nx&&nx.p.slug===p.slug)).join("")}</div>
+   <span class="small muted">Barras, en orden: ${PR_PASOS.map(([,n,l])=>n+" "+l.toLowerCase()).join(" · ")}. Contorno vacío: no aplica u opcional.</span></section>
+  ${otros.length?`<section class="panel"><div class="ph"><h2>Otros reels de la serie</h2></div><div class="list">${otros.map(r=>{const a=pr_actual(r);return `<div class="row"><div><div class="t">${esc(r.titulo||"Sin título")}</div><div class="s">${r.articulos?"Art. "+esc(r.articulos)+" · ":""}${a?"Paso: "+esc(a[2]):"Pipeline completo"}</div></div><button class="link" data-ract="open" data-id="${esc(r.id)}">Abrir</button></div>`}).join("")}</div></section>`:""}
+  <div class="grid">
+   <section class="panel"><h2>Elenco y reglas de oro</h2>
+    <ul class="pr-cast"><li><b>Clausulo</b>: el anfitrión. Barba y anteojos dorados; en algunos episodios, lentes oscuros (seguí la rotación del plan).</li><li><b>Codiguito</b>: un libro rojo.</li><li><b>Inciso</b>: un mate.</li><li><b>Resaltato</b>: un resaltador.</li><li><b>La Voz de la ley</b>: narrador en off. Lee SOLO el texto literal del artículo.</li></ul>
+    <h3>Reglas de oro</h3>
+    <ol class="pr-cast"><li>La Voz de la ley no parafrasea: lo que dice tiene que coincidir palabra por palabra con el texto vigente.</li><li>Antes de producir, verificá en InfoLEG o SAIJ el texto vigente, las concordancias y las excepciones.</li><li>Nadie es “Doctor” ni “Dr.”, y nunca se afirma una matrícula.</li><li>La descripción termina con: “${esc(PR_DISC)}”</li><li>Las fuentes van en el primer comentario.</li><li>Video 1080x1920, de 45 a 60 segundos; voces con 2 tomas por línea, verificadas con el transcriptor.</li><li>Nada se publica sin tu aprobación en la Sala de reels.</li></ol></section>
+   <section class="panel"><h2>Pipeline y comando</h2>
+    <ol class="pr-cast" start="0">${PR_PASOS.map(([,n,l,s])=>`<li value="${n}"><b>${esc(l)}</b>: <span class="muted">${esc(s)}</span></li>`).join("")}</ol>
+    <p class="small" style="margin:0">Por episodio, en la carpeta <code class="pr-cmd">reels/</code> de tu repositorio:</p><div class="pr-sh"><code class="pr-cmd">./producir.sh &lt;slug&gt;</code><span class="small muted">Ej.: ./producir.sh 959</span></div></section>
+   <section class="panel"><h2>Agregar episodio al plan</h2>
+    <div class="fields"><label for="pr-nslug">Slug<input id="pr-nslug" placeholder="Ej.: 1059_1060"></label><label for="pr-narts">Artículos<input id="pr-narts" placeholder="Ej.: 1059 y 1060"></label><label for="pr-nvar">Clausulo<select id="pr-nvar">${opts(PR_VAR,"anteojos")}</select></label></div>
+    <button class="btn sm" data-pract="addPlan" style="align-self:flex-start">Agregar al plan</button>
+    <span class="small muted">Los episodios agregados se guardan en tu cuenta. Los ocho del plan original quedan fijos.</span></section>
+  </div>`}
+
+/* vista nueva y acceso desde Reels */
+{const i=VIEWS.findIndex(v=>v[0]==="reels");VIEWS.splice(i<0?VIEWS.length:i+1,0,["produccion","Producción"]);SHORT.produccion="Prod."}
+const pr_render0=render;render=function(){if(current!=="produccion")return pr_render0();renderNav();const v=$("#view");const y=window.scrollY;v.innerHTML=pr_vista();if(render.keep)window.scrollTo(0,y);render.keep=true};
+const pr_vReels0=vReels;vReels=()=>{const h=pr_vReels0();const nx=pr_siguiente();
+  const strip=`<section class="panel"><div class="pr-sh"><span><span class="eyebrow">Serie animada</span><br><b>${nx?`Próximo: art. ${esc(nx.p.arts)} · ${nx.r?esc((pr_actual(nx.r)||["","","completo"])[2]):"falta crear el reel"}`:"Todos los episodios planificados están completos"}</b></span><a class="btn sm" href="#produccion" style="text-decoration:none">Estudio de producción</a></div></section>`;
+  const k=h.indexOf(`<section class="panel" style="border-color:var(--oro)">`);return k<0?h+strip:h.slice(0,k)+strip+h.slice(k)};
+
+/* ---------- eventos ---------- */
+document.addEventListener("input",e=>{const t=e.target;if(!reelEditing)return;
+  if(t.dataset&&t.dataset.prp){sp(reelEditing,t.dataset.prp,t.type==="checkbox"?t.checked:t.value);pr_later();return}
+  if(t.id==="pr-cap"||t.id==="pr-fc"){pr_draft[reelEditing.id]={cap:$("#pr-cap").value,fc:$("#pr-fc").value};pr_later();return}
+  if(t.dataset&&t.dataset.rp)pr_later()});
+document.addEventListener("change",e=>{const t=e.target;if(!reelEditing)return;
+  if(t.dataset&&t.dataset.prley!==undefined){const b=(reelEditing.bloques||[])[+t.dataset.prley];if(b){b.pr_ley=t.checked;pr_refresh()}return}
+  if(!t.dataset||!t.dataset.prp)return;sp(reelEditing,t.dataset.prp,t.type==="checkbox"?t.checked:t.value);
+  const m=t.dataset.prp.match(/^pr_pasos\.(\w+)\.estado$/);if(m){const p=reelEditing.pr_pasos[m[1]];if(p.estado==="hecho"&&!p.fecha)p.fecha=todayAR();drawReel(true)}
+  else if(t.dataset.prp==="pr_datoOk")pr_refresh()});
+document.addEventListener("click",async e=>{const el=e.target.closest("[data-pract]");if(!el)return;const k=el.dataset.pract;const r=reelEditing;
+  try{switch(k){
+  case"goProd":$("#pr-prod")?.scrollIntoView({behavior:"smooth",block:"start"});break;
+  case"save":if(r)await saveReel();break;
+  case"addArt":r.pr_articulos=[...(r.pr_articulos||[]),{num:"",epigrafe:"",texto:"",fuente:"",verificado:""}];drawReel(true);break;
+  case"fromField":{const have=(r.pr_articulos||[]).map(a=>pr_nums(a.num)[0]);r.pr_articulos=[...(r.pr_articulos||[]),...pr_expand(r.articulos).filter(n=>!have.includes(n)).map(n=>({num:String(n),epigrafe:"",texto:"",fuente:"",verificado:""}))];drawReel(true);break}
+  case"delArt":if(el.dataset.confirm){r.pr_articulos.splice(+el.dataset.i,1);drawReel(true)}else{el.dataset.confirm="1";el.textContent="Tocá de nuevo para quitar"}break;
+  case"hoy":r.pr_articulos[+el.dataset.i].verificado=todayAR();drawReel(true);break;
+  case"cmdReel":copy("./producir.sh "+(pr_slugOf(r)||"<slug>"));break;
+  case"gen":{const cap=pr_genCap(r),fc=pr_genFc(r);pr_draft[r.id]={cap,fc};$("#pr-cap").value=cap;$("#pr-fc").value=fc;pr_refresh();
+    toast(pr_capChecks(r,cap).some(w=>w[0]==="bad")?"Generado, pero hay controles en rojo: revisalos":"Descripción y comentario generados: revisalos y guardalos");break}
+  case"copyCap":copy($("#pr-cap").value);break;
+  case"copyFc":copy($("#pr-fc").value);break;
+  case"saveTxt":{const cap=$("#pr-cap").value.trim(),fc=$("#pr-fc").value.trim();const bad=[...pr_capChecks(r,cap),...pr_fcChecks(r,fc)].find(w=>w[0]==="bad");
+    if(!cap){toast("Generá o escribí la descripción primero");break}if(bad){toast("No se guardó: "+bad[1]);break}
+    r.caption=cap;r.primerComentario=fc;if(pr_est(r,"descripcion")==="pendiente")sp(r,"pr_pasos.descripcion.estado","curso");delete pr_draft[r.id];await saveReel();break}
+  case"cmd":copy("./producir.sh "+el.dataset.slug);break;
+  case"copyAll":{const l=pr_planAll().filter(p=>{const x=pr_reelDe(p);return!x||pr_actual(x)}).map(p=>"./producir.sh "+p.slug);if(!l.length){toast("No hay episodios pendientes");break}copy(l.join("\n"));break}
+  case"crear":{const p=pr_planAll().find(x=>x.slug===el.dataset.slug);if(!p)break;const ex=pr_reelDe(p);if(ex){openReel(ex.id);break}const t1=pr_t1(p.arts);
+    openReel(null,{titulo:"Serie animada · Art. "+p.arts,formato:"personajes",estado:"guion",episodio:t1?t1[0]:"",articulos:p.arts,pr_slug:p.slug,pr_clausulo:p.clausulo,
+      pr_articulos:pr_expand(p.arts).map(n=>({num:String(n),epigrafe:"",texto:"",fuente:"",verificado:""})),pr_pasos:{},notas:`Clausulo con ${p.clausulo}. Producir con: ./producir.sh ${p.slug}`,source:"pr_plan"});
+    toast("Reel precargado: pegá el texto literal y guardalo");break}
+  case"addPlan":{const slug=$("#pr-nslug").value.trim(),arts=$("#pr-narts").value.trim()||slug.replace(/_/g," y "),cl=$("#pr-nvar").value;
+    if(!/^[\w-]+$/.test(slug)){toast("Escribí un slug sin espacios, como 1059_1060");break}if(pr_planAll().some(p=>p.slug===slug)){toast("Ese episodio ya está en el plan");break}
+    await dbSet("pr_plan/"+slug,{slug,arts,clausulo:cl,createdAt:Date.now()});toast("Episodio agregado al plan");break}
+  case"delPlan":if(el.dataset.confirm){await dbDelete("pr_plan/"+el.dataset.slug);toast("Quitado del plan")}else{el.dataset.confirm="1";el.textContent="Tocá de nuevo para quitar"}break;
+  }}catch(err){if(err?.message!=="no-db")console.error(err)}});
+
+/* ---------- datos: plan propio en pr_plan ---------- */
+{let n=0;const iv=setInterval(()=>{n++;if(db){clearInterval(iv);try{db.collection("pr_plan").onSnapshot(s=>{S.pr_plan=s.docs.map(d=>({...d.data(),slug:d.id}));if(current==="produccion"&&!$("#drawerRoot").innerHTML)render()},()=>{})}catch(e){}}else if(S.caps.db==="off"||n>300)clearInterval(iv)},200)}
+
+if((location.hash||"").slice(1)==="produccion")current="produccion";
+render();
+</script>

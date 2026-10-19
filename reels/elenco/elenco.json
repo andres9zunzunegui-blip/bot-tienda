@@ -1,0 +1,49 @@
+{
+  "_nota": "Imágenes base del elenco. Usar SIEMPRE estas como reference_images en Floot (generate_image) para que los personajes salgan idénticos. 'floot' es la ruta del asset en el proyecto Floot 4600fe11-bf61-482a-ae81-7ca795857e94.",
+  "proyecto_floot": "4600fe11-bf61-482a-ae81-7ca795857e94",
+  "personajes": {
+    "clausulo": {
+      "rol": "Anfitrión",
+      "descripcion_prompt": "short stocky cartoon man, round egg-shaped face, soft chubby cheeks, button nose, curly chestnut hair swept up into a tuft, short neatly trimmed rounded chestnut beard, round thin gold wire glasses, navy blue double-breasted suit, white shirt, teal-green tie, black shoes",
+      "variantes": {
+        "anteojos": {"local": "clausulo_v2_anteojos.png", "floot": "/_cdn/static/16336631-409c-4e1b-a6a8-61c302ecffe6.png"},
+        "lentes_oscuros": {"local": "clausulo_v2_lentes_oscuros.png", "floot": "/_cdn/static/60f887ca-6c36-4156-b0f2-feafe28e3c30.png", "prompt_extra": "wearing dark black round sunglasses with thin gold frames instead of clear glasses"}
+      },
+      "_v1_retirada": "La versión anterior (/_cdn/static/977319c7-...) se parecía a una persona famosa: NO usarla como referencia de la cara de Clausulo."
+    },
+    "codiguito": {
+      "rol": "Libro rojo",
+      "descripcion_prompt": "red hardcover book character, blank red cover with thin gold border ornaments, big cartoon eyes with eyebrows, white cartoon gloves, red arms and legs, black shoes",
+      "local": "codiguito_inciso_oficina.png",
+      "floot": "/_cdn/static/a0608782-6e66-452e-91f1-d9f20d6573bb.png"
+    },
+    "inciso": {
+      "rol": "Mate invitado",
+      "descripcion_prompt": "black calabash mate gourd character with steel bombilla and green yerba on top, big cartoon eyes, white cartoon gloves, thin black legs with little black shoes",
+      "local": "codiguito_inciso_oficina.png",
+      "floot": "/_cdn/static/a0608782-6e66-452e-91f1-d9f20d6573bb.png"
+    },
+    "resaltato": {
+      "rol": "Resaltador",
+      "descripcion_prompt": "living chunky bright yellow highlighter marker, yellow cap on top, big expressive cartoon eyes with eyebrows, cheeky grin, small white gloves on thin yellow arms, thin yellow legs",
+      "local": "resaltato.png",
+      "floot": "/_cdn/static/61d78f34-a61e-4697-a325-6da64d08940c.png"
+    }
+  },
+  "set": {
+    "oficina": "warm law office: wood bookshelves, big window with warm backlight, glass desk, brass scales, plants, polished reflective floor",
+    "estilo": "Cinematic 3D animated film still, Pixar-quality, vertical 9:16, warm window backlight, volumetric light, shallow depth of field, creamy bokeh",
+    "sin_texto": "Absolutely no text, letters, numbers or logos anywhere."
+  },
+  "rotacion_clausulo": {
+    "_nota": "Para que Clausulo no salga siempre igual: alternar variantes por episodio.",
+    "957_1015": "anteojos",
+    "959": "lentes_oscuros",
+    "985": "anteojos",
+    "988": "anteojos",
+    "984": "lentes_oscuros",
+    "1061": "anteojos",
+    "1088": "lentes_oscuros",
+    "332": "anteojos"
+  }
+}

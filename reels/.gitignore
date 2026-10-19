@@ -1,0 +1,10 @@
+__pycache__/
+*.video.mp4
+*.mezcla.wav
+episodios/*/salida/cuadro_*.png
+episodios/*/salida/voces/tomas/
+episodios/*/clips/
+voces/moldes/
+secretos.env
+assets/sonido/
+episodios/*/salida/fuentes_voz/
