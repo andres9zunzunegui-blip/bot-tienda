@@ -1,0 +1,1287 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Cláusula Legal OS</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: centro de operaciones — barra lateral azul noche en escritorio, barra inferior en celular; contenido sobre marfil en paneles sobrios */
+:root{
+  --noche:#17263B; --marfil:#F4F0E7; --oro:#D6BD86; --oro-ink:#8A6D2F;
+  --bg:#F4F0E7; --surface:#FFFDF8; --ink:#17263B; --muted:#5E6675; --line:#E3DCCD; --soft:#ECE6D8;
+  --side:#17263B; --side-ink:#E9E3D6; --side-muted:#9AA3B2;
+  --ok:#2F7A55; --warn:#A06A12; --bad:#A6392E; --info:#2F5F8A;
+  --f-display:"Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --f-body:"Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1A2A; --surface:#17263B; --ink:#F1ECE1; --muted:#A8B0BE; --line:#2A3B55; --soft:#1E3049;
+  --side:#0B1421; --side-ink:#E9E3D6; --side-muted:#8D97A8; --oro-ink:#D6BD86;
+  --ok:#6CC59A; --warn:#E3B45A; --bad:#EE8A7F; --info:#8DB8E0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1A2A; --surface:#17263B; --ink:#F1ECE1; --muted:#A8B0BE; --line:#2A3B55; --soft:#1E3049;
+  --side:#0B1421; --side-ink:#E9E3D6; --side-muted:#8D97A8; --oro-ink:#D6BD86;
+  --ok:#6CC59A; --warn:#E3B45A; --bad:#EE8A7F; --info:#8DB8E0; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.app{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100%}
+aside{background:var(--side);color:var(--side-ink);padding-block:28px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:20px;display:flex;flex-direction:column;gap:28px;position:sticky;top:0;height:100vh}
+.logo{display:flex;flex-direction:column;gap:2px}
+.logo b{font-family:var(--f-display);font-weight:700;font-size:26px;letter-spacing:.01em;line-height:1}
+.logo span{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--oro)}
+nav{display:flex;flex-direction:column;gap:2px}
+nav a{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--side-muted);text-decoration:none;padding:9px 12px;border-radius:7px;font-weight:600;font-size:14px}
+nav a:hover{color:var(--side-ink)}
+nav a.on{color:var(--side-ink);background:rgba(214,189,134,.12);box-shadow:inset 2px 0 0 var(--oro)}
+nav .badge{font:500 11px var(--f-mono);background:var(--oro);color:var(--noche);border-radius:99px;padding:1px 7px}
+.side-foot{margin-top:auto;font-size:12px;color:var(--side-muted);display:flex;flex-direction:column;gap:4px}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--side-muted);margin-right:6px;vertical-align:middle}
+.dot.ok{background:#6CC59A}.dot.bad{background:#EE8A7F}.dot.wait{background:var(--oro)}
+main{padding-block:32px 96px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));min-width:0}
+.view{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+.head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
+.head h1{font-family:var(--f-display);font-weight:600;font-size:clamp(30px,4.5vw,42px);line-height:1.05;margin:0;text-wrap:balance}
+.head p{margin:4px 0 0;color:var(--muted);max-width:62ch}
+.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--oro-ink);font-weight:700}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.panel h2{font-family:var(--f-display);font-weight:600;font-size:22px;margin:0;line-height:1.15}
+.panel h3{font-size:13px;margin:0;font-weight:700}
+.ph{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.ph a,.link{color:var(--oro-ink);font-weight:600;font-size:13px;text-decoration:none;cursor:pointer;background:none;border:0;padding:0;font-family:inherit}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.empty{color:var(--muted);font-size:14px;padding:10px 0;display:flex;flex-direction:column;gap:6px}
+.list{display:flex;flex-direction:column}
+.row{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;padding:10px 0;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.row .t{font-weight:600;min-width:0;overflow-wrap:anywhere}
+.row .s{font-size:13px;color:var(--muted)}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:99px;white-space:nowrap;background:var(--soft);color:var(--ink)}
+.chip.ok{color:var(--ok);background:color-mix(in srgb,var(--ok) 13%,transparent)}
+.chip.warn{color:var(--warn);background:color-mix(in srgb,var(--warn) 15%,transparent)}
+.chip.bad{color:var(--bad);background:color-mix(in srgb,var(--bad) 13%,transparent)}
+.chip.info{color:var(--info);background:color-mix(in srgb,var(--info) 13%,transparent)}
+.chip.gold{color:var(--oro-ink);background:color-mix(in srgb,var(--oro) 22%,transparent)}
+.btn{font:700 13.5px var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:9px 14px;border-radius:7px;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--oro)}
+.btn.primary{background:var(--noche);border-color:var(--noche);color:var(--marfil)}
+:root[data-theme="dark"] .btn.primary{background:var(--oro);border-color:var(--oro);color:var(--noche)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn.primary{background:var(--oro);border-color:var(--oro);color:var(--noche)}}
+.btn.danger{color:var(--bad)}
+.btn.sm{padding:6px 10px;font-size:12.5px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--oro);outline-offset:2px}
+label{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:700;color:var(--muted)}
+input,select,textarea{font:500 14.5px var(--f-body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:9px 11px;min-width:0;width:100%}
+textarea{resize:vertical;min-height:84px;line-height:1.5}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.quick{display:flex;flex-wrap:wrap;gap:8px}
+.board{overflow-x:auto;padding-bottom:6px}
+.cols{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(220px,1fr);gap:12px;min-width:min-content}
+.col{background:var(--soft);border-radius:9px;padding:10px;display:flex;flex-direction:column;gap:8px;min-height:120px}
+.col h3{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;margin:2px 4px 4px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 11px;cursor:pointer;display:flex;flex-direction:column;gap:6px;text-align:left;font:inherit;color:inherit}
+.card:hover{border-color:var(--oro)}
+.card b{font-weight:600;overflow-wrap:anywhere}
+.card .meta{display:flex;flex-wrap:wrap;gap:5px;font-size:12px;color:var(--muted)}
+.agents{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.agent .tag{font-family:var(--f-mono);font-size:11px;color:var(--oro-ink)}
+.agent ul{margin:0;padding-left:18px;font-size:13px;color:var(--muted)}
+details{border-top:1px solid var(--line);padding-top:10px}
+summary{cursor:pointer;font-weight:700;font-size:13px}
+.out{display:flex;flex-direction:column;gap:12px}
+.prop{border:1px solid var(--line);border-left:3px solid var(--oro);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;background:var(--surface)}
+.prop h4{margin:0;font-size:15px}
+.kv{display:grid;grid-template-columns:120px minmax(0,1fr);gap:4px 12px;font-size:13.5px}
+.kv dt{color:var(--muted);font-weight:700}
+.kv dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap}
+.status{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.spin{width:12px;height:12px;border:2px solid var(--line);border-top-color:var(--oro);border-radius:50%;animation:sp 0.9s linear infinite}
+@keyframes sp{to{transform:rotate(1turn)}}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+td.n,th.n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.drawer-bg{position:fixed;inset:0;background:rgba(10,18,30,.45);z-index:20;display:flex;justify-content:flex-end}
+.drawer{background:var(--bg);width:min(780px,100%);height:100%;overflow-y:auto;padding-block:calc(22px + env(safe-area-inset-top,0px)) calc(40px + env(safe-area-inset-bottom,0px));padding-left:22px;padding-right:max(22px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.drawer h2{font-family:var(--f-display);font-weight:600;font-size:30px;margin:0;line-height:1.1}
+.dhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.split{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;align-items:start}
+.preview{position:sticky;top:0;display:flex;flex-direction:column;gap:8px}
+.ig{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:13px}
+.ig-top{display:flex;align-items:center;gap:8px;padding:9px 10px;font-weight:700}
+.ig-av{width:26px;height:26px;border-radius:50%;background:var(--noche);border:1.5px solid var(--oro);display:grid;place-items:center;color:var(--oro);font-family:var(--f-display);font-size:14px}
+.ig-img{aspect-ratio:4/5;max-width:100%;background:#17263B;color:#F4F0E7;display:flex;flex-direction:column;justify-content:flex-end;padding:22px;gap:10px;position:relative}
+.ig-img .k{position:absolute;top:18px;left:22px;font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:#D6BD86}
+.ig-img .tt{font-family:var(--f-display);font-weight:600;font-size:24px;line-height:1.08;text-wrap:balance}
+.ig-img .bb{font-size:11.5px;line-height:1.45;opacity:.88}
+.ig-img .rule{width:34px;height:1.5px;background:#D6BD86}
+.ig-nav{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;font-size:12px;color:var(--muted)}
+.ig-cap{padding:4px 10px 12px;white-space:pre-wrap;overflow-wrap:anywhere;max-height:160px;overflow:auto}
+.slide{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:8px;align-items:start}
+.slide .num{font-family:var(--f-mono);font-size:12px;color:var(--muted);padding-top:10px}
+.warns{display:flex;flex-direction:column;gap:5px;font-size:13px}
+.hist{font-size:12.5px;color:var(--muted);display:flex;flex-direction:column;gap:3px}
+.approval{border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:12px;background:var(--surface)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--noche);color:var(--marfil);padding:10px 16px;border-radius:8px;font-weight:600;font-size:14px;z-index:40;box-shadow:0 6px 24px rgba(0,0,0,.25);max-width:calc(100% - 32px)}
+.mobile-nav{display:none}
+@media (max-width:860px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  aside{display:none}
+  .mobile-nav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:15;background:var(--side);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);overflow-x:auto}
+  .mobile-nav a{flex:1 0 auto;color:var(--side-muted);text-decoration:none;font-size:11.5px;font-weight:700;padding:12px 10px;text-align:center;position:relative}
+  .mobile-nav a.on{color:var(--oro)}
+  .mobile-nav .badge{position:absolute;top:4px;right:2px;font:500 10px var(--f-mono);background:var(--oro);color:var(--noche);border-radius:99px;padding:0 5px}
+  .split{grid-template-columns:minmax(0,1fr)}
+  .preview{position:static}
+  .kv{grid-template-columns:minmax(0,1fr)}
+  .kv dt{margin-top:6px}
+}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+</style>
+
+<style>
+.tlist{display:flex;flex-direction:column}
+.trow{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 4px;border:0;border-top:1px solid var(--line);background:none;font:inherit;color:inherit;text-align:left;cursor:pointer;width:100%}
+.trow:first-child{border-top:0}.trow:hover b{color:var(--oro-ink)}
+.tep{font:500 12px var(--f-mono);color:var(--oro-ink)}.tboard .ph h2{white-space:nowrap}
+.tti{display:flex;flex-direction:column;min-width:0}.tti b{font-weight:700;overflow-wrap:anywhere}.tti span{font-size:12.5px;color:var(--muted)}
+.tsteps{display:flex;gap:4px}.tsteps i{width:22px;height:8px;border-radius:99px;background:var(--soft);display:block}
+.tsteps i.on{background:var(--ok)}.tsteps i.now{background:var(--oro)}
+.tleg{font-size:11.5px;color:var(--muted);text-align:right}
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.wday{background:var(--soft);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:6px;min-height:92px;min-width:0}
+.wday.has{background:color-mix(in srgb,var(--oro) 14%,var(--soft))}.wday.today{box-shadow:inset 0 0 0 1.5px var(--oro)}
+.wd{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.wev{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 7px;font:inherit;color:inherit;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:2px;min-width:0;text-decoration:none}
+.wev b{font-size:12.5px;font-weight:700;overflow-wrap:anywhere}.wk{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--oro-ink);font-weight:700}
+.wnone{color:var(--muted);font-size:12px}
+#masSheet .mas-bg{position:fixed;inset:0;background:rgba(10,18,30,.35);z-index:16}
+#masSheet .mas{position:fixed;left:8px;right:8px;bottom:calc(52px + env(safe-area-inset-bottom,0px));z-index:17;background:var(--side);border-radius:12px;padding:6px;display:flex;flex-direction:column;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+#masSheet .mas a{color:var(--side-ink);text-decoration:none;font-weight:700;font-size:15px;padding:13px 14px;border-radius:8px;display:flex;justify-content:space-between;align-items:center}
+#masSheet .mas a.on{color:var(--oro);background:rgba(214,189,134,.1)}
+#masSheet .badge{font:500 11px var(--f-mono);background:var(--oro);color:var(--noche);border-radius:99px;padding:1px 7px}
+@media (min-width:861px){#masSheet{display:none}}
+@media (max-width:860px){.mobile-nav{overflow-x:visible}.mobile-nav a{flex:1 1 0;font-size:12px;padding:13px 4px}
+ .week{grid-template-columns:minmax(0,1fr)}.wday{min-height:0;flex-direction:row;flex-wrap:wrap;align-items:center}.wd{min-width:64px}.wday:not(.has):not(.today){display:none}
+ .trow{grid-template-columns:44px minmax(0,1fr)}.tsteps{grid-column:2}.tleg{text-align:left}}
+</style>
+<style>
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.srch{gap:8px}.srch input{font-size:15.5px;padding:11px 13px}
+.srow{background:none;border:0;border-top:1px solid var(--line);font:inherit;color:inherit;text-align:left;cursor:pointer;width:100%}.srow:hover b{color:var(--oro-ink)}
+.reel-m{display:none}
+.fchips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+.fchip{font:700 12.5px var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:99px;padding:6px 11px;white-space:nowrap;cursor:pointer}
+.fchip span{font-family:var(--f-mono);font-weight:500;color:var(--muted);margin-left:3px}
+.fchip.on{background:var(--noche);border-color:var(--noche);color:var(--marfil)}.fchip.on span{color:var(--oro)}
+:root[data-theme="dark"] .fchip.on{background:var(--oro);border-color:var(--oro);color:var(--noche)}:root[data-theme="dark"] .fchip.on span{color:var(--noche)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fchip.on{background:var(--oro);border-color:var(--oro);color:var(--noche)}:root:not([data-theme="light"]) .fchip.on span{color:var(--noche)}}
+.capchk{display:flex;flex-direction:column;gap:5px;margin-top:6px}
+@media (max-width:860px){.reel-m{display:flex}.reel-m+.board{display:none}}
+</style>
+<style>.next{border-color:var(--oro);gap:6px}.nrow{display:flex;justify-content:space-between;align-items:center;gap:12px}.nrow b{font-family:var(--f-display);font-size:22px;font-weight:600;line-height:1.2}</style>
+<style>
+.iggrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;max-width:520px}
+.igt{position:relative;aspect-ratio:3/4;border:0;padding:0;background:var(--noche);overflow:hidden;cursor:pointer;border-radius:2px}
+.igt img{width:100%;height:100%;object-fit:cover;display:block}
+.igph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:10px;text-align:center;color:var(--marfil);font-family:var(--f-display);font-size:16px;line-height:1.15}
+.igk{position:absolute;left:4px;bottom:4px;font:700 10px var(--f-body);background:rgba(23,38,59,.82);color:#F4F0E7;border-radius:4px;padding:1px 5px;letter-spacing:.02em}
+</style>
+<style>
+.blqbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px}
+.igwrap{position:relative;display:block}.igwrap .igt{width:100%;height:100%}
+.igmv{position:absolute;top:4px;right:4px;display:flex;gap:3px}.igmv button{border:0;border-radius:4px;background:rgba(23,38,59,.85);color:#F4F0E7;font-size:11px;padding:3px 6px;cursor:pointer}
+</style>
+<div class="app">
+  <aside>
+    <div class="logo"><b>Cláusula Legal</b><span>Centro de operaciones</span></div>
+    <nav id="nav"></nav>
+    <div class="side-foot" id="sideStatus"></div>
+  </aside>
+  <main><div class="view" id="view"></div></main>
+</div>
+<div class="mobile-nav" id="mnav"></div>
+<div id="drawerRoot"></div>
+<div id="toastRoot"></div>
+
+<script>
+"use strict";
+/* ============ Constantes ============ */
+const TZ="America/Argentina/Buenos_Aires";
+const MC="Metricool Social Media Management";
+const STAGES=[["idea","Idea"],["investigacion","Investigación"],["guion","Guion"],["diseno","Diseño"],["revision","En revisión"],["aprobado","Aprobado"],["programado","Programado"],["publicado","Publicado"],["error","Error de publicación"]];
+const STAGE_CHIP={idea:"",investigacion:"",guion:"",diseno:"",revision:"warn",aprobado:"info",programado:"gold",publicado:"ok",error:"bad"};
+const FORMATS=[["post","Publicación"],["carrusel","Carrusel"],["reel","Reel"],["historia","Historia"],["guion","Guion audiovisual"]];
+const LEAD_STATES=[["nuevo","Nuevo"],["calificando","Calificando"],["presupuesto","Presupuesto enviado"],["ganado","Ganado"],["perdido","Perdido"]];
+const SERVICES=["Contrato de locación de vivienda","Contrato de locación temporaria","Contrato de locación comercial","Revisión de contrato","Modelo de contrato","Aviso de actualizaciones","Otro"];
+const DEFAULT_SETTINGS={igUser:"clausuladigitall",brandId:"7462145",precios:"",memoria:[],plantillas:[],
+  instr:{contenido:"",crecimiento:"",captacion:""}};
+const BRAND_CONTEXT=`Marca: Cláusula Legal (Instagram @{ig}). Proyecto argentino de documentación contractual, enfocado en contratos de locación (vivienda, temporarios, comerciales), con modalidad digital para todo el país. El responsable es estudiante avanzado de Derecho, todavía SIN matrícula: nunca afirmar ni sugerir que es abogado matriculado, ni prometer resultados jurídicos. Tono: claro, sobrio, profesional, cercano, en español rioplatense (vos). Identidad visual: azul noche #17263B, marfil #F4F0E7, dorado champagne #D6BD86 con moderación; estética premium, sobria, editorial. Primera publicación: "Los acuerdos claros empiezan acá". Marco vigente conocido: el DNU 70/2023 derogó la Ley 27.551 y reformó el art. 1199 del Código Civil y Comercial: las partes pactan libremente plazo, moneda, índice y frecuencia de actualización; conviven contratos viejos con ajuste anual por ICL. Toda afirmación jurídica debe listarse en "afirmaciones_a_verificar" para que el responsable la confirme en fuentes oficiales antes de publicar, porque vos no podés consultar fuentes en este momento.`;
+
+/* ============ Estado ============ */
+const S={posts:[],leads:[],approvals:[],runs:[],tasks:[],settings:{...DEFAULT_SETTINGS},
+  loaded:{posts:false,leads:true,approvals:false,runs:false,tasks:false,settings:false},
+  caps:{db:"wait",sample:"wait",mcp:"wait"}, metrics:{state:"idle",rows:[],error:"",at:null},
+  scheduled:{state:"idle",items:[],error:""}, uid:null, agentOut:{}, agentBusy:{}};
+let db=null, sample=null, mcp=null, user=null;
+
+/* ============ Utilidades ============ */
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmtAR=new Intl.DateTimeFormat("sv-SE",{timeZone:TZ,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false});
+const nowAR=()=>fmtAR.format(new Date()).replace(" ","T");
+const todayAR=()=>nowAR().slice(0,10);
+const niceDate=s=>{if(!s)return"";const d=new Date(String(s).length<=16?s+":00-03:00":s);if(isNaN(d))return esc(s);return d.toLocaleString("es-AR",{timeZone:TZ,day:"numeric",month:"short",hour:String(s).length>10?"2-digit":undefined,minute:String(s).length>10?"2-digit":undefined})};
+const ago=ms=>{if(!ms)return"";const m=Math.round((Date.now()-ms)/60000);if(m<1)return"recién";if(m<60)return"hace "+m+" min";const h=Math.round(m/60);if(h<24)return"hace "+h+" h";return"hace "+Math.round(h/24)+" d"};
+const stageLabel=k=>(STAGES.find(s=>s[0]===k)||[k,k])[1];
+const fmtLabel=k=>(FORMATS.find(s=>s[0]===k)||[k,k])[1];
+const leadLabel=k=>(LEAD_STATES.find(s=>s[0]===k)||[k,k])[1];
+const stageChip=k=>`<span class="chip ${STAGE_CHIP[k]||""}">${esc(stageLabel(k))}</span>`;
+function toast(msg){const r=$("#toastRoot");r.innerHTML=`<div class="toast" role="status">${esc(msg)}</div>`;clearTimeout(toast.t);toast.t=setTimeout(()=>r.innerHTML="",3200)}
+async function copy(text){try{await navigator.clipboard.writeText(text);toast("Copiado")}catch(e){toast("No se pudo copiar automáticamente: seleccioná el texto y copialo a mano")}}
+function opts(list,sel){return list.map(([v,l])=>`<option value="${esc(v)}"${v===sel?" selected":""}>${esc(l)}</option>`).join("")}
+const byNewest=(a,b)=>(b.createdAt||0)-(a.createdAt||0);
+
+/* ============ Persistencia ============ */
+async function dbSet(path,data){if(!db){toast("Los datos no se pueden guardar en esta vista");throw new Error("no-db")}
+  try{await db.doc(path).set(data)}catch(e){toast(dbMsg(e));throw e}}
+async function dbUpdate(path,data){if(!db){toast("Los datos no se pueden guardar en esta vista");throw new Error("no-db")}
+  try{await db.doc(path).update(data)}catch(e){toast(dbMsg(e));throw e}}
+async function dbDelete(path){if(!db)return;try{await db.doc(path).delete()}catch(e){toast(dbMsg(e))}}
+function dbMsg(e){return e?.code==="quota_exceeded"?"Se llenó el espacio de datos: borrá registros viejos":e?.code==="invalid_argument"?"No tenés permiso para guardar acá, o el dato es inválido":"No se pudo guardar. Probá de nuevo en un momento"}
+const newId=p=>p+"-"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+async function saveSettings(patch){S.settings={...S.settings,...patch};await dbSet("config/main",S.settings)}
+async function logRun(agent,task,summary,output){const id=newId("run");
+  await dbSet("runs/"+id,{agent,task,summary:String(summary).slice(0,300),output,createdAt:Date.now(),by:S.uid||null}).catch(()=>{});return id}
+
+/* ============ Navegación ============ */
+const VIEWS=[["panel","Inicio"],["publicaciones","Publicaciones"],["reels","Reels"],["historias","Historias"],["director","Director"],["aprobaciones","Aprobaciones"],["config","Ajustes"]];
+const SHORT={panel:"Inicio",publicaciones:"Posts",reels:"Reels",historias:"Historias",director:"Director",aprobaciones:"Aprobar",config:"Ajustes"};
+let current="panel";
+function route(){const h=(location.hash||"").slice(1);current=VIEWS.some(v=>v[0]===h)?h:"panel";render()}
+window.addEventListener("hashchange",route);
+function renderNav(){const pend=S.approvals.filter(a=>a.status==="pendiente").length;
+  const unread=(S.alertas||[]).filter(a=>!a.leida).length;
+  const salaN=(S.reels||[]).filter(r=>r.video&&r.video.url&&(r.sala||"revision")==="revision"&&r.estado!=="publicado").length;
+  const badge=k=>k==="sala"&&salaN?salaN:k==="aprobaciones"&&pend?pend:k==="director"&&unread?unread:0;
+  $("#nav").innerHTML=VIEWS.map(([k,l])=>`<a href="#${k}" class="${k===current?"on":""}">${esc(l)}${badge(k)?`<span class="badge">${badge(k)}</span>`:""}</a>`).join("");
+  $("#mnav").innerHTML=VIEWS.map(([k])=>`<a href="#${k}" class="${k===current?"on":""}">${SHORT[k]}${badge(k)?`<span class="badge">${badge(k)}</span>`:""}</a>`).join("");
+  const d=s=>s==="ok"?"ok":s==="off"?"bad":"wait";
+  $("#sideStatus").innerHTML=`<span><i class="dot ${d(S.caps.db)}"></i>Datos guardados</span><span><i class="dot ${d(S.caps.sample)}"></i>Agentes (Claude)</span><span><i class="dot ${d(S.caps.mcp)}"></i>Metricool · @${esc(S.settings.igUser)}</span>`;
+}
+function render(){renderNav();const v=$("#view");
+  const fn={panel:vPanel,sala:(typeof vSala==="function"?vSala:vPanel),publicaciones:vPublicaciones,reels:vReels,historias:vHistorias,director:vDirector,aprobaciones:vAprob,config:vConfig}[current];
+  const y=window.scrollY; v.innerHTML=fn(); if(render.keep)window.scrollTo(0,y); render.keep=true}
+
+/* ============ Panel ============ */
+function vPanel(){
+  const t=todayAR(), n=nowAR();
+  const pend=S.approvals.filter(a=>a.status==="pendiente");
+  const review=S.posts.filter(p=>p.stage==="revision");
+  const upcoming=S.posts.filter(p=>p.scheduledAt&&p.scheduledAt>=n&&p.stage!=="publicado").sort((a,b)=>a.scheduledAt.localeCompare(b.scheduledAt)).slice(0,6);
+  const recent=S.posts.filter(p=>p.stage==="publicado").sort((a,b)=>(b.publishedAt||0)-(a.publishedAt||0)).slice(0,4);
+  const tasksToday=S.tasks.filter(x=>x.fecha===t||(!x.hecho&&x.fecha<t)).sort((a,b)=>(a.hecho-b.hecho)||a.createdAt-b.createdAt);
+  const auto=[];
+  if(pend.length)auto.push(`<div class="row"><span class="t">Revisar ${pend.length} ${pend.length===1?"acción pendiente":"acciones pendientes"} de aprobación</span><a class="link" href="#aprobaciones">Ver</a></div>`);
+  if(review.length)auto.push(`<div class="row"><span class="t">${review.length} ${review.length===1?"pieza espera":"piezas esperan"} tu revisión</span><a class="link" href="#publicaciones">Abrir</a></div>`);
+  const al=(S.alertas||[]).filter(a=>!a.leida);if(al.length)auto.push(`<div class="row"><span class="t">El Director tiene ${al.length} ${al.length===1?"alerta o recomendación nueva":"alertas o recomendaciones nuevas"}</span><a class="link" href="#director">Ver</a></div>`);
+  const sr=(S.reels||[]).filter(r=>r.video&&r.video.url&&(r.sala||"revision")==="revision"&&r.estado!=="publicado");if(sr.length)auto.unshift(`<div class="row"><span class="t">${sr.length} ${sr.length===1?"reel terminado espera":"reels terminados esperan"} tu aprobación</span><a class="link" href="#sala">Ver</a></div>`);
+  const rg=(S.reels||[]).filter(r=>r.estado==="grabar");if(rg.length)auto.push(`<div class="row"><span class="t">${rg.length} ${rg.length===1?"reel listo para grabar":"reels listos para grabar"}</span><a class="link" href="#reels">Abrir</a></div>`);
+  const hh=(S.historias||[]).filter(x=>x.fecha===t&&x.estado!=="publicada");if(hh.length)auto.push(`<div class="row"><span class="t">Historias de hoy para subir</span><a class="link" href="#historias">Abrir</a></div>`);
+  if(typeof pilotAlerts==="function")auto.unshift(...pilotAlerts());
+  const loading=!S.loaded.posts;
+  return `
+  <div class="head"><div><div class="eyebrow">${esc(new Date().toLocaleDateString("es-AR",{timeZone:TZ,weekday:"long",day:"numeric",month:"long"}))}</div><h1>Qué hay para hacer hoy</h1></div>
+    <div class="quick"><button class="btn primary" data-act="newPost">Nueva publicación</button><a class="btn" href="#reels" style="text-decoration:none">Nuevo reel</a><a class="btn" href="#director" style="text-decoration:none">Ver al Director</a></div></div>
+  ${S.caps.db==="off"?`<div class="panel"><b>Esta vista no puede guardar datos.</b><span class="muted small">Abrí la app desde claude.ai con tu cuenta para que se guarden publicaciones, reels, historias y aprobaciones.</span></div>`:""}
+  <div class="grid">
+    <section class="panel"><div class="ph"><h2>Hoy</h2></div>
+      <div class="list">${auto.join("")}${tasksToday.map(x=>`<div class="row"><label style="flex-direction:row;align-items:center;gap:9px;font-size:14px;color:var(--ink);font-weight:500"><input type="checkbox" style="width:auto" data-act="toggleTask" data-id="${esc(x.id)}" ${x.hecho?"checked":""}><span style="${x.hecho?"text-decoration:line-through;color:var(--muted)":""}">${esc(x.texto)}</span></label><button class="link" data-act="delTask" data-id="${esc(x.id)}" aria-label="Borrar tarea">Borrar</button></div>`).join("")}
+      ${!auto.length&&!tasksToday.length?`<div class="empty">${loading?"Cargando…":"Nada pendiente. Agregá una tarea o pedile ideas al agente de contenido."}</div>`:""}</div>
+      <form data-form="task" style="display:flex;gap:8px"><input id="taskText" placeholder="Agregar tarea para hoy" aria-label="Nueva tarea"><button class="btn sm">Agregar</button></form>
+    </section>
+    <section class="panel"><div class="ph"><h2>Próximas publicaciones</h2><a href="#publicaciones">Publicaciones</a></div>
+      <div class="list">${upcoming.map(p=>`<div class="row"><div><div class="t">${esc(p.title||"Sin título")}</div><div class="s">${niceDate(p.scheduledAt)} · ${esc(fmtLabel(p.format))}</div></div>${stageChip(p.stage)}</div>`).join("")||`<div class="empty">Ninguna pieza tiene fecha todavía. Asigná una fecha desde el editor de cada publicación.</div>`}</div>
+      ${scheduledBlock()}
+    </section>
+    <section class="panel"><div class="ph"><h2>Pendientes de aprobación</h2><a href="#aprobaciones">Ver todo</a></div>
+      <div class="list">${[...pend.map(a=>`<div class="row"><div><div class="t">${esc(a.titulo)}</div><div class="s">${esc(a.cuando||"")}</div></div><span class="chip warn">Acción externa</span></div>`),...review.map(p=>`<div class="row"><button class="link t" style="text-align:left;color:var(--ink)" data-act="openPost" data-id="${esc(p.id)}">${esc(p.title||"Sin título")}</button><span class="chip warn">Borrador en revisión</span></div>`)].join("")||`<div class="empty">No hay nada esperando tu aprobación.</div>`}</div>
+    </section>
+    <section class="panel" style="grid-column:1/-1"><div class="ph"><h2>Rendimiento en Instagram</h2><span class="small muted">${metricsStamp()}</span></div>${metricsBlock()}</section>
+    <section class="panel"><div class="ph"><h2>Actividad de los agentes</h2><a href="#director">Director</a></div>
+      <div class="list">${S.runs.slice(0,6).map(r=>`<div class="row"><div><div class="t">${esc(agentName(r.agent))}: ${esc(r.task)}</div><div class="s">${esc(r.summary)}</div></div><span class="small muted" style="white-space:nowrap">${ago(r.createdAt)}</span></div>`).join("")||`<div class="empty">Ningún agente trabajó todavía.</div>`}</div>
+    </section>
+    <section class="panel"><div class="ph"><h2>Publicado recientemente</h2></div>
+      <div class="list">${recent.map(p=>`<div class="row"><span class="t">${esc(p.title)}</span>${p.igUrl?`<a class="link" href="${esc(p.igUrl)}" target="_blank" rel="noopener">Ver en Instagram</a>`:""}</div>`).join("")||`<div class="empty">Ninguna publicación figura como publicada. Se marca publicada solo cuando Metricool confirma la publicación.</div>`}</div>
+    </section>
+    <section class="panel"><div class="ph"><h2>Integraciones</h2><a href="#config">Detalle</a></div>${integrationsList()}</section>
+  </div>`;
+}
+function metricsStamp(){return S.metrics.at?"Actualizado "+ago(S.metrics.at):""}
+function metricsBlock(){const m=S.metrics;
+  if(S.caps.mcp==="off")return `<div class="empty">Metricool no está disponible en esta vista. Conectalo en claude.ai → Configuración → Conectores.</div>`;
+  if(m.state==="loading"&&!m.rows.length)return `<div class="status"><span class="spin"></span>Consultando Metricool…</div>`;
+  if(m.state==="error"&&!m.rows.length)return `<div class="empty"><span>${esc(m.error)}</span><button class="btn sm" data-act="loadMetrics" style="align-self:flex-start">Reintentar</button></div>`;
+  if(!m.rows.length)return `<div class="empty">Metricool no registra publicaciones en los últimos 90 días.</div>`;
+  const tot=k=>m.rows.reduce((s,r)=>s+(+r[k]||0),0);
+  return `<div class="small muted">Datos observados de Metricool, últimos 90 días: ${m.rows.length} ${m.rows.length===1?"publicación":"publicaciones"}, alcance total ${tot("reach")}, interacciones ${tot("interactions")}, guardados ${tot("saved")}, seguidores ganados ${tot("follows")}.</div>
+  <div class="tbl"><table><thead><tr><th>Fecha</th><th>Publicación</th><th>Tipo</th><th class="n">Alcance</th><th class="n">Interac.</th><th class="n">Guardados</th><th class="n">Compart.</th><th class="n">Seguidores</th></tr></thead><tbody>
+  ${m.rows.map(r=>`<tr><td style="white-space:nowrap">${esc(r.dateLabel)}</td><td style="min-width:220px">${r.url?`<a class="link" href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.text.slice(0,80))}${r.text.length>80?"…":""}</a>`:esc(r.text.slice(0,80))}</td><td>${esc(r.type)}</td><td class="n">${r.reach??"–"}</td><td class="n">${r.interactions??"–"}</td><td class="n">${r.saved??"–"}</td><td class="n">${r.shares??"–"}</td><td class="n">${r.follows??"–"}</td></tr>`).join("")}
+  </tbody></table></div>${m.state==="error"?`<div class="small" style="color:var(--warn)">No se pudo actualizar: se muestran los últimos datos obtenidos.</div>`:""}`;
+}
+function scheduledBlock(){const s=S.scheduled;
+  if(S.caps.mcp!=="ok")return"";
+  if(s.state==="loading")return `<div class="status"><span class="spin"></span>Consultando la agenda de Metricool…</div>`;
+  if(s.state==="error")return `<div class="small muted">Agenda de Metricool: ${esc(s.error)}</div>`;
+  if(s.state!=="done")return"";
+  return `<h3>En la agenda de Metricool</h3>${s.items.length?`<div class="list">${s.items.map(i=>`<div class="row"><span class="t">${esc(i.text)}</span><span class="small muted" style="white-space:nowrap">${esc(i.when)}</span></div>`).join("")}</div>`:`<div class="small muted">No hay publicaciones programadas en Metricool para los próximos 60 días.</div>`}`;
+}
+function integrationsList(){const row=(name,st,okTxt,offTxt)=>`<div class="row"><span class="t">${name}</span><span class="chip ${st==="ok"?"ok":st==="off"?"bad":""}">${st==="ok"?okTxt:st==="off"?offTxt:"Verificando"}</span></div>`;
+  return `<div class="list">${row("Base de datos",S.caps.db,"Conectada","No disponible")}${row("Agentes de IA (Claude)",S.caps.sample,"Disponibles","No disponibles")}${row("Metricool · Instagram @"+esc(S.settings.igUser),S.caps.mcp,"Conectado","Sin conexión")}</div>`}
+
+/* ============ Estudio ============ */
+function vEstudio(){
+  const groups=STAGES.map(([k,l])=>{const items=S.posts.filter(p=>(p.stage||"idea")===k).sort((a,b)=>(a.scheduledAt||"9").localeCompare(b.scheduledAt||"9")||byNewest(a,b));
+    return `<div class="col"><h3><span>${esc(l)}</span><span>${items.length}</span></h3>${items.map(p=>`<button class="card" data-act="openPost" data-id="${esc(p.id)}"><b>${esc(p.title||"Sin título")}</b><span class="meta"><span class="chip">${esc(fmtLabel(p.format))}</span>${p.scheduledAt?`<span>${niceDate(p.scheduledAt)}</span>`:""}${p.source==="agente"?`<span class="chip gold">Agente</span>`:""}</span></button>`).join("")}</div>`}).join("");
+  return `<div class="head"><div><div class="eyebrow">Idea → Publicación → Análisis</div><h1>Estudio de contenido</h1><p>Cada pieza recorre las etapas con su historial. Pasá una pieza a “Aprobado” y después pedí su programación: nada se publica sin que lo apruebes.</p></div>
+  <div class="btns"><button class="btn primary" data-act="newPost">Nueva pieza</button><a class="btn" href="#agentes" style="text-decoration:none">Pedir ideas al agente</a></div></div>
+  ${!S.loaded.posts?`<div class="status"><span class="spin"></span>Cargando…</div>`:!S.posts.length?`<div class="panel"><h2>Todavía no hay piezas</h2><p class="muted" style="margin:0">Creá la primera a mano o pedile al agente de contenido que proponga ideas. Las propuestas que guardes aparecen acá como “Idea”.</p></div>`:""}
+  <div class="board"><div class="cols">${groups}</div></div>`;
+}
+function blankPost(){return{id:newId("post"),title:"",format:"carrusel",stage:"idea",objetivo:"",audiencia:"",caption:"",hashtags:"#ClausulaLegal #Contratos #Locaciones #AlquileresArgentina",cta:"",slides:[{titulo:"",texto:""}],guionReel:"",media:"",scheduledAt:"",notas:"",verificar:[],history:[],versions:[],createdAt:Date.now(),source:"manual"}}
+let editing=null, previewIdx=0;
+function openPost(id){const p=id?S.posts.find(x=>x.id===id):blankPost();if(!p)return;editing=JSON.parse(JSON.stringify(p));editing._new=!id;previewIdx=0;drawPost()}
+function postWarnings(p){const w=[];
+  if((p.caption||"").length>2200)w.push(["bad","El texto supera los 2.200 caracteres que permite Instagram."]);
+  const tags=(p.hashtags||"").match(/#\S+/g)||[];if(tags.length>30)w.push(["bad","Más de 30 hashtags: Instagram no lo permite."]);
+  (p.slides||[]).forEach((s,i)=>{if((s.titulo||"").length>70)w.push(["warn",`Diapositiva ${i+1}: el título es largo para leerse en el celular (más de 70 caracteres).`]);if((s.texto||"").length>220)w.push(["warn",`Diapositiva ${i+1}: mucho texto (más de 220 caracteres). Dividilo en dos diapositivas.`])});
+  if(p.format==="carrusel"&&(p.slides||[]).length>20)w.push(["bad","Instagram admite hasta 20 diapositivas por carrusel."]);
+  if(!p.cta)w.push(["warn","Falta llamada a la acción."]);
+  if((p.verificar||[]).length)w.push(["warn",`Hay ${p.verificar.length} afirmaciones jurídicas para verificar antes de publicar.`]);
+  if(/abogad[oa]\s+matriculad|matr[ií]cula\s+n|soy\s+abogad/i.test(((p.caption||"")+JSON.stringify(p.slides||[])).replace(/(asesoramiento|revisi[oó]n|firma|consulta)[^.\n]{0,40}abogad[oa]\s+matriculad[oa]/gi,"")))w.push(["bad","El texto menciona una matrícula profesional que todavía no tenés."]);
+  return w}
+function drawPost(){const p=editing;const slides=p.slides||[];const i=Math.min(previewIdx,Math.max(0,slides.length-1));const s=slides[i]||{titulo:p.title,texto:""};
+  const w=postWarnings(p);
+  $("#drawerRoot").innerHTML=`<div class="drawer-bg" data-act="closeBg"><div class="drawer" role="dialog" aria-label="Editor de publicación">
+  <div class="dhead"><div><div class="eyebrow">${esc(fmtLabel(p.format))} · ${esc(stageLabel(p.stage))}</div><h2>${esc(p.title||"Nueva pieza")}</h2></div><button class="btn sm" data-act="closeDrawer">Cerrar</button></div>
+  <div class="split"><div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+    <div class="fields"><label for="pTitle">Título interno<input id="pTitle" data-f="title" value="${esc(p.title)}"></label>
+      <label for="pFormat">Formato<select id="pFormat" data-f="format">${opts(FORMATS,p.format)}</select></label>
+      <label for="pStage">Etapa<select id="pStage" data-f="stage">${opts(STAGES.filter(x=>p.stage==="publicado"||p.stage==="programado"||!["programado","publicado"].includes(x[0])),p.stage)}</select></label>
+      <label for="pDate">Fecha y hora previstas (Argentina)<input id="pDate" type="datetime-local" data-f="scheduledAt" value="${esc(p.scheduledAt)}"></label></div>
+    <div class="fields"><label for="pObj">Objetivo<input id="pObj" data-f="objetivo" value="${esc(p.objetivo)}"></label><label for="pAud">Audiencia<input id="pAud" data-f="audiencia" value="${esc(p.audiencia)}"></label></div>
+    ${["carrusel","post","historia"].includes(p.format)?`<div style="display:flex;flex-direction:column;gap:8px"><b class="small">${p.format==="carrusel"?"Diapositivas":"Texto de la imagen"}</b>
+      ${slides.map((s,k)=>`<div class="slide"><span class="num">${k+1}</span><div style="display:flex;flex-direction:column;gap:6px;min-width:0"><input aria-label="Título diapositiva ${k+1}" data-slide="${k}" data-sf="titulo" value="${esc(s.titulo)}" placeholder="Título"><textarea aria-label="Texto diapositiva ${k+1}" data-slide="${k}" data-sf="texto" style="min-height:60px" placeholder="Texto">${esc(s.texto)}</textarea></div><button class="btn sm" data-act="delSlide" data-i="${k}" aria-label="Quitar diapositiva ${k+1}">Quitar</button></div>`).join("")}
+      ${p.format==="carrusel"||!slides.length?`<button class="btn sm" data-act="addSlide" style="align-self:flex-start">Agregar diapositiva</button>`:""}</div>`:""}
+    ${["reel","guion"].includes(p.format)?`<label for="pReel">Guion (escenas, narración, duración, sonido)<textarea id="pReel" data-f="guionReel" style="min-height:180px">${esc(p.guionReel)}</textarea></label>`:""}
+    <label for="pCap">Texto de la publicación (caption)<textarea id="pCap" data-f="caption" style="min-height:150px">${esc(p.caption)}</textarea><span class="small" style="font-weight:500">${(p.caption||"").length} / 2.200</span></label>
+    <div class="fields"><label for="pTags">Hashtags<input id="pTags" data-f="hashtags" value="${esc(p.hashtags)}"></label><label for="pCta">Llamada a la acción<input id="pCta" data-f="cta" value="${esc(p.cta)}"></label></div>
+    ${typeof imagesBlock==="function"?imagesBlock(p):""}
+    <label for="pMedia">Imágenes o video final (una URL pública por línea, en orden)<textarea id="pMedia" data-f="media" style="min-height:60px" placeholder="https://… (Google Drive, Dropbox o enlace directo)">${esc(p.media)}</textarea><span class="small" style="font-weight:500">Metricool necesita el archivo final para programar en Instagram. Diseñalo con la plantilla aprobada y pegá acá el enlace.</span></label>
+    <label for="pNotes">Observaciones de esta etapa<textarea id="pNotes" data-f="notas" style="min-height:60px">${esc(p.notas)}</textarea></label>
+    ${(p.verificar||[]).length?`<div class="panel" style="padding:12px"><h3>Afirmaciones a verificar en fuentes oficiales</h3><ul style="margin:0;padding-left:18px;font-size:13px">${p.verificar.map((v,k)=>`<li>${esc(v)} <button class="link" data-act="okVerif" data-i="${k}">Verificada</button></li>`).join("")}</ul></div>`:""}
+    <div class="btns"><button class="btn primary" data-act="savePost">Guardar</button>
+      <button class="btn" data-act="copyCaption">Copiar texto y hashtags</button>
+      ${!p._new?`<button class="btn" data-act="dupPost">Duplicar</button><button class="btn" data-act="agentDevelop">Desarrollar con el agente</button>`:""}
+      ${p.stage==="aprobado"&&!p._new?`<button class="btn" data-act="requestSchedule">Solicitar programación</button>`:""}
+      ${p.stage==="programado"?`<button class="btn" data-act="verifyPub">Verificar publicación</button>`:""}
+      ${!p._new?`<button class="btn danger" data-act="delPost">Eliminar</button>`:""}</div>
+    ${(p.versions||[]).length?`<details><summary>Versiones anteriores (${p.versions.length})</summary><div class="list">${p.versions.map((v,k)=>`<div class="row"><span class="s">${new Date(v.at).toLocaleString("es-AR",{timeZone:TZ})} · ${esc((v.caption||"").slice(0,60))}…</span><button class="link" data-act="restoreVer" data-i="${k}">Restaurar</button></div>`).join("")}</div></details>`:""}
+    ${(p.history||[]).length?`<details><summary>Historial de etapas</summary><div class="hist">${p.history.slice().reverse().map(h=>`<span>${new Date(h.at).toLocaleString("es-AR",{timeZone:TZ})} · ${esc(stageLabel(h.stage))}${h.note?" · "+esc(h.note):""}</span>`).join("")}</div></details>`:""}
+  </div>
+  <div class="preview"><b class="small">Vista previa en Instagram</b>
+    <div class="ig"><div class="ig-top"><span class="ig-av">C</span>${esc(S.settings.igUser)}</div>
+    ${["reel","guion"].includes(p.format)?`<div class="ig-img" style="aspect-ratio:9/16"><span class="k">Reel · Cláusula Legal</span><div class="tt">${esc(p.title||"Título del reel")}</div><div class="rule"></div><div class="bb">${esc((p.guionReel||"").slice(0,160))}</div></div>`
+    :`<div class="ig-img"><span class="k">Cláusula Legal</span><div class="tt">${esc(s.titulo||"Título")}</div><div class="rule"></div><div class="bb">${esc(s.texto||"")}</div></div>
+    ${slides.length>1?`<div class="ig-nav"><button class="link" data-act="prevSlide" ${i===0?"disabled":""}>Anterior</button><span>${i+1} / ${slides.length}</span><button class="link" data-act="nextSlide" ${i>=slides.length-1?"disabled":""}>Siguiente</button></div>`:""}`}
+    <div class="ig-cap"><b>${esc(S.settings.igUser)}</b> ${esc(p.caption)}${p.hashtags?"\n\n"+esc(p.hashtags):""}</div></div>
+    <span class="small muted">Boceto de legibilidad con la paleta de marca. La pieza final se diseña sobre la plantilla aprobada.</span>
+    <div class="warns">${w.length?w.map(([k,t])=>`<span class="chip ${k}" style="white-space:normal">${esc(t)}</span>`).join(""):`<span class="chip ok">Sin advertencias de legibilidad ni de marca</span>`}</div>
+  </div></div></div></div>`;
+}
+function readPostForm(){const p=editing;document.querySelectorAll("#drawerRoot [data-f]").forEach(el=>{p[el.dataset.f]=el.value});
+  document.querySelectorAll("#drawerRoot [data-slide]").forEach(el=>{p.slides[+el.dataset.slide][el.dataset.sf]=el.value})}
+async function savePost(){readPostForm();const p=editing;const prev=S.posts.find(x=>x.id===p.id);
+  const clean={...p};delete clean._new;clean.updatedAt=Date.now();clean.media=(clean.media||"").trim();
+  if(prev){if(prev.stage!==clean.stage)clean.history=[...(clean.history||[]),{stage:clean.stage,at:Date.now(),by:S.uid,note:clean.notas||""}];
+    const changed=prev.caption!==clean.caption||JSON.stringify(prev.slides)!==JSON.stringify(clean.slides)||prev.guionReel!==clean.guionReel;
+    if(changed)clean.versions=[{at:Date.now(),caption:prev.caption,slides:prev.slides,guionReel:prev.guionReel,hashtags:prev.hashtags,cta:prev.cta},...(prev.versions||[])].slice(0,10)}
+  else clean.history=[{stage:clean.stage,at:Date.now(),by:S.uid,note:"Creada"}];
+  await dbSet("posts/"+clean.id,clean);editing={...clean,_new:false};toast("Guardado");drawPost()}
+function closeDrawer(){$("#drawerRoot").innerHTML="";editing=null;leadEditing=null;if(typeof resetContract==="function")resetContract();if(typeof resetAcuerdo==="function")resetAcuerdo()}
+
+/* Programación con aprobación */
+async function requestSchedule(){readPostForm();const p=editing;
+  const media=(p.media||"").split(/\n+/).map(s=>s.trim()).filter(Boolean);
+  const errs=[];if(!p.scheduledAt)errs.push("una fecha y hora");if(p.scheduledAt&&p.scheduledAt<=nowAR())errs.push("una fecha futura");if(!media.length)errs.push("al menos una imagen o video final");
+  if(["reel"].includes(p.format)&&media.length&&!/\.(mp4|mov)|drive|dropbox/i.test(media[0]))errs.push("un video para el Reel");
+  if(p.format==="guion")errs.push("un formato publicable (el guion audiovisual no se publica)");
+  if(errs.length){toast("Para programar falta "+errs.join(", "));return}
+  if(postWarnings(p).some(w=>w[0]==="bad")){toast("Resolvé las advertencias en rojo antes de programar");return}
+  await savePost();
+  if(S.approvals.some(a=>a.postId===p.id&&["pendiente","ejecutando"].includes(a.status))){toast("Ya hay una solicitud pendiente para esta pieza");return}
+  const id=newId("apr");
+  const igType=p.format==="reel"?"REEL":p.format==="historia"?"STORY":"POST";
+  await dbSet("approvals/"+id,{id,tipo:"programar_publicacion",postId:p.id,status:"pendiente",createdAt:Date.now(),
+    titulo:"Programar: "+(p.title||"pieza sin título"),
+    que:`Crear una publicación programada (${igType==="POST"?(media.length>1?"carrusel":"publicación"):igType==="REEL"?"Reel":"historia"}) que Metricool publicará automáticamente.`,
+    cuenta:"Instagram @"+S.settings.igUser+" · marca de Metricool "+S.settings.brandId,
+    contenido:(igType==="STORY"?"(Las historias no llevan texto)":(p.caption||"")+(p.hashtags?"\n\n"+p.hashtags:"")),
+    media,cuando:niceDate(p.scheduledAt)+" (hora de Argentina)",scheduledAt:p.scheduledAt,igType,
+    consecuencias:"Al aprobar, la publicación queda programada en Metricool y saldrá en tu perfil público a esa hora, salvo que la canceles desde Metricool antes. Es visible para cualquier persona."});
+  closeDrawer();location.hash="#aprobaciones";toast("Solicitud enviada a Aprobaciones")}
+function vAprob(){const pend=S.approvals.filter(a=>["pendiente","ejecutando"].includes(a.status)).sort(byNewest);
+  const done=S.approvals.filter(a=>!["pendiente","ejecutando"].includes(a.status)).sort((a,b)=>(b.decidedAt||0)-(a.decidedAt||0)).slice(0,20);
+  return `<div class="head"><div><div class="eyebrow">Supervisión humana</div><h1>Aprobaciones</h1><p>Toda acción con consecuencias externas espera acá. Cada aprobación vale para una sola acción.</p></div></div>
+  ${pend.length?pend.map(a=>`<div class="approval"><div class="ph"><h2 style="font-family:var(--f-display);font-size:24px;margin:0">${esc(a.titulo)}</h2>${a.status==="ejecutando"?`<span class="chip info">Ejecutando…</span>`:`<span class="chip warn">Esperando tu decisión</span>`}</div>
+    <dl class="kv"><dt>Qué hará</dt><dd>${esc(a.que)}</dd><dt>En qué cuenta</dt><dd>${esc(a.cuenta)}</dd><dt>Cuándo</dt><dd>${esc(a.cuando)}</dd><dt>Contenido</dt><dd>${esc(a.contenido)}</dd><dt>Archivos</dt><dd>${(a.media||[]).map(u=>`<a class="link" href="${esc(u)}" target="_blank" rel="noopener">${esc(u.length>60?u.slice(0,60)+"…":u)}</a>`).join("<br>")}</dd><dt>Consecuencias</dt><dd>${esc(a.consecuencias)}</dd></dl>
+    <div class="btns"><button class="btn primary" data-act="approve" data-id="${esc(a.id)}" ${a.status!=="pendiente"||S.caps.mcp!=="ok"?"disabled":""}>Aprobar y programar</button><button class="btn" data-act="openPost" data-id="${esc(a.postId)}">Editar pieza</button><button class="btn" data-act="reject" data-id="${esc(a.id)}" ${a.status!=="pendiente"?"disabled":""}>Rechazar</button><button class="btn danger" data-act="cancelApr" data-id="${esc(a.id)}" ${a.status!=="pendiente"?"disabled":""}>Cancelar solicitud</button></div>
+    ${S.caps.mcp!=="ok"?`<span class="small" style="color:var(--warn)">Metricool no está disponible en esta vista: no se puede ejecutar.</span>`:""}
+    <div id="rej-${esc(a.id)}"></div></div>`).join(""):`<div class="panel"><h2>Nada pendiente</h2><p class="muted" style="margin:0">Cuando pidas programar una pieza aprobada, la solicitud aparece acá con todos sus detalles.</p></div>`}
+  <section class="panel"><h2>Registro</h2><div class="list">${done.map(a=>`<div class="row"><div><div class="t">${esc(a.titulo)}</div><div class="s">${esc(a.resultado||"")}${a.decidedAt?" · "+new Date(a.decidedAt).toLocaleString("es-AR",{timeZone:TZ}):""}${a.decidedBy?" · decidió "+(a.decidedBy===S.uid?"vos":"otra persona"):""}</div>${a.plannerUrl?`<a class="link" href="${esc(a.plannerUrl)}" target="_blank" rel="noopener">Ver en Metricool</a>`:""}</div><span class="chip ${a.status==="ejecutada"?"ok":a.status==="fallida"||a.status==="incierta"?"bad":""}">${esc(a.status)}</span></div>`).join("")||`<div class="empty">Sin decisiones registradas.</div>`}</div></section>`}
+async function approve(id){const a=S.approvals.find(x=>x.id===id);if(!a||a.status!=="pendiente")return;
+  const p=S.posts.find(x=>x.id===a.postId);if(!p){toast("La pieza ya no existe");return}
+  await dbUpdate("approvals/"+id,{status:"ejecutando",decidedAt:Date.now(),decidedBy:S.uid});
+  const info={autoPublish:true,draft:false,descendants:[],firstCommentText:"",hasNotReadNotes:false,media:a.media,mediaAltText:[],
+    providers:[{network:"instagram"}],publicationDate:{dateTime:a.scheduledAt+":00",timezone:TZ},shortener:false,smartLinkData:{ids:[]},
+    instagramData:{type:a.igType,showReelOnFeed:true,isAiGenerated:false}};
+  if(a.igType!=="STORY")info.text=(p.caption||"")+(p.hashtags?"\n\n"+p.hashtags:"");
+  try{const r=await mcp.callTool(MC,"createScheduledPost",{blogId:String(S.settings.brandId),date:a.scheduledAt+":00-03:00",info:JSON.stringify(info)});
+    const pl=r.payload;const url=findKey(pl,"plannerUrl");
+    await dbUpdate("approvals/"+id,{status:"ejecutada",resultado:"Programada en Metricool",plannerUrl:url||null});
+    await dbUpdate("posts/"+p.id,{stage:"programado",plannerUrl:url||null,history:[...(p.history||[]),{stage:"programado",at:Date.now(),by:S.uid,note:"Programada en Metricool tras aprobación"}]});
+    toast("Programada en Metricool");loadScheduled()}
+  catch(e){const amb=["server_unavailable","upstream_error","cancelled"].includes(e?.code);
+    const msg=e?.code==="tool_error"?"Metricool rechazó la publicación: "+String(e.message||"").slice(0,240):e?.code==="needs_reauth"?"Volvé a conectar Metricool en claude.ai → Configuración → Conectores":e?.code==="not_in_manifest"||e?.code==="approval_required"?"No autorizaste a la app a usar Metricool":amb?"Sin respuesta clara de Metricool. Revisá su planificador antes de reintentar para no duplicar":"No se pudo programar ("+(e?.code||"error")+")";
+    await dbUpdate("approvals/"+id,{status:amb?"incierta":"fallida",resultado:msg});
+    if(!amb)await dbUpdate("posts/"+p.id,{stage:"error",history:[...(p.history||[]),{stage:"error",at:Date.now(),by:S.uid,note:msg}]});
+    toast(msg)}}
+function findKey(o,k){if(!o||typeof o!=="object")return null;if(k in o)return o[k];for(const v of Object.values(o)){const r=findKey(v,k);if(r)return r}return null}
+async function verifyPublication(){const p=editing;if(!mcp){toast("Metricool no está disponible");return}
+  toast("Buscando la publicación en Metricool…");await loadMetrics(true);
+  const head=(p.caption||"").trim().slice(0,60);const hit=S.metrics.rows.find(r=>head&&r.text.trim().startsWith(head));
+  if(hit){await dbUpdate("posts/"+p.id,{stage:"publicado",publishedAt:Date.now(),igUrl:hit.url||null,history:[...(p.history||[]),{stage:"publicado",at:Date.now(),by:S.uid,note:"Confirmada por Metricool"}]});closeDrawer();toast("Confirmada: la publicación está en Instagram")}
+  else toast("Metricool todavía no registra esta publicación. Sigue como programada")}
+
+/* ============ Agentes ============ */
+const AGENTS={
+ contenido:{name:"Agente de contenido",obj:"Desarrollar contenido jurídico y comercial de alta calidad para propietarios, inquilinos e inmobiliarias.",
+  tools:["Lee las piezas del Estudio y lo aprendido de tus correcciones","Escribe propuestas que vos guardás o descartás","No publica ni programa nada"],
+  limits:["No consulta fuentes en vivo: marca cada afirmación jurídica para verificar","No inventa datos, leyes ni fallos","Nunca menciona una matrícula profesional"]},
+ crecimiento:{name:"Agente de crecimiento",obj:"Mejorar alcance, interacción y crecimiento orgánico con datos reales.",
+  tools:["Lee métricas reales de Metricool (solo lectura)","Lee las piezas del Estudio","Propone experimentos que vos aprobás"],
+  limits:["Separa datos observados, hipótesis y recomendaciones","Nunca inventa seguidores, alcance, horarios ni competidores","Con pocos datos, lo dice"]},
+ captacion:{name:"Agente de captación",obj:"Convertir el interés en consultas y oportunidades comerciales.",
+  tools:["Lee las fichas del CRM y tus precios","Prepara borradores de respuesta y presupuesto","No envía mensajes: vos copiás y enviás"],
+  limits:["No promete resultados jurídicos","No acepta presupuestos ni compromete servicios","No afirma matrícula ni título"]}};
+const agentName=k=>({piloto:"Piloto automático",reels:"Agente de reels",historias:"Agente de historias",director:"Director"})[k]||AGENTS[k]?.name||k;
+function agentContext(agent){const st=S.settings;const mem=(st.memoria||[]).slice(-20);
+  const titles=S.posts.slice().sort(byNewest).slice(0,25).map(p=>`- ${p.title} [${stageLabel(p.stage)}, ${fmtLabel(p.format)}]`).join("\n")||"(sin piezas)";
+  const others=S.runs.filter(r=>r.agent!==agent).slice(0,5).map(r=>`- ${agentName(r.agent)} · ${r.task}: ${r.summary}`).join("\n")||"(sin actividad)";
+  return `${BRAND_CONTEXT.replace("{ig}",st.igUser)}\nFecha de hoy: ${todayAR()} (Argentina).\n\nInstrucciones persistentes del responsable para este agente:\n${st.instr?.[agent]||"(ninguna)"}\n\nPreferencias aprendidas de correcciones aprobadas:\n${mem.map(m=>"- "+m).join("\n")||"(ninguna todavía)"}\n\nPiezas existentes en el Estudio (no repetir temas):\n${titles}\n\nTrabajo reciente de los otros agentes (para coordinarte):\n${others}\n`}
+function vAgentes(){
+  return `<div class="head"><div><div class="eyebrow">Tres agentes coordinados · supervisión humana</div><h1>Agentes de IA</h1><p>Cada agente trabaja con instrucciones persistentes, comparte contexto con los otros y guarda su historial. Sus resultados son propuestas: vos decidís qué se guarda.</p></div></div>
+  ${S.caps.sample==="off"?`<div class="panel"><b>Los agentes no están disponibles en esta vista.</b><span class="muted small">Abrí la app en claude.ai con tu cuenta. La primera vez, Claude te pide permiso para que la app use tu cuenta.</span></div>`:""}
+  ${typeof pilotPanel==="function"?pilotPanel():""}
+  <div class="agents">${Object.entries(AGENTS).map(([k,a])=>agentCard(k,a)).join("")}</div>
+  <div id="agentOutput">${Object.keys(AGENTS).map(k=>S.agentOut[k]?outBlock(k):"").join("")}</div>`}
+function agentCard(k,a){const runs=S.runs.filter(r=>r.agent===k).slice(0,5);const busy=S.agentBusy[k];
+  const tasks={contenido:`<label for="tc-tema">Tema o foco (opcional)<input id="tc-tema" placeholder="Ej.: ajustes por IPC, depósito en garantía"></label>
+     <div class="btns"><button class="btn primary" data-act="run" data-agent="contenido" data-task="ideas" ${busy?"disabled":""}>Proponer 5 ideas</button><button class="btn" data-act="run" data-agent="contenido" data-task="plan" ${busy?"disabled":""}>Plan de 2 semanas</button></div>
+     <label for="tc-post">Desarrollar una publicación<select id="tc-post"><option value="">Elegí una pieza</option>${S.posts.filter(p=>!["publicado","programado"].includes(p.stage)).map(p=>`<option value="${esc(p.id)}">${esc(p.title||"Sin título")}</option>`).join("")}</select></label>
+     <button class="btn" data-act="run" data-agent="contenido" data-task="desarrollar" ${busy?"disabled":""} style="align-self:flex-start">Desarrollar pieza</button>`,
+   crecimiento:`<div class="btns"><button class="btn primary" data-act="run" data-agent="crecimiento" data-task="analizar" ${busy?"disabled":""}>Analizar rendimiento real</button><button class="btn" data-act="bestTime" ${busy?"disabled":""}>Mejores horarios (Metricool)</button></div>
+     <label for="tg-bio">Biografía actual del perfil (para revisarla)<textarea id="tg-bio" style="min-height:60px" placeholder="Pegá la bio de @${esc(S.settings.igUser)}"></textarea></label>
+     <button class="btn" data-act="run" data-agent="crecimiento" data-task="perfil" ${busy?"disabled":""} style="align-self:flex-start">Revisar perfil</button>`,
+   captacion:`<label for="ts-msg">Mensaje recibido<textarea id="ts-msg" style="min-height:70px" placeholder="Pegá el mensaje privado o comentario"></textarea></label>
+     <label for="ts-lead">Contacto (opcional)<select id="ts-lead"><option value="">Contacto nuevo</option>${S.leads.map(l=>`<option value="${esc(l.id)}">${esc(l.nombre||"Sin nombre")}</option>`).join("")}</select></label>
+     <div class="btns"><button class="btn primary" data-act="run" data-agent="captacion" data-task="atender" ${busy?"disabled":""}>Preparar respuesta</button><button class="btn" data-act="run" data-agent="captacion" data-task="bienvenida" ${busy?"disabled":""}>Mensajes de bienvenida</button></div>`}[k];
+  return `<section class="panel agent"><div><div class="tag">${k.toUpperCase()}</div><h2>${esc(a.name)}</h2><p class="small muted" style="margin:4px 0 0">${esc(a.obj)}</p></div>
+  ${tasks}${busy?`<div class="status"><span class="spin"></span>${esc(busy)}</div>`:""}
+  <details><summary>Instrucciones persistentes</summary><div style="display:flex;flex-direction:column;gap:8px;padding-top:8px"><textarea id="instr-${k}" aria-label="Instrucciones de ${esc(a.name)}" placeholder="Ej.: priorizar contenido para propietarios que alquilan sin inmobiliaria">${esc(S.settings.instr?.[k]||"")}</textarea><button class="btn sm" data-act="saveInstr" data-agent="${k}" style="align-self:flex-start">Guardar instrucciones</button></div></details>
+  <details><summary>Herramientas y límites</summary><div style="display:flex;flex-direction:column;gap:6px;padding-top:8px"><b class="small">Puede</b><ul>${a.tools.map(t=>`<li>${esc(t)}</li>`).join("")}</ul><b class="small">Límites</b><ul>${a.limits.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div></details>
+  <details><summary>Historial (${S.runs.filter(r=>r.agent===k).length})</summary><div class="list">${runs.map(r=>`<div class="row"><div><div class="t small">${esc(r.task)}</div><div class="s">${esc(r.summary)}</div></div><button class="link" data-act="showRun" data-id="${esc(r.id)}">Ver</button></div>`).join("")||`<div class="empty">Sin ejecuciones.</div>`}</div></details>
+  </section>`}
+const sampleMsg=e=>({not_granted:"No autorizaste a la app a usar Claude. Recargá la página para que vuelva a preguntar.",sampling_disabled:"Claude no está disponible para esta cuenta.",rate_limited:"Llegaste al límite de uso por ahora. Probá de nuevo más tarde.",invalid_json:"La respuesta vino con un formato inesperado. Probá de nuevo.",refused:"Claude no quiso responder ese pedido. Reformulalo.",prompt_too_large:"Demasiado contexto. Achicá el texto pegado.",session_expired:"Tu sesión venció: volvé a iniciar sesión en claude.ai."}[e?.code]||"No se pudo completar. Probá de nuevo.");
+async function runAgent(agent,task){if(!sample){toast("Los agentes no están disponibles en esta vista");return}
+  let prompt="",label="",extra={};
+  const ctx=agentContext(agent);
+  if(agent==="contenido"&&task==="ideas"){const tema=$("#tc-tema")?.value.trim();label="Proponer 5 ideas"+(tema?": "+tema:"");
+    prompt=`${ctx}\nTAREA: Proponé 5 ideas de publicaciones de Instagram para Cláusula Legal${tema?` sobre: ${tema}`:""}, útiles para propietarios, inquilinos o inmobiliarias en Argentina. Variá formatos (carrusel, reel, publicación).\nRespondé SOLO un array JSON de 5 objetos con: titulo, formato ("carrusel"|"reel"|"post"), objetivo, audiencia, gancho, slides (array de {titulo,texto}; para reel, array vacío), guion_reel (texto con escenas, narración, duración y sonido sugerido; vacío si no es reel), caption, hashtags (string), cta, recursos (qué imágenes o materiales hacen falta), justificacion (por qué conviene estratégicamente), afirmaciones_a_verificar (array de strings).`}
+  else if(agent==="contenido"&&task==="plan"){label="Plan editorial de 2 semanas";
+    prompt=`${ctx}\nTAREA: Armá un calendario editorial para las próximas 2 semanas desde ${todayAR()}, con 3 publicaciones por semana, alternando educativo, comercial y preguntas frecuentes.\nRespondé SOLO un array JSON de objetos {fecha:"YYYY-MM-DD", hora:"HH:MM", formato:"carrusel"|"reel"|"post", titulo, objetivo, tema, cta}. No inventes horarios "óptimos": usá 19:00 como horario provisorio salvo que tengas datos reales.`}
+  else if(agent==="contenido"&&task==="desarrollar"){const pid=$("#tc-post")?.value;const p=S.posts.find(x=>x.id===pid);if(!p){toast("Elegí una pieza del Estudio");return}
+    label="Desarrollar: "+p.title;extra.postId=p.id;
+    prompt=`${ctx}\nTAREA: Desarrollá completa esta pieza:\n${JSON.stringify({titulo:p.title,formato:p.format,objetivo:p.objetivo,audiencia:p.audiencia,caption:p.caption,slides:p.slides,guion_reel:p.guionReel,cta:p.cta,notas:p.notas})}\nRespondé SOLO un objeto JSON con: caption (máx. 1800 caracteres), hashtags (string, máx. 12), cta, slides (array de {titulo (máx. 60 caracteres), texto (máx. 200)}; entre 5 y 9 si es carrusel; 1 si es post; vacío si es reel), guion_reel (si es reel: escenas numeradas con duración, narración y sonido; si no, vacío), afirmaciones_a_verificar (array), cambios (resumen breve de lo que hiciste).`}
+  else if(agent==="crecimiento"&&task==="analizar"){label="Analizar rendimiento";
+    if(S.caps.mcp==="ok")await loadMetrics(true);
+    const rows=S.metrics.rows.map(r=>({fecha:r.dateLabel,tipo:r.type,texto:r.text.slice(0,120),alcance:r.reach,interacciones:r.interactions,guardados:r.saved,compartidos:r.shares,vistas:r.views,seguidores:r.follows}));
+    prompt=`${ctx}\nDATOS OBSERVADOS de Metricool, Instagram, últimos 90 días (${rows.length} publicaciones):\n${JSON.stringify(rows)}\n${S.caps.mcp!=="ok"?"(Metricool no estuvo disponible: no hay datos.)":""}\nTAREA: Analizá el rendimiento. Si hay pocas publicaciones, decilo con claridad y no saques conclusiones estadísticas.\nRespondé SOLO un objeto JSON con: observado (array: solo hechos que salen de los datos), hipotesis (array), recomendaciones (array), experimentos (array de {nombre, hipotesis, como_hacerlo, como_medir, duracion}), datos_suficientes (boolean).`}
+  else if(agent==="crecimiento"&&task==="perfil"){const bio=$("#tg-bio")?.value.trim();if(!bio){toast("Pegá la biografía actual del perfil");return}label="Revisar perfil";
+    prompt=`${ctx}\nBiografía actual de @${S.settings.igUser}:\n"""${bio}"""\nTAREA: Revisá la biografía para mejorar claridad y conversión (máx. 150 caracteres por propuesta).\nRespondé SOLO un objeto JSON con: problemas (array), propuestas (array de 3 strings), enlace_recomendado (qué poner en el enlace de la bio), justificacion.`}
+  else if(agent==="captacion"&&task==="atender"){const msg=$("#ts-msg")?.value.trim();if(!msg){toast("Pegá el mensaje recibido");return}
+    const lid=$("#ts-lead")?.value;const lead=S.leads.find(l=>l.id===lid);label="Preparar respuesta"+(lead?": "+lead.nombre:"");extra={leadId:lid||null,mensaje:msg};
+    prompt=`${ctx}\nServicios y precios del responsable:\n${S.settings.precios||"(no cargados: no inventes precios)"}\nPlantillas de bienvenida aprobadas:\n${(S.settings.plantillas||[]).join("\n---\n")||"(ninguna)"}\n${lead?"Ficha del contacto: "+JSON.stringify({nombre:lead.nombre,servicio:lead.servicio,estado:lead.estado,notas:lead.notas}):""}\nMENSAJE RECIBIDO:\n"""${msg}"""\nTAREA: Prepará la atención comercial. Trato profesional y cálido. No prometas resultados, no afirmes matrícula, no aceptes ni cierres precios: si preguntan precio y no hay lista, proponé pedir datos para presupuestar.\nRespondé SOLO un objeto JSON con: nombre_detectado, servicio (uno de: ${SERVICES.join(", ")}), prioridad ("alta"|"media"|"baja"), motivo_prioridad, resumen, preguntas_calificacion (array), borrador_respuesta, siguiente_paso, datos_para_contrato (array de datos a pedir).`}
+  else if(agent==="captacion"&&task==="bienvenida"){label="Mensajes de bienvenida";
+    prompt=`${ctx}\nTAREA: Escribí 3 mensajes de bienvenida para responder mensajes privados nuevos en Instagram, y 3 respuestas rápidas para preguntas frecuentes (precio, plazos, modalidad a distancia).\nRespondé SOLO un objeto JSON con: bienvenida (array de 3 strings), respuestas_rapidas (array de {pregunta, respuesta}).`}
+  else if(agent==="captacion"&&task==="presupuesto"){const lead=S.leads.find(l=>l.id===extra.leadId||l.id===runAgent.leadId);if(!lead)return;extra={leadId:lead.id};label="Borrador de presupuesto: "+lead.nombre;
+    prompt=`${ctx}\nServicios y precios del responsable:\n${S.settings.precios||"(no cargados)"}\nFicha: ${JSON.stringify({nombre:lead.nombre,servicio:lead.servicio,notas:lead.notas,datos:lead.datos})}\nTAREA: Prepará un borrador de presupuesto. Usá SOLO precios de la lista; si no hay, poné "a definir". Aclaraciones obligatorias: es un borrador, no constituye asesoramiento de un profesional matriculado.\nRespondé SOLO un objeto JSON con: items (array de {concepto, detalle, precio}), plazo_entrega, condiciones, validez, aclaraciones (array).`}
+  else return;
+  S.agentBusy[agent]="Trabajando: "+label+"…";render();
+  try{const out=await sample.json(prompt,{modelTier:task==="bienvenida"?"default":"default",cache:false});
+    const sum=summarize(agent,task,out);const runId=await logRun(agent,label,sum,out);
+    S.agentOut[agent]={task,label,out,runId,extra};toast(agentName(agent)+": listo")}
+  catch(e){if(e?.code!=="cancelled")toast(sampleMsg(e))}
+  finally{delete S.agentBusy[agent];render();if(S.agentOut[agent])document.getElementById("out-"+agent)?.scrollIntoView({behavior:"smooth",block:"start"})}}
+function summarize(agent,task,o){try{if(Array.isArray(o))return o.length+" propuestas: "+o.slice(0,3).map(x=>x.titulo||x.tema).join(" · ");
+  if(task==="analizar")return(o.datos_suficientes===false?"Datos insuficientes. ":"")+(o.recomendaciones||[]).slice(0,1).join("");
+  if(task==="atender")return(o.nombre_detectado||"Consulta")+" · "+(o.servicio||"")+" · prioridad "+(o.prioridad||"");
+  if(task==="desarrollar")return o.cambios||"Pieza desarrollada";if(task==="perfil")return(o.propuestas||[])[0]||"Revisión de perfil";
+  if(task==="presupuesto")return(o.items||[]).length+" conceptos";return"Resultado listo"}catch(e){return"Resultado listo"}}
+const arr=v=>Array.isArray(v)?v:v?[v]:[];
+function outBlock(agent){const r=S.agentOut[agent];const o=r.out;let body="";
+  const verif=v=>arr(v).length?`<dt>Verificar</dt><dd>${arr(v).map(esc).join("\n")}</dd>`:"";
+  if(r.task==="ideas")body=arr(o).map((x,i)=>`<div class="prop"><h4>${esc(x.titulo)}</h4><span class="meta small muted">${esc(fmtLabel(x.formato))}</span><dl class="kv"><dt>Objetivo</dt><dd>${esc(x.objetivo)}</dd><dt>Audiencia</dt><dd>${esc(x.audiencia)}</dd><dt>Gancho</dt><dd>${esc(x.gancho)}</dd>${arr(x.slides).length?`<dt>Diapositivas</dt><dd>${arr(x.slides).map((s,k)=>`${k+1}. ${esc(s.titulo)} — ${esc(s.texto)}`).join("\n")}</dd>`:""}${x.guion_reel?`<dt>Guion</dt><dd>${esc(x.guion_reel)}</dd>`:""}<dt>Caption</dt><dd>${esc(x.caption)}</dd><dt>CTA</dt><dd>${esc(x.cta)}</dd><dt>Recursos</dt><dd>${esc(x.recursos)}</dd><dt>Por qué</dt><dd>${esc(x.justificacion)}</dd>${verif(x.afirmaciones_a_verificar)}</dl><div class="btns"><button class="btn sm primary" data-act="saveIdea" data-i="${i}">Guardar en Estudio</button><button class="btn sm" data-act="learn" data-agent="contenido" data-i="${i}">Descartar y explicar por qué</button></div></div>`).join("");
+  else if(r.task==="plan")body=`<div class="tbl"><table><thead><tr><th>Fecha</th><th>Formato</th><th>Tema</th><th>Objetivo</th></tr></thead><tbody>${arr(o).map(x=>`<tr><td style="white-space:nowrap">${esc(x.fecha)} ${esc(x.hora||"")}</td><td>${esc(fmtLabel(x.formato))}</td><td><b>${esc(x.titulo)}</b><br><span class="small muted">${esc(x.tema)}</span></td><td>${esc(x.objetivo)}</td></tr>`).join("")}</tbody></table></div><div class="btns"><button class="btn primary sm" data-act="savePlan">Agregar todo al Estudio como ideas con fecha</button></div>`;
+  else if(r.task==="desarrollar")body=`<div class="prop"><h4>${esc(S.posts.find(p=>p.id===r.extra.postId)?.title||"Pieza")}</h4><dl class="kv"><dt>Cambios</dt><dd>${esc(o.cambios)}</dd>${arr(o.slides).length?`<dt>Diapositivas</dt><dd>${arr(o.slides).map((s,k)=>`${k+1}. ${esc(s.titulo)} — ${esc(s.texto)}`).join("\n")}</dd>`:""}${o.guion_reel?`<dt>Guion</dt><dd>${esc(o.guion_reel)}</dd>`:""}<dt>Caption</dt><dd>${esc(o.caption)}</dd><dt>Hashtags</dt><dd>${esc(o.hashtags)}</dd><dt>CTA</dt><dd>${esc(o.cta)}</dd>${verif(o.afirmaciones_a_verificar)}</dl><div class="btns"><button class="btn sm primary" data-act="applyDev">Aplicar a la pieza (guarda versión anterior)</button><button class="btn sm" data-act="learn" data-agent="contenido" data-i="-1">Descartar y explicar por qué</button></div></div>`;
+  else if(r.task==="analizar")body=`<div class="prop">${o.datos_suficientes===false?`<span class="chip warn" style="align-self:flex-start">Datos insuficientes para conclusiones firmes</span>`:""}<dl class="kv"><dt>Observado</dt><dd>${arr(o.observado).map(esc).join("\n")||"–"}</dd><dt>Hipótesis</dt><dd>${arr(o.hipotesis).map(esc).join("\n")||"–"}</dd><dt>Recomendaciones</dt><dd>${arr(o.recomendaciones).map(esc).join("\n")||"–"}</dd></dl>${arr(o.experimentos).map(x=>`<div style="border-top:1px solid var(--line);padding-top:8px"><b>${esc(x.nombre)}</b><dl class="kv"><dt>Hipótesis</dt><dd>${esc(x.hipotesis)}</dd><dt>Cómo</dt><dd>${esc(x.como_hacerlo)}</dd><dt>Medición</dt><dd>${esc(x.como_medir)} · ${esc(x.duracion)}</dd></dl></div>`).join("")}</div>`;
+  else if(r.task==="perfil")body=`<div class="prop"><dl class="kv"><dt>Problemas</dt><dd>${arr(o.problemas).map(esc).join("\n")}</dd><dt>Enlace</dt><dd>${esc(o.enlace_recomendado)}</dd><dt>Por qué</dt><dd>${esc(o.justificacion)}</dd></dl>${arr(o.propuestas).map(b=>`<div class="row"><span style="white-space:pre-wrap">${esc(b)}</span><button class="btn sm" data-act="copyText" data-text="${esc(b)}">Copiar</button></div>`).join("")}</div>`;
+  else if(r.task==="atender")body=`<div class="prop"><div class="btns"><span class="chip ${o.prioridad==="alta"?"bad":o.prioridad==="media"?"warn":""}">Prioridad ${esc(o.prioridad)}</span><span class="chip">${esc(o.servicio)}</span></div><dl class="kv"><dt>Contacto</dt><dd>${esc(o.nombre_detectado)}</dd><dt>Resumen</dt><dd>${esc(o.resumen)}</dd><dt>Prioridad</dt><dd>${esc(o.motivo_prioridad)}</dd><dt>Preguntas</dt><dd>${arr(o.preguntas_calificacion).map(esc).join("\n")}</dd><dt>Siguiente paso</dt><dd>${esc(o.siguiente_paso)}</dd><dt>Datos a pedir</dt><dd>${arr(o.datos_para_contrato).map(esc).join("\n")}</dd></dl><label for="replyDraft">Borrador de respuesta (editalo antes de enviar)<textarea id="replyDraft" style="min-height:140px">${esc(o.borrador_respuesta)}</textarea></label><div class="btns"><button class="btn sm primary" data-act="copyReply">Copiar respuesta</button><button class="btn sm" data-act="saveLeadFromAgent">${r.extra.leadId?"Guardar en la ficha":"Registrar como contacto"}</button></div><span class="small muted">La app no envía mensajes: copiá la respuesta y enviala vos desde Instagram.</span></div>`;
+  else if(r.task==="bienvenida")body=`<div class="prop">${arr(o.bienvenida).map((b,i)=>`<div class="row"><span style="white-space:pre-wrap">${esc(b)}</span><div class="btns"><button class="btn sm" data-act="copyText" data-text="${esc(b)}">Copiar</button><button class="btn sm" data-act="keepTpl" data-text="${esc(b)}">Aprobar como plantilla</button></div></div>`).join("")}<h4 style="margin-top:6px">Respuestas rápidas</h4>${arr(o.respuestas_rapidas).map(q=>`<div class="row"><div><div class="t small">${esc(q.pregunta)}</div><div style="white-space:pre-wrap">${esc(q.respuesta)}</div></div><button class="btn sm" data-act="copyText" data-text="${esc(q.respuesta)}">Copiar</button></div>`).join("")}</div>`;
+  else if(r.task==="presupuesto")body=`<div class="prop"><div class="tbl"><table><thead><tr><th>Concepto</th><th>Detalle</th><th class="n">Precio</th></tr></thead><tbody>${arr(o.items).map(x=>`<tr><td>${esc(x.concepto)}</td><td>${esc(x.detalle)}</td><td class="n">${esc(x.precio)}</td></tr>`).join("")}</tbody></table></div><dl class="kv"><dt>Plazo</dt><dd>${esc(o.plazo_entrega)}</dd><dt>Condiciones</dt><dd>${esc(o.condiciones)}</dd><dt>Validez</dt><dd>${esc(o.validez)}</dd><dt>Aclaraciones</dt><dd>${arr(o.aclaraciones).map(esc).join("\n")}</dd></dl><div class="btns"><button class="btn sm primary" data-act="saveBudget">Guardar como borrador en la ficha</button></div></div>`;
+  return `<section class="panel" id="out-${agent}" style="margin-top:16px"><div class="ph"><h2>${esc(agentName(agent))}: ${esc(r.label)}</h2><button class="link" data-act="clearOut" data-agent="${agent}">Cerrar</button></div><div class="out">${body}</div></section>`}
+function postFromIdea(x,date){const p=blankPost();Object.assign(p,{title:x.titulo||"Idea",format:["carrusel","reel","post"].includes(x.formato)?x.formato:"post",objetivo:x.objetivo||"",audiencia:x.audiencia||"",
+  caption:x.caption||"",cta:x.cta||"",slides:arr(x.slides).length?arr(x.slides).map(s=>({titulo:s.titulo||"",texto:s.texto||""})):[],guionReel:x.guion_reel||"",hashtags:x.hashtags||p.hashtags,
+  notas:[x.gancho&&"Gancho: "+x.gancho,x.recursos&&"Recursos: "+x.recursos,x.justificacion&&"Justificación: "+x.justificacion,x.tema&&"Tema: "+x.tema].filter(Boolean).join("\n"),
+  verificar:arr(x.afirmaciones_a_verificar),scheduledAt:date||"",source:"agente",history:[{stage:"idea",at:Date.now(),by:S.uid,note:"Propuesta del agente de contenido, guardada por vos"}]});return p}
+
+/* ============ CRM ============ */
+let leadEditing=null;
+function vCRM(){const cols=LEAD_STATES.map(([k,l])=>{const items=S.leads.filter(x=>(x.estado||"nuevo")===k).sort(byNewest);
+  return `<div class="col"><h3><span>${esc(l)}</span><span>${items.length}</span></h3>${items.map(x=>`<button class="card" data-act="openLead" data-id="${esc(x.id)}"><b>${esc(x.nombre||"Sin nombre")}</b><span class="meta"><span>${esc(x.servicio||"")}</span>${x.prioridad==="alta"?`<span class="chip bad">Prioridad alta</span>`:""}${x.seguimiento?`<span>Seguir ${niceDate(x.seguimiento)}</span>`:""}</span></button>`).join("")}</div>`}).join("");
+  return `<div class="head"><div><div class="eyebrow">Captación</div><h1>CRM y consultas</h1><p>Cada consulta con su estado, próximo paso y presupuesto. Los datos personales quedan privados en tu cuenta.</p></div><div class="btns"><button class="btn primary" data-act="newLead">Registrar contacto</button><a class="btn" href="#agentes" style="text-decoration:none">Preparar respuesta con el agente</a></div></div>
+  ${S.loaded.leads&&!S.leads.length?`<div class="panel"><h2>Sin contactos todavía</h2><p class="muted" style="margin:0">Cuando alguien te escriba, pegá el mensaje en el agente de captación: clasifica la consulta, sugiere preguntas y deja un borrador de respuesta.</p></div>`:""}
+  <div class="board"><div class="cols">${cols}</div></div>`}
+function openLead(id){const l=id?S.leads.find(x=>x.id===id):{id:newId("lead"),nombre:"",contacto:"",canal:"Instagram",servicio:SERVICES[0],estado:"nuevo",prioridad:"media",notas:"",proximoPaso:"",seguimiento:"",createdAt:Date.now(),_new:true};if(!l)return;leadEditing=JSON.parse(JSON.stringify(l));drawLead()}
+function drawLead(){const l=leadEditing;const b=l.presupuesto;
+  $("#drawerRoot").innerHTML=`<div class="drawer-bg" data-act="closeBg"><div class="drawer" role="dialog" aria-label="Ficha de contacto">
+  <div class="dhead"><div><div class="eyebrow">${esc(leadLabel(l.estado))}</div><h2>${esc(l.nombre||"Nuevo contacto")}</h2></div><button class="btn sm" data-act="closeDrawer">Cerrar</button></div>
+  <div class="fields"><label for="lNom">Nombre<input id="lNom" data-l="nombre" value="${esc(l.nombre)}"></label><label for="lCon">Contacto (usuario, teléfono o email)<input id="lCon" data-l="contacto" value="${esc(l.contacto)}"></label>
+  <label for="lCanal">Canal<select id="lCanal" data-l="canal">${opts(["Instagram","WhatsApp","Email","Otro"].map(x=>[x,x]),l.canal)}</select></label>
+  <label for="lSrv">Servicio<select id="lSrv" data-l="servicio">${opts(SERVICES.map(x=>[x,x]),l.servicio)}</select></label>
+  <label for="lEst">Estado<select id="lEst" data-l="estado">${opts(LEAD_STATES,l.estado)}</select></label>
+  <label for="lPri">Prioridad<select id="lPri" data-l="prioridad">${opts([["alta","Alta"],["media","Media"],["baja","Baja"]],l.prioridad)}</select></label>
+  <label for="lSeg">Fecha de seguimiento<input id="lSeg" type="date" data-l="seguimiento" value="${esc(l.seguimiento)}"></label></div>
+  <label for="lPaso">Siguiente paso<input id="lPaso" data-l="proximoPaso" value="${esc(l.proximoPaso)}"></label>
+  <label for="lNotas">Notas y mensajes<textarea id="lNotas" data-l="notas" style="min-height:120px">${esc(l.notas)}</textarea></label>
+  <label for="lDatos">Datos para el contrato<textarea id="lDatos" data-l="datos" style="min-height:90px" placeholder="Partes, inmueble, plazo, monto, índice de actualización, garantías…">${esc(l.datos||"")}</textarea></label>
+  ${b?`<section class="panel"><div class="ph"><h2>Presupuesto</h2><span class="chip ${b.estado==="aceptado"?"ok":b.estado==="enviado"?"gold":""}">${esc(b.estado)}</span></div><div class="tbl"><table><tbody>${arr(b.items).map(x=>`<tr><td>${esc(x.concepto)}</td><td>${esc(x.detalle)}</td><td class="n">${esc(x.precio)}</td></tr>`).join("")}</tbody></table></div><span class="small muted">${esc(b.condiciones||"")}</span>
+    <div class="btns"><button class="btn sm" data-act="copyBudget">Copiar presupuesto</button><button class="btn sm" data-act="budgetState" data-s="enviado">Lo envié</button><button class="btn sm" data-act="budgetState" data-s="aceptado">Lo aceptó</button><button class="btn sm" data-act="budgetState" data-s="rechazado">Lo rechazó</button></div>
+    <span class="small muted">Confirmar el presupuesto y comprometer el servicio es decisión tuya: la app solo registra lo que marcás.</span></section>`:""}
+  <div class="btns"><button class="btn primary" data-act="saveLead">Guardar</button>${!l._new?`<button class="btn" data-act="leadBudget">Borrador de presupuesto con el agente</button><button class="btn danger" data-act="delLead">Eliminar</button>`:""}</div>
+  ${S.agentBusy.captacion?`<div class="status"><span class="spin"></span>${esc(S.agentBusy.captacion)}</div>`:""}
+  </div></div>`}
+function readLead(){document.querySelectorAll("#drawerRoot [data-l]").forEach(el=>{leadEditing[el.dataset.l]=el.value})}
+async function saveLead(){readLead();const l={...leadEditing};delete l._new;l.updatedAt=Date.now();await dbSet("leads/"+l.id,l);leadEditing={...l};toast("Contacto guardado");drawLead()}
+function budgetText(l){const b=l.presupuesto;return `Presupuesto para ${l.nombre}\n\n${arr(b.items).map(x=>`• ${x.concepto}${x.detalle?" — "+x.detalle:""}: ${x.precio}`).join("\n")}\n\nPlazo: ${b.plazo_entrega||"a convenir"}\nCondiciones: ${b.condiciones||""}\nValidez: ${b.validez||""}\n${arr(b.aclaraciones).map(a=>"• "+a).join("\n")}`}
+
+/* ============ Configuración ============ */
+function vConfig(){const st=S.settings;
+  return `<div class="head"><div><div class="eyebrow">Marca e integraciones</div><h1>Configuración</h1></div></div>
+  <div class="grid">
+  <section class="panel"><h2>Cuenta y marca</h2><div class="fields"><label for="cIg">Usuario de Instagram<input id="cIg" value="${esc(st.igUser)}"></label><label for="cBrand">Marca en Metricool (id)<input id="cBrand" value="${esc(st.brandId)}"></label></div>
+    <button class="btn sm" data-act="checkBrand" style="align-self:flex-start">Verificar con Metricool</button><div id="brandCheck" class="small muted"></div>
+    <button class="btn primary sm" data-act="saveConfig" style="align-self:flex-start">Guardar</button></section>
+  <section class="panel"><h2>Lo que aprendieron los agentes</h2><p class="small muted" style="margin:0">Cuando descartás una propuesta y explicás por qué, queda acá y los tres agentes lo tienen en cuenta.</p>
+    <div class="list">${(st.memoria||[]).map((m,i)=>`<div class="row"><span>${esc(m)}</span><button class="link" data-act="delMem" data-i="${i}">Quitar</button></div>`).join("")||`<div class="empty">Sin aprendizajes todavía.</div>`}</div>
+    <form data-form="mem" style="display:flex;gap:8px"><input id="memText" placeholder="Ej.: no usar emojis en los títulos" aria-label="Nueva preferencia"><button class="btn sm">Agregar</button></form></section>
+  <section class="panel"><h2>Integraciones</h2>${integrationsList()}<button class="btn sm" data-act="loadMetrics" style="align-self:flex-start">Volver a consultar Metricool</button></section>
+  <section class="panel"><h2>Qué funciona y qué no</h2><dl class="kv">
+    <dt>Funciona</dt><dd>Estudio con etapas, versiones e historial; secciones de publicaciones, reels (guiones, teleprompter y controles) e historias; agentes por sección y un Director con alertas; aprobaciones de una sola acción; métricas reales de Instagram vía Metricool; programación en Metricool tras tu aprobación.</dd>
+    <dt>Necesita algo tuyo</dt><dd>Programar exige el archivo final de la imagen o video como URL pública. La app no genera imágenes: se diseñan con la plantilla aprobada.</dd>
+    <dt>No hace</dt><dd>No responde mensajes privados ni envía correos: deja el borrador para que lo envíes vos. Los agentes de la app no consultan fuentes en vivo y marcan lo que hay que verificar; las novedades legales las trae el Director cada mañana desde la web. Contratos, acuerdos y clientes viven en el Despacho.</dd>
+    <dt>Costos</dt><dd>Los agentes usan tu plan de Claude. Las funciones de Metricool dependen de tu plan de Metricool.</dd></dl></section>
+  </div>`}
+
+/* ============ Metricool ============ */
+async function loadMetrics(force){if(!mcp)return;S.metrics.state="loading";if(current==="panel")render();
+  const to=todayAR(),fromD=new Date(Date.now()-90*864e5);const from=fmtAR.format(fromD).slice(0,10);
+  try{const r=await mcp.callTool(MC,"getAnalyticsDataByMetrics",{brandId:String(S.settings.brandId),from:from+"T00:00:00-03:00",to:to+"T23:59:59-03:00",metrics:["IGPO02","IGPO03","IGPO06","IGPO07","IGPO14","IGPO12","IGPO15","IGPO27","IGPO28","IGPO29"]},force?{cache:{refresh:true}}:{cache:{staleTime:120000}});
+    const rows=(r.payload&&r.payload.rows)||[];const num=v=>v===null||v===undefined||v===""?null:+v;
+    S.metrics={state:"done",error:"",at:r.cache?.storedAt||Date.now(),rows:rows.map(x=>({date:x[0],dateLabel:x[0]?`${x[0].slice(6,8)}/${x[0].slice(4,6)}/${x[0].slice(0,4)}`:"",text:String(x[1]||""),url:x[2],type:({FEED_IMAGE:"Imagen",FEED_CAROUSEL_ALBUM:"Carrusel",REELS:"Reel",FEED_VIDEO:"Video"})[x[3]]||x[3]||"",reach:num(x[4]),interactions:num(x[5]),saved:num(x[6]),shares:num(x[7]),views:num(x[8]),follows:num(x[9])})).sort((a,b)=>String(b.date).localeCompare(String(a.date)))}}
+  catch(e){S.metrics.state="error";S.metrics.error=mcpMsg(e)}
+  if(!editing&&!leadEditing)render()}
+async function loadScheduled(){if(!mcp)return;S.scheduled.state="loading";
+  const to=fmtAR.format(new Date(Date.now()+60*864e5)).slice(0,10);
+  try{const r=await mcp.callTool(MC,"getScheduledPosts",{brandId:String(S.settings.brandId),fromDate:todayAR()+"T00:00:00-03:00",toDate:to+"T23:59:59-03:00",timezone:TZ},{cache:false});
+    const list=arr(r.payload?.data);S.scheduled={state:"done",error:"",items:list.slice(0,6).map(p=>({text:String(p.text||p.title||"(sin texto)").slice(0,70),when:p.publicationDate?.dateTime?niceDate(p.publicationDate.dateTime.slice(0,16)):""}))}}
+  catch(e){S.scheduled={state:"error",items:[],error:mcpMsg(e)}}
+  if(!editing&&!leadEditing&&current==="panel")render()}
+function mcpMsg(e){return({needs_reauth:"Volvé a conectar Metricool en claude.ai → Configuración → Conectores.",server_not_connected:"Agregá Metricool en claude.ai → Configuración → Conectores.",selection_required:"Elegí qué conexión de Metricool usar cuando claude.ai te lo pregunte.",not_in_manifest:"No autorizaste a la app a usar Metricool.",approval_required:"Falta tu permiso para usar Metricool.",server_unavailable:"Metricool no responde ahora. Probá en unos minutos.",tool_error:"Metricool devolvió un error: "+String(e?.message||"").slice(0,160)})[e?.code]||"No se pudo consultar Metricool ("+(e?.code||"error")+")."}
+async function bestTime(){if(!mcp){toast("Metricool no está disponible");return}
+  S.agentBusy.crecimiento="Consultando horarios en Metricool…";render();
+  const from=todayAR(),to=fmtAR.format(new Date(Date.now()+6*864e5)).slice(0,10);
+  try{const r=await mcp.callTool(MC,"getBestTimeToPostByNetwork",{brandId:String(S.settings.brandId),fromDate:from+"T00:00:00-03:00",toDate:to+"T23:59:59-03:00",timezone:TZ,socialNetwork:"instagram"});
+    const days=["","lunes","martes","miércoles","jueves","viernes","sábado","domingo"];const slots=[];
+    arr(r.payload?.data).forEach(d=>arr(d.bestTimesByHour).forEach(h=>slots.push({d:days[d.dayOfWeek]||d.dayOfWeek,h:h.hourOfDay,v:+h.value||0})));
+    const top=slots.filter(s=>s.v>0).sort((a,b)=>b.v-a.v).slice(0,5);
+    const out={observado:top.length?top.map(s=>`${s.d} a las ${String(s.h).padStart(2,"0")}:00 (valor ${s.v})`):["Metricool todavía no tiene datos suficientes de tu audiencia para recomendar horarios. Con más publicaciones y seguidores, este dato aparece."],hipotesis:[],recomendaciones:[],experimentos:[],datos_suficientes:top.length>0};
+    S.agentOut.crecimiento={task:"analizar",label:"Mejores horarios según Metricool",out,extra:{}};await logRun("crecimiento","Mejores horarios (Metricool)",out.observado[0],out)}
+  catch(e){toast(mcpMsg(e))}finally{delete S.agentBusy.crecimiento;render()}}
+
+/* ============ Eventos ============ */
+document.addEventListener("click",async ev=>{const el=ev.target.closest("[data-act]");if(!el)return;const a=el.dataset.act;
+  if(a==="closeBg"&&ev.target!==el)return;
+  const id=el.dataset.id;
+  try{switch(a){
+  case"newPost":location.hash="#publicaciones";openPost();break;
+  case"openPost":openPost(id);break;
+  case"closeDrawer":case"closeBg":closeDrawer();break;
+  case"savePost":await savePost();break;
+  case"addSlide":readPostForm();editing.slides.push({titulo:"",texto:""});previewIdx=editing.slides.length-1;drawPost();break;
+  case"delSlide":readPostForm();editing.slides.splice(+el.dataset.i,1);previewIdx=0;drawPost();break;
+  case"prevSlide":readPostForm();previewIdx=Math.max(0,previewIdx-1);drawPost();break;
+  case"nextSlide":readPostForm();previewIdx++;drawPost();break;
+  case"okVerif":readPostForm();editing.verificar.splice(+el.dataset.i,1);drawPost();break;
+  case"copyCaption":readPostForm();copy((editing.caption||"")+(editing.hashtags?"\n\n"+editing.hashtags:""));break;
+  case"dupPost":{readPostForm();const c={...JSON.parse(JSON.stringify(editing)),id:newId("post"),title:(editing.title||"")+" (variante)",stage:"idea",scheduledAt:"",versions:[],history:[{stage:"idea",at:Date.now(),by:S.uid,note:"Duplicada"}],createdAt:Date.now(),plannerUrl:null,igUrl:null};delete c._new;await dbSet("posts/"+c.id,c);editing=c;drawPost();toast("Variante creada");break}
+  case"delPost":if(el.dataset.confirm){await dbDelete("posts/"+editing.id);closeDrawer();toast("Pieza eliminada")}else{el.dataset.confirm="1";el.textContent="Tocá de nuevo para eliminar"}break;
+  case"restoreVer":{readPostForm();const v=editing.versions[+el.dataset.i];Object.assign(editing,{caption:v.caption,slides:v.slides||[],guionReel:v.guionReel||"",hashtags:v.hashtags??editing.hashtags,cta:v.cta??editing.cta});drawPost();toast("Versión cargada: guardá para confirmarla");break}
+  case"requestSchedule":await requestSchedule();break;
+  case"verifyPub":await verifyPublication();break;
+  case"agentDevelop":{const pid=editing.id;closeDrawer();location.hash="#publicaciones";current="publicaciones";render();const s=$("#tc-post");if(s){s.value=pid;await runAgent("contenido","desarrollar")}break}
+  case"approve":await approve(id);break;
+  case"reject":{const box=document.getElementById("rej-"+id);box.innerHTML=`<form data-form="reject" data-id="${esc(id)}" style="display:flex;flex-direction:column;gap:8px"><label for="rr-${esc(id)}">Motivo del rechazo (los agentes lo tendrán en cuenta)<input id="rr-${esc(id)}"></label><button class="btn sm" style="align-self:flex-start">Confirmar rechazo</button></form>`;break}
+  case"cancelApr":await dbUpdate("approvals/"+id,{status:"cancelada",decidedAt:Date.now(),decidedBy:S.uid,resultado:"Cancelada sin ejecutar"});toast("Solicitud cancelada");break;
+  case"run":await runAgent(el.dataset.agent,el.dataset.task);break;
+  case"bestTime":await bestTime();break;
+  case"saveInstr":{const k=el.dataset.agent;await saveSettings({instr:{...S.settings.instr,[k]:$("#instr-"+k).value}});toast("Instrucciones guardadas");break}
+  case"showRun":{const r=S.runs.find(x=>x.id===id);if(r){S.agentOut[r.agent]={task:taskKey(r.task),label:r.task+" ("+ago(r.createdAt)+")",out:r.output,runId:r.id,extra:{}};render();document.getElementById("out-"+r.agent)?.scrollIntoView({behavior:"smooth"})}break}
+  case"clearOut":delete S.agentOut[el.dataset.agent];render();break;
+  case"saveIdea":{const x=arr(S.agentOut.contenido.out)[+el.dataset.i];const p=postFromIdea(x);await dbSet("posts/"+p.id,p);el.disabled=true;el.textContent="Guardada en Estudio";break}
+  case"savePlan":{for(const x of arr(S.agentOut.contenido.out)){const p=postFromIdea(x,x.fecha?x.fecha+"T"+(x.hora||"19:00"):"");await dbSet("posts/"+p.id,p)}el.disabled=true;el.textContent="Agregado al Estudio";break}
+  case"applyDev":{const r=S.agentOut.contenido;const p=S.posts.find(x=>x.id===r.extra.postId);if(!p){toast("La pieza ya no existe");break}const o=r.out;
+    const upd={...p,caption:o.caption??p.caption,hashtags:o.hashtags||p.hashtags,cta:o.cta||p.cta,slides:arr(o.slides).length?arr(o.slides):p.slides,guionReel:o.guion_reel||p.guionReel,verificar:[...new Set([...(p.verificar||[]),...arr(o.afirmaciones_a_verificar)])],updatedAt:Date.now(),
+      versions:[{at:Date.now(),caption:p.caption,slides:p.slides,guionReel:p.guionReel,hashtags:p.hashtags,cta:p.cta},...(p.versions||[])].slice(0,10)};
+    if(p.stage==="idea"){upd.stage="guion";upd.history=[...(p.history||[]),{stage:"guion",at:Date.now(),by:S.uid,note:"Desarrollada por el agente de contenido"}]}
+    await dbSet("posts/"+p.id,upd);el.disabled=true;el.textContent="Aplicado";toast("Pieza actualizada");break}
+  case"learn":{const i=+el.dataset.i;const holder=el.closest(".prop");if(holder.querySelector("form"))break;holder.insertAdjacentHTML("beforeend",`<form data-form="learn" data-i="${i}" style="display:flex;gap:8px"><input aria-label="Motivo" placeholder="¿Qué no te gustó? Ej.: demasiado técnico"><button class="btn sm">Guardar aprendizaje</button></form>`);break}
+  case"copyText":copy(el.dataset.text);break;
+  case"copyReply":copy($("#replyDraft").value);break;
+  case"keepTpl":await saveSettings({plantillas:[...(S.settings.plantillas||[]),el.dataset.text].slice(-10)});el.disabled=true;el.textContent="Aprobada";break;
+  case"saveLeadFromAgent":{const r=S.agentOut.captacion;const o=r.out;const ex=S.leads.find(l=>l.id===r.extra.leadId);
+    const note=`[${todayAR()}] Mensaje: ${r.extra.mensaje}\nResumen: ${o.resumen||""}\nRespuesta preparada: ${$("#replyDraft").value}`;
+    const l=ex?{...ex,notas:(ex.notas?ex.notas+"\n\n":"")+note,proximoPaso:o.siguiente_paso||ex.proximoPaso,prioridad:o.prioridad||ex.prioridad,estado:ex.estado==="nuevo"?"calificando":ex.estado,updatedAt:Date.now()}
+      :{id:newId("lead"),nombre:o.nombre_detectado||"Contacto de Instagram",contacto:"",canal:"Instagram",servicio:SERVICES.includes(o.servicio)?o.servicio:"Otro",estado:"nuevo",prioridad:o.prioridad||"media",notas:note,proximoPaso:o.siguiente_paso||"",seguimiento:todayAR(),datos:arr(o.datos_para_contrato).map(d=>"• "+d+": ").join("\n"),createdAt:Date.now()};
+    await dbSet("leads/"+l.id,l);el.disabled=true;el.textContent="Guardado en el CRM";break}
+  case"newLead":openLead();break;
+  case"openLead":openLead(id);break;
+  case"saveLead":await saveLead();break;
+  case"delLead":if(el.dataset.confirm){await dbDelete("leads/"+leadEditing.id);closeDrawer();toast("Contacto eliminado")}else{el.dataset.confirm="1";el.textContent="Tocá de nuevo para eliminar"}break;
+  case"leadBudget":{await saveLead();runAgent.leadId=leadEditing.id;closeDrawer();location.hash="#agentes";current="agentes";render();
+    await runAgent("captacion","presupuesto");runAgent.leadId=null;break}
+  case"saveBudget":{const r=S.agentOut.captacion;const l=S.leads.find(x=>x.id===r.extra.leadId);if(!l)break;await dbUpdate("leads/"+l.id,{presupuesto:{...r.out,estado:"borrador",at:Date.now()}});el.disabled=true;el.textContent="Guardado en la ficha";break}
+  case"copyBudget":copy(budgetText(leadEditing));break;
+  case"budgetState":{const s=el.dataset.s;const l=S.leads.find(x=>x.id===leadEditing.id);const pres={...l.presupuesto,estado:s,[s+"At"]:Date.now()};
+    const est=s==="enviado"?"presupuesto":s==="aceptado"?"ganado":s==="rechazado"?"perdido":l.estado;await dbUpdate("leads/"+l.id,{presupuesto:pres,estado:est});leadEditing={...leadEditing,presupuesto:pres,estado:est};drawLead();break}
+  case"toggleTask":await dbUpdate("tasks/"+id,{hecho:el.checked});break;
+  case"delTask":await dbDelete("tasks/"+id);break;
+  case"loadMetrics":await loadMetrics(true);loadScheduled();break;
+  case"saveConfig":await saveSettings({igUser:$("#cIg").value.trim().replace(/^@/,"")||"clausuladigitall",brandId:$("#cBrand").value.trim()});toast("Configuración guardada");break;
+  case"checkBrand":{const box=$("#brandCheck");if(!mcp){box.textContent="Metricool no está disponible en esta vista.";break}box.textContent="Consultando…";
+    try{const r=await mcp.callTool(MC,"getBrandSettings",{});const b=arr(r.payload?.data);box.innerHTML=b.map(x=>`Marca “${esc(String(x.label||"").trim())}” (id ${esc(x.id)}) · Instagram @${esc(x.networksData?.instagramData||"sin conectar")}`).join("<br>")||"Metricool no devolvió marcas."}catch(e){box.textContent=mcpMsg(e)}break}
+  case"delMem":{const m=[...(S.settings.memoria||[])];m.splice(+el.dataset.i,1);await saveSettings({memoria:m});break}
+  case"delTpl":{const m=[...(S.settings.plantillas||[])];m.splice(+el.dataset.i,1);await saveSettings({plantillas:m});break}
+  }}catch(e){if(e?.message!=="no-db")console.error(e)}});
+const taskKey=t=>/ideas/i.test(t)?"ideas":/plan/i.test(t)?"plan":/desarrollar/i.test(t)?"desarrollar":/rendimiento|horarios/i.test(t)?"analizar":/perfil/i.test(t)?"perfil":/bienvenida/i.test(t)?"bienvenida":/presupuesto/i.test(t)?"presupuesto":"atender";
+document.addEventListener("submit",async ev=>{const f=ev.target;if(!f.dataset.form)return;ev.preventDefault();
+  try{if(f.dataset.form==="task"){const t=$("#taskText").value.trim();if(!t)return;const id=newId("task");await dbSet("tasks/"+id,{id,texto:t,fecha:todayAR(),hecho:false,createdAt:Date.now()})}
+  if(f.dataset.form==="mem"){const t=$("#memText").value.trim();if(!t)return;await saveSettings({memoria:[...(S.settings.memoria||[]),t].slice(-40)})}
+  if(f.dataset.form==="learn"){const t=f.querySelector("input").value.trim();if(!t)return;await saveSettings({memoria:[...(S.settings.memoria||[]),t].slice(-40)});f.outerHTML=`<span class="chip ok" style="align-self:flex-start">Aprendizaje guardado</span>`}
+  if(f.dataset.form==="reject"){const id=f.dataset.id;const why=f.querySelector("input").value.trim();
+    await dbUpdate("approvals/"+id,{status:"rechazada",decidedAt:Date.now(),decidedBy:S.uid,resultado:why?"Rechazada: "+why:"Rechazada"});
+    if(why)await saveSettings({memoria:[...(S.settings.memoria||[]),"Rechazo de publicación: "+why].slice(-40)});
+    const a=S.approvals.find(x=>x.id===id);const p=a&&S.posts.find(x=>x.id===a.postId);if(p)await dbUpdate("posts/"+p.id,{stage:"revision",history:[...(p.history||[]),{stage:"revision",at:Date.now(),by:S.uid,note:"Programación rechazada"+(why?": "+why:"")}]});toast("Rechazada")}}
+  catch(e){}});
+document.addEventListener("input",ev=>{const t=ev.target;if(!editing||!t.closest("#drawerRoot"))return;
+  if(t.dataset.slide===undefined&&!["caption","hashtags","title","guionReel"].includes(t.dataset.f))return;
+  clearTimeout(drawPost.t);drawPost.t=setTimeout(()=>{if(!editing)return;readPostForm();if(t.dataset.slide!==undefined)previewIdx=+t.dataset.slide;redrawKeepFocus()},400)});
+function redrawKeepFocus(){const scroll=$(".drawer")?.scrollTop;const a=document.activeElement;const sel=a&&(a.id?"#"+a.id:a.dataset.slide!==undefined?`[data-slide="${a.dataset.slide}"][data-sf="${a.dataset.sf}"]`:null);const pos=a?.selectionStart;
+  drawPost();const d=$(".drawer");if(d)d.scrollTop=scroll;if(sel){const n=$("#drawerRoot "+sel);if(n){n.focus();try{n.setSelectionRange(pos,pos)}catch(e){}}}}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("#drawerRoot").innerHTML)closeDrawer()});
+
+/* ============ Arranque ============ */
+function subscribe(col,key,order){const q=order?db.collection(col).orderBy("createdAt","desc").limit(order):db.collection(col);
+  q.onSnapshot(s=>{S[key]=s.docs.map(d=>({...d.data(),id:d.id}));S.loaded[key]=true;
+    render()},e=>{S.loaded[key]=true;render()})}
+async function boot(){render();
+  const [d,sm,mc,us]=await Promise.all([claude.use("db"),claude.use("sample"),claude.use("mcp"),claude.use("user")]);
+  db=d;sample=sm;mcp=mc;user=us;
+  S.caps.db=db?"ok":"off";S.caps.sample=sample?"ok":"off";S.caps.mcp=mcp?"ok":"off";
+  if(user){try{S.uid=await user.id()}catch(e){}}
+  if(db){db.doc("config/main").onSnapshot(s=>{S.settings={...DEFAULT_SETTINGS,...(s.exists?s.data():{})};S.loaded.settings=true;if(!$("#drawerRoot").innerHTML)render()},()=>{});
+    subscribe("posts","posts");subscribe("reels","reels");subscribe("historias","historias");subscribe("alertas","alertas",80);subscribe("approvals","approvals");subscribe("runs","runs",60);subscribe("tasks","tasks")}
+  else Object.keys(S.loaded).forEach(k=>S.loaded[k]=true);
+  if(mcp){try{const lt=await mcp.listTools(MC);const sv=lt.servers.find(x=>x.server===MC);if(!sv||!sv.tools.length&&sv.authStatus!=="unknown")S.caps.mcp="off";else if(sv.authStatus==="needs_reauth")S.caps.mcp="off"}catch(e){}
+    render();if(S.caps.mcp==="ok"){loadMetrics(false);loadScheduled()}}
+  else render()}
+</script>
+
+<style>
+.drawer.wide{width:min(1180px,100%)}
+.csplit{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:20px;align-items:start}
+.cform{display:flex;flex-direction:column;gap:14px;min-width:0}
+.cform fieldset{border:1px solid var(--line);border-radius:9px;padding:12px 14px 14px;display:flex;flex-direction:column;gap:10px;margin:0;min-width:0}
+.cform legend{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--oro-ink);font-weight:700;padding:0 6px}
+.cform .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.paperwrap{position:sticky;top:0;display:flex;flex-direction:column;gap:10px;min-width:0}
+.paper{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:36px clamp(18px,4vw,48px);font-family:var(--f-display);font-size:17px;font-weight:500;line-height:1.55;max-height:calc(100vh - 160px);overflow:auto;text-align:justify;hyphens:auto}
+.paper .wm{font-family:var(--f-body);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--bad);text-align:center;border:1px dashed color-mix(in srgb,var(--bad) 45%,transparent);border-radius:6px;padding:6px 8px;margin-bottom:22px}
+.paper h3{font-family:var(--f-display);font-weight:700;font-size:20px;text-align:center;letter-spacing:.04em;margin:0 0 18px;text-wrap:balance}
+.paper p{margin:0 0 12px}
+.paper .cl{position:relative;border-radius:4px}
+.paper .cl.ovr{box-shadow:inset 3px 0 0 var(--oro);padding-left:10px}
+.paper .cl.flag{background:color-mix(in srgb,var(--warn) 9%,transparent)}
+.paper .firmas{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:28px;margin-top:44px;font-family:var(--f-body);font-size:12.5px;text-align:center}
+.paper .firmas div{border-top:1px solid var(--ink);padding-top:6px}
+.miss{background:color-mix(in srgb,var(--warn) 22%,transparent);border-radius:3px;padding:0 3px;font-family:var(--f-body);font-size:.82em}
+@media (max-width:980px){.csplit{grid-template-columns:minmax(0,1fr)}.paperwrap{position:static}.paper{max-height:none}}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+"use strict";
+/* ============ Marketing: imágenes de marca y piloto automático ============ */
+let assetsCap=null;claude.use("assets").then(a=>{assetsCap=a}).catch(()=>{});
+const BR={noche:"#17263B",marfil:"#F4F0E7",oro:"#D6BD86",oroOsc:"#8A6D2F",grisN:"#B7BFCC",grisM:"#5B6476"};
+const SERIF='"Cormorant Garamond", Georgia, serif',SANS='Manrope, system-ui, sans-serif';
+const PILOT_DEFAULT={activo:"si",pilares:"Alquileres: aumentos, índices y renovaciones\nQué revisar antes de firmar un contrato\nDerechos y obligaciones de propietarios e inquilinos\nDeudas y acuerdos de pago con trato digno\nPreguntas frecuentes de la comunidad",evitar:"Prometer resultados jurídicos\nAfirmar que hay un abogado matriculado firmando",cta:"Escribinos por WhatsApp al 2920 60-2681 o por mensaje privado",ritmo:"diario_historias",hora:"19:00"};
+const pilot=()=>({...PILOT_DEFAULT,...(S.settings.piloto||{})});
+async function brandFonts(){try{await Promise.all([document.fonts.load('600 96px "Cormorant Garamond"'),document.fonts.load('700 40px "Cormorant Garamond"'),document.fonts.load('500 40px Manrope'),document.fonts.load('700 22px Manrope')])}catch(e){}}
+function wrapC(ctx,text,width){const lines=[];String(text||"").split("\n").forEach(par=>{let cur="";par.split(/\s+/).filter(Boolean).forEach(w=>{const t=(cur+" "+w).trim();if(ctx.measureText(t).width<=width)cur=t;else{if(cur)lines.push(cur);cur=w}});lines.push(cur)});return lines}
+function fitC(ctx,text,fam,wt,width,maxH,start,min,lh){for(let s=start;s>=min;s-=4){ctx.font=`${wt} ${s}px ${fam}`;const L=wrapC(ctx,text,width);if(L.length*s*lh<=maxH)return{L,s}}ctx.font=`${wt} ${min}px ${fam}`;return{L:wrapC(ctx,text,width),s:min}}
+function drawSlide(s,idx,total,W,H,user){const cv=document.createElement("canvas");cv.width=W;cv.height=H;const x=cv.getContext("2d");
+  const dark=(s.tema||(idx%2?"marfil":"noche"))==="noche";const bg=dark?BR.noche:BR.marfil,ink=dark?BR.marfil:BR.noche,muted=dark?BR.grisN:BR.grisM,oro=dark?BR.oro:BR.oroOsc;
+  x.fillStyle=bg;x.fillRect(0,0,W,H);x.textBaseline="top";const M=96,width=W-2*M;
+  x.fillStyle=ink;x.font=`700 40px ${SERIF}`;x.fillText("Cláusula Legal",M,M-8);x.fillStyle=oro;x.font=`700 17px ${SANS}`;x.fillText("DOCUMENTACIÓN CONTRACTUAL",M,M+40);
+  if(total>1){x.fillStyle=muted;x.font=`600 24px ${SANS}`;const t=`${idx+1} / ${total}`;x.fillText(t,W-M-x.measureText(t).width,M)}
+  const bottom=H-M-70;let body={L:[],s:0};if(s.texto)body=fitC(x,s.texto,SANS,500,width,H*0.30,40,28,1.45);const bodyH=body.L.length*body.s*1.45;
+  const tt=fitC(x,s.titulo||"",SERIF,600,width,H*(s.texto?0.42:0.6),H>1500?(idx===0?124:110):(idx===0?112:96),56,1.06);const titleH=tt.L.length*tt.s*1.06;
+  let y=bottom-bodyH-(body.L.length?48:0)-titleH-70;if(s.kicker){x.fillStyle=oro;x.font=`700 22px ${SANS}`;x.fillText(String(s.kicker).toUpperCase(),M,y)}y+=52;
+  x.fillStyle=ink;x.font=`600 ${tt.s}px ${SERIF}`;tt.L.forEach(l=>{x.fillText(l,M,y);y+=tt.s*1.06});y+=20;x.fillStyle=oro;x.fillRect(M,y,90,3);y+=28;
+  x.fillStyle=dark?BR.marfil:BR.noche;x.font=`500 ${body.s}px ${SANS}`;body.L.forEach(l=>{x.fillText(l,M,y);y+=body.s*1.45});
+  x.fillStyle=muted;x.font=`600 22px ${SANS}`;x.fillText("@"+user,M,H-M-10);if(total>1&&idx<total-1){x.fillStyle=oro;const a="Deslizá  →";x.fillText(a,W-M-x.measureText(a).width,H-M-10)}
+  return new Promise(r=>cv.toBlob(b=>r(b),"image/png"))}
+function slidesOf(p){const sl=(p.slides||[]).filter(s=>(s.titulo||"").trim()||(s.texto||"").trim());if(sl.length)return sl.map((s,i)=>({...s,kicker:s.kicker||(i===0?(p.objetivo?"":"Cláusula Legal"):"")}));
+  return[{kicker:"Cláusula Legal",titulo:p.title||"",texto:(p.caption||"").split("\n")[0].slice(0,200)}]}
+async function genImages(p,kind){if(!assetsCap){toast("Esta vista no puede guardar imágenes");return null}await brandFonts();const user=S.settings.igUser||"clausuladigitall";
+  const list=kind==="historias"?(p.historias||[]):slidesOf(p);if(!list.length){toast(kind==="historias"?"Esta pieza no tiene historias":"Agregá diapositivas o texto primero");return null}
+  const H=kind==="historias"?1920:1350;const out=[];
+  for(let i=0;i<list.length;i++){const b=await drawSlide(list[i],i,kind==="historias"?1:list.length,1080,H,user);const r=await assetsCap.upload(b);out.push({id:r.id,url:r.url})}return out}
+async function zipAndSave(items,name){if(!downloads||typeof JSZip==="undefined"){toast("La descarga no está disponible en esta vista");return}
+  const z=new JSZip();for(let i=0;i<items.length;i++){const b=await (await fetch(items[i].url)).blob();z.file(`${String(i+1).padStart(2,"0")}.png`,b)}
+  const blob=await z.generateAsync({type:"blob"});try{await downloads.save({filename:name+".zip",data:blob});toast("Imágenes listas")}catch(e){toast(e?.code==="declined"?"Descarga cancelada":"No se pudo descargar")}}
+async function saveOne(url,name){if(!downloads){toast("La descarga no está disponible en esta vista");return}const b=await (await fetch(url)).blob();try{await downloads.save({filename:name+".png",data:b})}catch(e){if(e?.code!=="declined")toast("No se pudo descargar")}}
+function imagesBlock(p){const im=p.imagenes||[],hs=p.historiasImg||[];
+  return `<div class="panel" style="padding:14px"><div class="ph"><h3>Imágenes con la plantilla de marca</h3>${p.source==="piloto"?`<span class="chip gold">Piloto automático</span>`:""}</div>
+  ${im.length?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px">${im.map((x,i)=>`<button class="card" style="padding:0;overflow:hidden" data-mact="one" data-url="${esc(x.url)}" data-n="${i+1}" aria-label="Descargar imagen ${i+1}"><img src="${esc(x.url)}" alt="Diapositiva ${i+1}" style="width:100%;aspect-ratio:4/5;object-fit:cover;display:block"></button>`).join("")}</div>`:`<span class="small muted">Todavía no hay imágenes. Se generan con el título y texto de cada diapositiva.</span>`}
+  ${hs.length?`<b class="small">Historias</b><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px">${hs.map((x,i)=>`<button class="card" style="padding:0;overflow:hidden" data-mact="one" data-url="${esc(x.url)}" data-n="historia-${i+1}" aria-label="Descargar historia ${i+1}"><img src="${esc(x.url)}" alt="Historia ${i+1}" style="width:100%;aspect-ratio:9/16;object-fit:cover;display:block"></button>`).join("")}</div>`:""}
+  <div class="btns">${p._new?`<span class="small muted">Guardá la pieza para generar sus imágenes.</span>`:`<button class="btn sm primary" data-mact="gen">${im.length?"Regenerar imágenes":"Generar imágenes"}</button>${(p.historias||[]).length?`<button class="btn sm" data-mact="genH">${hs.length?"Regenerar historias":"Generar historias"}</button>`:""}${im.length||hs.length?`<button class="btn sm" data-mact="zip">Descargar todo (zip)</button>`:""}${p.stage==="aprobado"||p.stage==="revision"?`<button class="btn sm" data-mact="manual">Ya la programé en Metricool</button>`:""}`}</div>
+  ${(p.historias||[]).length?`<details><summary>Texto de las historias (${p.historias.length})</summary><ol class="small" style="margin:6px 0 0;padding-left:18px">${p.historias.map(h=>`<li><b>${esc(h.titulo)}</b> ${esc(h.texto||"")}</li>`).join("")}</ol></details>`:""}
+  <span class="small muted">Tocá una imagen para descargarla sola. Para publicar: descargá, abrí Metricool o Instagram, pegá el texto con “Copiar texto y hashtags”.</span></div>`}
+function pilotAlerts(){const hoy=todayAR();return S.posts.filter(p=>p.source==="piloto"&&p.stage==="revision"&&(p.scheduledAt||"").startsWith(hoy)).map(p=>`<div class="row"><span class="t">Pieza del día lista: ${esc(p.title)}</span><button class="link" data-act="openPost" data-id="${esc(p.id)}">Revisar y publicar</button></div>`)}
+function pilotPanel(){const c=pilot();const piezas=S.posts.filter(p=>p.source==="piloto").sort(byNewest).slice(0,5);const runs=S.runs.filter(r=>r.agent==="piloto").slice(0,3);
+  return `<section class="panel" style="border-color:var(--oro)"><div class="ph"><h2>Piloto automático de Instagram</h2><span class="chip ${c.activo==="si"?"ok":""}">${c.activo==="si"?"Activo":"En pausa"}</span></div>
+  <p class="small muted" style="margin:0">Todos los días a la mañana prepara la pieza del día con sus imágenes y 2 historias, verifica las afirmaciones jurídicas en fuentes oficiales, la deja en el Estudio y te avisa al celular. Vos revisás, descargás y programás en Metricool.</p>
+  <div class="fields"><label for="plAct">Estado<select id="plAct">${opts([["si","Activo"],["no","En pausa"]],c.activo)}</select></label><label for="plHora">Hora de publicación sugerida<input id="plHora" type="time" value="${esc(c.hora)}"></label><label for="plRitmo">Ritmo<select id="plRitmo">${opts([["diario_historias","1 por día (lun a sáb) + 2 historias"],["diario","1 por día (lun a sáb)"],["cuatro","4 por semana"]],c.ritmo)}</select></label></div>
+  <div class="fields"><label for="plPil">Pilares de contenido (uno por línea)<textarea id="plPil" style="min-height:110px">${esc(c.pilares)}</textarea></label><label for="plEv">Nunca hacer (uno por línea)<textarea id="plEv" style="min-height:110px">${esc(c.evitar)}</textarea></label></div>
+  <label for="plCta">Llamada a la acción principal<input id="plCta" value="${esc(c.cta)}"></label>
+  <button class="btn sm primary" data-mact="savePilot" style="align-self:flex-start">Guardar configuración</button>
+  <h3>Últimas piezas del piloto</h3><div class="list">${piezas.map(p=>`<div class="row"><button class="link t" style="text-align:left;color:var(--ink)" data-act="openPost" data-id="${esc(p.id)}">${esc(p.title)}</button>${stageChip(p.stage)}</div>`).join("")||`<div class="empty">Todavía no corrió. La primera pieza aparece mañana a la mañana.</div>`}</div>
+  ${runs.length?`<div class="small muted">Última ejecución: ${esc(runs[0].summary)} · ${ago(runs[0].createdAt)}</div>`:""}</section>`}
+document.addEventListener("click",async ev=>{const el=ev.target.closest("[data-mact]");if(!el)return;const k=el.dataset.mact;
+  try{switch(k){
+  case"gen":case"genH":{if(!editing)break;readPostForm();await savePost();el.disabled=true;el.textContent="Generando…";const imgs=await genImages(editing,k==="genH"?"historias":"feed");if(imgs){const f=k==="genH"?"historiasImg":"imagenes";await dbUpdate("posts/"+editing.id,{[f]:imgs});editing[f]=imgs;toast("Imágenes listas")}drawPost();break}
+  case"zip":{const p=editing;await zipAndSave([...(p.imagenes||[]),...(p.historiasImg||[])],"Instagram "+(p.title||"pieza").replace(/[\\/:*?"<>|]+/g," ").slice(0,60));break}
+  case"one":await saveOne(el.dataset.url,`${(editing?.title||"pieza").replace(/[\\/:*?"<>|]+/g," ").slice(0,50)} ${el.dataset.n}`);break;
+  case"manual":{readPostForm();editing.stage="programado";editing.notas=(editing.notas?editing.notas+"\n":"")+"Programada a mano en Metricool";await savePost();toast("Marcada como programada. Cuando salga, usá “Verificar publicación”.");break}
+  case"savePilot":await saveSettings({piloto:{...pilot(),activo:$("#plAct").value,hora:$("#plHora").value||"19:00",ritmo:$("#plRitmo").value,pilares:$("#plPil").value,evitar:$("#plEv").value,cta:$("#plCta").value}});toast("Configuración del piloto guardada");break;
+  }}catch(e){if(e?.message!=="no-db"){console.error(e);toast("No se pudo completar la acción")}}});
+
+</script>
+<script>
+"use strict";
+/* ============ Instagram: Publicaciones, Reels, Historias y Director ============ */
+let downloads=null;claude.use("downloads").then(d=>{downloads=d}).catch(()=>{});
+S.reels=[];S.historias=[];S.alertas=[];Object.assign(S.loaded,{reels:false,historias:false,alertas:false});
+const dia=d=>d?String(d).slice(0,10).split("-").reverse().join("/"):"";
+const gp=(o,p)=>p.split(".").reduce((a,k)=>a==null?a:a[k],o);
+function sp(o,p,v){const ks=p.split(".");let a=o;ks.slice(0,-1).forEach(k=>{if(typeof a[k]!=="object"||a[k]===null)a[k]={};a=a[k]});a[ks.at(-1)]=v}
+const STUDY=`Lo que hoy hace crecer un reel (estudio interno): Instagram confirmó que sus señales principales son tiempo de visualización, me gusta y envíos por mensaje directo (los envíos pesan algo más para llegar a no seguidores). El reel se muestra primero a un grupo chico y se expande si lo miran hasta el final o lo envían. El gancho tiene que plantear en los primeros 2 segundos un problema que la persona reconoce como propio, dicho y escrito en pantalla. Duración ideal 45 a 60 segundos. Subtítulos desde la primera palabra. Contenido original, sin marcas de agua. Cierre que pida enviarlo ("mandáselo a quien…") y una palabra clave para comentar. En temas legales funcionan explicaciones de un minuto de problemas cotidianos con una voz reconocible.`;
+
+/* ---------- Publicaciones ---------- */
+function vPublicaciones(){const list=S.posts.filter(p=>["post","carrusel"].includes(p.format||"post"));
+  const groups=STAGES.map(([k,l])=>{const items=list.filter(p=>(p.stage||"idea")===k).sort((a,b)=>(a.scheduledAt||"9").localeCompare(b.scheduledAt||"9")||byNewest(a,b));
+    return `<div class="col"><h3><span>${esc(l)}</span><span>${items.length}</span></h3>${items.map(p=>`<button class="card" data-act="openPost" data-id="${esc(p.id)}">${(p.imagenes||[])[0]?`<img src="${esc(p.imagenes[0].url)}" alt="" style="width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:5px">`:""}<b>${esc(p.title||"Sin título")}</b><span class="meta"><span class="chip">${esc(fmtLabel(p.format))}</span>${p.scheduledAt?`<span>${niceDate(p.scheduledAt)}</span>`:""}${p.source==="piloto"?`<span class="chip gold">Piloto</span>`:p.source==="triptico"?`<span class="chip gold">Tríptico</span>`:""}</span></button>`).join("")}</div>`}).join("");
+  return `<div class="head"><div><div class="eyebrow">Sección 1 · Feed</div><h1>Publicaciones</h1><p>Carruseles y publicaciones con imagen, de la idea a la publicación. El carrusel es el formato que más se guarda: ideal para contenido útil.</p></div>
+  <div class="btns"><button class="btn primary" data-act="newPost">Nueva publicación</button></div></div>
+  ${agentCard("contenido",AGENTS.contenido)}
+  ${S.agentOut.contenido?outBlock("contenido"):""}
+  <div class="board"><div class="cols">${groups}</div></div>`}
+
+/* ---------- Reels ---------- */
+const R_FORMATOS=[["articulo","El artículo en 60 segundos"],["resaltador","El resaltador en la mesa"],["respondo","Respondo tu pregunta"],["personajes","Serie animada"],["otro","Otro"]];
+const R_ESTADOS=[["idea","Idea"],["guion","Guion"],["grabar","Para grabar"],["editar","En edición"],["revision","En revisión"],["listo","Aprobado"],["publicado","Publicado"]];
+const R_CHIP={revision:"warn",listo:"info",publicado:"ok",grabar:"gold"};
+const T1=[["1","9 y 961","Lo que no dice tu contrato también te obliga"],["2","10","Tener un derecho no te da permiso para todo"],["3","11","Cuando el más grande impone las reglas"],["4","265 a 270","Firmé creyendo otra cosa"],["5","271 a 275","Te lo escondieron a propósito"],["6","332","Aprovecharse de la necesidad tiene nombre"],["7","957 a 959","Firmaste: ahora es ley entre ustedes"],["8","984 a 989","La letra chica que no vale"],["9","1059 y 1060","La seña: ¿la perdés o te la devuelven doble?"],["10","1086 a 1088","Si no cumplís, se termina"]];
+const R_FMT_GUIDE={articulo:"Voz en off del responsable sobre imágenes simples y texto grande en pantalla; un artículo del Código Civil y Comercial explicado con un caso cotidiano argentino.",resaltador:"Filmado desde arriba con el celular: la mano del responsable, un contrato impreso real y un resaltador amarillo que marca la cláusula trampa mientras explica. Las escenas deben describir qué hace la mano y qué se resalta.",respondo:"Pregunta real de un seguidor en pantalla y respuesta directa en 45 segundos.",personajes:"Serie animada con Cláusula (un resaltador amarillo mentor) y El Contrato (hojas plegadas que sufren los conflictos) sobre un escritorio de madera con lámpara de bronce.",otro:""};
+let reelEditing=null, reelBusy="";
+const rLabel=(L,k)=>(L.find(x=>x[0]===k)||[k,k])[1];
+function blankReel(){return{id:newId("reel"),titulo:"",formato:"articulo",estado:"idea",episodio:"",articulos:"",gancho:"",bloques:[{tiempo:"0-3 s",pantalla:"",voz:""}],musica:"",cta:"",palabraClave:"",caption:"",hashtags:"#ClausulaLegal #CodigoCivil #Contratos",scheduledAt:"",notas:"",verificar:[],createdAt:Date.now(),source:"manual"}}
+const vozTotal=r=>(r.bloques||[]).map(b=>b.voz||"").join(" ").trim();
+const segs=r=>Math.round((vozTotal(r).split(/\s+/).filter(Boolean).length)/2.6);
+function reelChecks(r){const c=[];const s=segs(r);const g=(r.gancho||"").trim();
+  c.push([g&&g.split(/\s+/).length<=14?"ok":"warn",g?`Gancho de ${g.split(/\s+/).length} palabras${g.split(/\s+/).length>14?": acortalo para que entre en 2 segundos":""}`:"Falta el gancho de los primeros 2 segundos"]);
+  c.push([s>=25&&s<=75?"ok":"warn",s?`Duración estimada de la voz: ${s} segundos${s>75?" (larga: apuntá a 45 a 60)":s<25?" (corta)":""}`:"Todavía no hay voz en off"]);
+  c.push([/mand[aá]|envi[aá]|compart/i.test((r.cta||"")+vozTotal(r))?"ok":"warn","Pide enviarlo a alguien (la señal que más alcance da)"]);
+  c.push([r.palabraClave?"ok":"warn",r.palabraClave?`Palabra clave: ${r.palabraClave}`:"Falta la palabra clave para comentar"]);
+  if((r.verificar||[]).length)c.push(["warn",`${r.verificar.length} afirmaciones para verificar antes de grabar`]);
+  if(/abogad[oa]\s+matriculad|soy\s+abogad/i.test(vozTotal(r)+(r.caption||"")))c.push(["bad","Menciona una matrícula que todavía no tenés"]);
+  return c}
+function vReels(){const groups=R_ESTADOS.map(([k,l])=>{const items=S.reels.filter(r=>(r.estado||"idea")===k).sort(byNewest);
+  return `<div class="col"><h3><span>${esc(l)}</span><span>${items.length}</span></h3>${items.map(r=>`<button class="card" data-ract="open" data-id="${esc(r.id)}"><b>${esc(r.titulo||"Sin título")}</b><span class="meta"><span class="chip">${esc(rLabel(R_FORMATOS,r.formato))}</span>${r.episodio?`<span class="chip gold">T1 · Ep. ${esc(r.episodio)}</span>`:""}${segs(r)?`<span>${segs(r)} s</span>`:""}</span></button>`).join("")}</div>`}).join("");
+  return `<div class="head"><div><div class="eyebrow">Sección 2 · Alcance</div><h1>Reels</h1><p>Guiones por bloques con voz en off, listos para grabar con el teleprompter. Cada reel se controla contra lo que hoy hace crecer un video: gancho, retención, envíos y palabra clave.</p></div>
+  <div class="btns"><button class="btn" data-ract="new">Nuevo reel en blanco</button></div></div>
+  <section class="panel" style="border-color:var(--oro)"><div class="ph"><h2>Agente de reels</h2><span class="tag" style="font-family:var(--f-mono);font-size:11px;color:var(--oro-ink)">REELS</span></div>
+   <p class="small muted" style="margin:0">Escribe el guion completo: gancho, bloques de 10 segundos con lo que se ve y la voz en off, música, cierre y texto de la publicación.</p>
+   <div class="fields"><label for="rfFmt">Formato<select id="rfFmt">${opts(R_FORMATOS.slice(0,4),"articulo")}</select></label><label for="rfEp">Episodio de la serie del Código<select id="rfEp"><option value="">Ninguno</option>${T1.map(([n,a,t])=>`<option value="${n}">Ep. ${n} · arts. ${esc(a)} · ${esc(t)}</option>`).join("")}</select></label></div>
+   <label for="rfTema">Tema o pregunta (opcional si elegiste episodio)<input id="rfTema" placeholder="Ej.: ¿me pueden pedir 3 meses de depósito?"></label>
+   <button class="btn primary" data-ract="agent" ${reelBusy?"disabled":""} style="align-self:flex-start">Escribir guion</button>${reelBusy?`<div class="status"><span class="spin"></span>${esc(reelBusy)}</div>`:""}</section>
+  ${S.loaded.reels&&!S.reels.length?`<div class="empty">Todavía no hay reels. Empezá por el Episodio 1 de la serie o por una pregunta frecuente.</div>`:""}
+  <div class="board"><div class="cols">${groups}</div></div>`}
+function RF(path,label,o={}){const v=gp(reelEditing,path)??"";const id="rf-"+path.replace(/\./g,"-");
+  if(o.select)return `<label for="${id}">${esc(label)}<select id="${id}" data-rp="${esc(path)}">${o.select.map(([k,l])=>`<option value="${esc(k)}"${String(v)===k?" selected":""}>${esc(l)}</option>`).join("")}</select></label>`;
+  if(o.area)return `<label for="${id}">${esc(label)}<textarea id="${id}" data-rp="${esc(path)}" style="min-height:${o.area}px">${esc(v)}</textarea></label>`;
+  return `<label for="${id}">${esc(label)}<input id="${id}" data-rp="${esc(path)}" value="${esc(v)}"${o.type?` type="${o.type}"`:""}${o.ph?` placeholder="${esc(o.ph)}"`:""}></label>`}
+function reelSide(){const r=reelEditing;return `<section class="panel"><div class="ph"><h2>Controles</h2><span class="chip">${segs(r)} s estimados</span></div><div class="warns">${reelChecks(r).map(([k,t])=>`<span class="chip ${k}" style="white-space:normal">${esc(t)}</span>`).join("")}</div></section>
+  <div class="paper" style="font-size:19px"><div class="wm" style="color:var(--oro-ink);border-color:var(--oro)">Guion para leer</div>${r.gancho?`<p><b>${esc(r.gancho)}</b></p>`:""}${(r.bloques||[]).map(b=>`<p><span class="small muted" style="font-family:var(--f-mono)">${esc(b.tiempo)}</span><br>${esc(b.voz)}</p>`).join("")}</div>`}
+function drawReel(keep){const r=reelEditing;const d0=$(".drawer"),st=keep&&d0?d0.scrollTop:0;
+  $("#drawerRoot").innerHTML=`<div class="drawer-bg" data-act="closeBg"><div class="drawer wide" role="dialog" aria-label="Editor de reel">
+  <div class="dhead"><div><div class="eyebrow">Reel · ${esc(rLabel(R_FORMATOS,r.formato))} · ${esc(rLabel(R_ESTADOS,r.estado))}</div><h2>${esc(r.titulo||"Nuevo reel")}</h2></div><button class="btn sm" data-act="closeDrawer">Cerrar</button></div>
+  <div class="btns"><button class="btn primary" data-ract="save">Guardar</button><button class="btn" data-ract="prompter">Modo grabación</button><button class="btn" data-ract="copy">Copiar guion</button><button class="btn" data-ract="copyCap">Copiar texto y hashtags</button>${S.reels.some(x=>x.id===r.id)?`<button class="btn danger" data-ract="del">Eliminar</button>`:""}</div>
+  <div class="csplit"><div class="cform">
+   <fieldset><legend>Reel</legend>${RF("titulo","Título interno")}<div class="two">${RF("formato","Formato",{select:R_FORMATOS})}${RF("estado","Estado",{select:R_ESTADOS})}</div><div class="two">${RF("episodio","Episodio de la serie",{select:[["","Ninguno"],...T1.map(([n,,t])=>[n,"Ep. "+n+" · "+t])]})}${RF("articulos","Artículos del Código")}</div>${RF("scheduledAt","Fecha y hora previstas",{type:"datetime-local"})}</fieldset>
+   <fieldset><legend>Gancho (primeros 2 segundos)</legend>${RF("gancho","Lo que se dice y se lee al empezar",{area:56})}</fieldset>
+   <fieldset><legend>Bloques</legend>${(r.bloques||[]).map((b,i)=>`<div style="display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line);padding-top:8px"><div class="two">${RF(`bloques.${i}.tiempo`,"Tiempo")}</div>${RF(`bloques.${i}.pantalla`,"Qué se ve (escena y texto en pantalla)",{area:56})}${RF(`bloques.${i}.voz`,"Voz en off",{area:70})}<button class="link" data-ract="delBlock" data-i="${i}" style="align-self:flex-start">Quitar bloque</button></div>`).join("")}<button class="btn sm" data-ract="addBlock" style="align-self:flex-start">Agregar bloque</button></fieldset>
+   <fieldset><legend>Cierre y publicación</legend>${RF("cta","Llamada a la acción (pedí que lo envíen)")}<div class="two">${RF("palabraClave","Palabra clave para comentar")}${RF("musica","Música o sonido")}</div>${RF("caption","Texto de la publicación",{area:110})}${RF("hashtags","Hashtags")}${RF("notas","Notas de grabación o edición",{area:60})}</fieldset>
+   ${(r.verificar||[]).length?`<fieldset><legend>Verificar antes de grabar</legend><ul class="small" style="margin:0;padding-left:18px">${r.verificar.map((v,i)=>`<li>${esc(v)} <button class="link" data-ract="okVer" data-i="${i}">Verificada</button></li>`).join("")}</ul></fieldset>`:""}
+  </div><div class="paperwrap" id="reelSide">${reelSide()}</div></div></div></div>`;
+  if(keep){const d=$(".drawer");if(d)d.scrollTop=st}}
+function openReel(id,seed){const r=id?S.reels.find(x=>x.id===id):Object.assign(blankReel(),seed||{});if(!r)return;reelEditing=JSON.parse(JSON.stringify(r));drawReel()}
+async function saveReel(){const r=JSON.parse(JSON.stringify(reelEditing));r.updatedAt=Date.now();if(!r.titulo)r.titulo=(r.gancho||"Reel").slice(0,60);await dbSet("reels/"+r.id,r);reelEditing=r;toast("Reel guardado");drawReel(true)}
+function reelPlain(r){return [`REEL: ${r.titulo}`,r.gancho?`GANCHO: ${r.gancho}`:"",...(r.bloques||[]).map(b=>`[${b.tiempo}]\nSe ve: ${b.pantalla}\nVoz: ${b.voz}`),r.musica?`Música: ${r.musica}`:"",r.cta?`Cierre: ${r.cta}`:"",r.palabraClave?`Palabra clave: ${r.palabraClave}`:""].filter(Boolean).join("\n\n")}
+function prompter(){const r=reelEditing;const txt=[r.gancho,...(r.bloques||[]).map(b=>b.voz)].filter(Boolean);
+  const ov=document.createElement("div");ov.id="prompter";ov.setAttribute("role","dialog");ov.setAttribute("aria-label","Teleprompter");
+  ov.style.cssText="position:fixed;inset:0;z-index:50;background:#0B1421;color:#F4F0E7;display:flex;flex-direction:column";
+  ov.innerHTML=`<div style="display:flex;gap:8px;align-items:center;justify-content:space-between;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 12px;border-bottom:1px solid rgba(214,189,134,.3)"><b style="font-family:var(--f-display);font-size:20px">Modo grabación</b><div class="btns"><button class="btn sm" id="pPlay">Iniciar</button><button class="btn sm" id="pSlow">Más lento</button><button class="btn sm" id="pFast">Más rápido</button><button class="btn sm" id="pClose">Cerrar</button></div></div><div id="pScroll" style="flex:1;overflow:auto;padding:30vh 8vw 60vh;font:600 clamp(28px,5vw,48px)/1.35 var(--f-body);text-align:center">${txt.map(t=>`<p style="margin:0 0 1.2em">${esc(t)}</p>`).join("")}</div>`;
+  document.body.appendChild(ov);let speed=1.2,run=false,raf=0;const sc=ov.querySelector("#pScroll");const step=()=>{if(!run)return;sc.scrollTop+=speed;raf=requestAnimationFrame(step)};
+  ov.querySelector("#pPlay").onclick=e=>{run=!run;e.target.textContent=run?"Pausa":"Seguir";if(run)step()};ov.querySelector("#pSlow").onclick=()=>speed=Math.max(.3,speed-.3);ov.querySelector("#pFast").onclick=()=>speed+=.3;
+  ov.querySelector("#pClose").onclick=()=>{run=false;cancelAnimationFrame(raf);ov.remove()}}
+async function reelAgent(fromEditor){if(!sample){toast("Los agentes no están disponibles en esta vista");return}
+  const fmt=fromEditor?reelEditing.formato:$("#rfFmt").value, ep=fromEditor?reelEditing.episodio:$("#rfEp").value, tema=fromEditor?(reelEditing.titulo||""):$("#rfTema").value.trim();
+  if(!ep&&!tema){toast("Elegí un episodio o escribí un tema");return}const e=T1.find(x=>x[0]===ep);
+  reelBusy="Escribiendo el guion…";render();
+  const prompt=`${agentContext("contenido")}\n${STUDY}\nFORMATO: ${rLabel(R_FORMATOS,fmt)}. ${R_FMT_GUIDE[fmt]||""}\n${e?`EPISODIO ${e[0]} de la Temporada 1 de la serie que explica el Código Civil y Comercial en orden: artículos ${e[1]}, título "${e[2]}". Contá el artículo con un conflicto cotidiano argentino.`:""}\n${tema?"TEMA: "+tema:""}\nTAREA: Escribí el guion completo de un reel de 45 a 60 segundos en español rioplatense, cálido y claro, sin tecnicismos innecesarios. Parafraseá los artículos; si citás textual, poné el número de artículo. Nunca afirmes matrícula ni des asesoramiento para un caso concreto.\nRespondé SOLO un objeto JSON con: titulo, gancho (máximo 12 palabras, dicho y escrito), bloques (array de 5 o 6 objetos {tiempo: "0-3 s" | "3-10 s"…, pantalla: qué se ve y el texto en pantalla, voz: lo que dice la voz en off}), musica, cta (que pida enviarlo a alguien), palabra_clave (una palabra en mayúsculas), caption (máximo 1.200 caracteres, con la palabra clave), hashtags (5 a 8), articulos (string), afirmaciones_a_verificar (array).`;
+  try{const o=await sample.json(prompt,{modelTier:"complex",cache:false});
+    const data={titulo:o.titulo||"",gancho:o.gancho||"",bloques:arr(o.bloques).map(b=>({tiempo:b.tiempo||"",pantalla:b.pantalla||"",voz:b.voz||""})),musica:o.musica||"",cta:o.cta||"",palabraClave:o.palabra_clave||"",caption:o.caption||"",hashtags:o.hashtags||"",articulos:o.articulos||(e?e[1]:""),verificar:arr(o.afirmaciones_a_verificar),estado:"guion",formato:fmt,episodio:ep||""};
+    await logRun("reels","Guion: "+(data.titulo||tema),data.gancho,o);
+    if(fromEditor){Object.assign(reelEditing,data);drawReel(true)}else{reelBusy="";openReel(null,{...data,source:"agente"})}toast("Guion listo: revisalo y guardalo")}
+  catch(err){if(err?.code!=="cancelled")toast(sampleMsg(err))}finally{reelBusy="";if(!fromEditor)render()}}
+document.addEventListener("click",async ev=>{const el=ev.target.closest("[data-ract]");if(!el)return;const k=el.dataset.ract;const r=reelEditing;
+  try{switch(k){
+  case"new":openReel();break;
+  case"open":openReel(el.dataset.id);break;
+  case"agent":await reelAgent(false);break;
+  case"save":await saveReel();break;
+  case"addBlock":r.bloques=[...(r.bloques||[]),{tiempo:"",pantalla:"",voz:""}];drawReel(true);break;
+  case"delBlock":r.bloques.splice(+el.dataset.i,1);drawReel(true);break;
+  case"okVer":r.verificar.splice(+el.dataset.i,1);drawReel(true);break;
+  case"copy":copy(reelPlain(r));break;
+  case"copyCap":copy((r.caption||"")+(r.hashtags?"\n\n"+r.hashtags:""));break;
+  case"prompter":prompter();break;
+  case"del":if(el.dataset.confirm){await dbDelete("reels/"+r.id);closeDrawer();toast("Reel eliminado")}else{el.dataset.confirm="1";el.textContent="Tocá de nuevo para eliminar"}break;
+  }}catch(e){if(e?.message!=="no-db")console.error(e)}});
+document.addEventListener("input",ev=>{const t=ev.target;if(!reelEditing||!t.dataset?.rp)return;sp(reelEditing,t.dataset.rp,t.value);clearTimeout(drawReel.t);drawReel.t=setTimeout(()=>{const s=$("#reelSide");if(s)s.innerHTML=reelSide()},300)});
+document.addEventListener("change",ev=>{const t=ev.target;if(!reelEditing||!t.dataset?.rp)return;sp(reelEditing,t.dataset.rp,t.value);const s=$("#reelSide");if(s)s.innerHTML=reelSide()});
+
+/* ---------- Historias ---------- */
+const H_TIPOS=[["texto","Texto"],["encuesta","Encuesta"],["pregunta","Caja de preguntas"],["quiz","Quiz"],["link","Enlace"],["cuenta","Cuenta regresiva"]];
+const H_OBJ=[["post","Llevar al post o reel del día"],["educar","Enseñar un dato útil"],["interactuar","Generar respuestas"],["vender","Mostrar un servicio"],["detras","Detrás de escena"]];
+let histEditing=null, histBusy="";
+function blankHist(){return{id:newId("hist"),fecha:todayAR(),objetivo:"post",estado:"borrador",frames:[{tipo:"texto",kicker:"",titulo:"",texto:"",opciones:""}],imagenes:[],createdAt:Date.now(),source:"manual"}}
+function vHistorias(){const list=S.historias.slice().sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||"")||byNewest(a,b));
+  return `<div class="head"><div><div class="eyebrow">Sección 3 · Comunidad</div><h1>Historias</h1><p>Secuencias diarias de 4 a 6 historias: abren con un gancho, generan respuestas con stickers y llevan al contenido del día o a WhatsApp.</p></div><div class="btns"><button class="btn" data-hact="new">Nueva secuencia en blanco</button></div></div>
+  <section class="panel" style="border-color:var(--oro)"><div class="ph"><h2>Agente de historias</h2><span style="font-family:var(--f-mono);font-size:11px;color:var(--oro-ink)">HISTORIAS</span></div>
+   <div class="fields"><label for="hfObj">Objetivo<select id="hfObj">${opts(H_OBJ,"post")}</select></label><label for="hfTema">Tema (opcional)<input id="hfTema" placeholder="Ej.: el carrusel de hoy sobre renovaciones"></label></div>
+   <button class="btn primary" data-hact="agent" ${histBusy?"disabled":""} style="align-self:flex-start">Armar la secuencia del día</button>${histBusy?`<div class="status"><span class="spin"></span>${esc(histBusy)}</div>`:""}</section>
+  <section class="panel"><div class="ph"><h2>Secuencias</h2><span class="small muted">${list.length}</span></div><div class="list">${list.map(h=>`<div class="row"><div><button class="link t" style="text-align:left;color:var(--ink)" data-hact="open" data-id="${esc(h.id)}">${esc(dia(h.fecha))} · ${esc(rLabel(H_OBJ,h.objetivo))}</button><div class="s">${(h.frames||[]).length} historias${h.source==="piloto"?" · piloto automático":""}</div></div><span class="chip ${h.estado==="publicada"?"ok":h.estado==="lista"?"info":""}">${esc(h.estado)}</span></div>`).join("")||`<div class="empty">Todavía no hay secuencias. Pedile al agente la del día.</div>`}</div></section>`}
+function HF(path,label,o={}){const v=gp(histEditing,path)??"";const id="hf-"+path.replace(/\./g,"-");
+  if(o.select)return `<label for="${id}">${esc(label)}<select id="${id}" data-hp="${esc(path)}">${o.select.map(([k,l])=>`<option value="${esc(k)}"${String(v)===k?" selected":""}>${esc(l)}</option>`).join("")}</select></label>`;
+  if(o.area)return `<label for="${id}">${esc(label)}<textarea id="${id}" data-hp="${esc(path)}" style="min-height:${o.area}px">${esc(v)}</textarea></label>`;
+  return `<label for="${id}">${esc(label)}<input id="${id}" data-hp="${esc(path)}" value="${esc(v)}"${o.type?` type="${o.type}"`:""}></label>`}
+const stickerTip=f=>({encuesta:`Agregá el sticker de encuesta con: ${f.opciones||"Sí / No"}`,pregunta:`Agregá la caja de preguntas: "${f.opciones||"Preguntame lo que quieras"}"`,quiz:`Agregá el sticker de quiz con: ${f.opciones||"opciones"}`,link:`Agregá el sticker de enlace a la web o a WhatsApp`,cuenta:`Agregá el sticker de cuenta regresiva: ${f.opciones||""}`}[f.tipo]||"");
+function drawHist(keep){const h=histEditing;const d0=$(".drawer"),st=keep&&d0?d0.scrollTop:0;
+  $("#drawerRoot").innerHTML=`<div class="drawer-bg" data-act="closeBg"><div class="drawer wide" role="dialog" aria-label="Secuencia de historias">
+  <div class="dhead"><div><div class="eyebrow">Historias · ${esc(dia(h.fecha))}</div><h2>${esc(rLabel(H_OBJ,h.objetivo))}</h2></div><button class="btn sm" data-act="closeDrawer">Cerrar</button></div>
+  <div class="btns"><button class="btn primary" data-hact="save">Guardar</button><button class="btn" data-hact="gen">${(h.imagenes||[]).length?"Regenerar imágenes":"Generar imágenes"}</button>${(h.imagenes||[]).length?`<button class="btn" data-hact="zip">Descargar todas</button>`:""}<button class="btn" data-hact="tips">Copiar instrucciones de stickers</button>${S.historias.some(x=>x.id===h.id)?`<button class="btn danger" data-hact="del">Eliminar</button>`:""}</div>
+  <div class="csplit"><div class="cform"><fieldset><legend>Secuencia</legend><div class="two">${HF("fecha","Día",{type:"date"})}${HF("objetivo","Objetivo",{select:H_OBJ})}</div>${HF("estado","Estado",{select:[["borrador","Borrador"],["lista","Lista para subir"],["publicada","Publicada"]]})}</fieldset>
+   ${(h.frames||[]).map((f,i)=>`<fieldset><legend>Historia ${i+1}</legend><div class="two">${HF(`frames.${i}.tipo`,"Tipo",{select:H_TIPOS})}${HF(`frames.${i}.kicker`,"Etiqueta")}</div>${HF(`frames.${i}.titulo`,"Frase principal")}${HF(`frames.${i}.texto`,"Texto chico",{area:50})}${["encuesta","quiz","pregunta","cuenta"].includes(f.tipo)?HF(`frames.${i}.opciones`,f.tipo==="pregunta"?"Texto de la caja":f.tipo==="cuenta"?"Evento":"Opciones (separadas con /)"):""}<button class="link" data-hact="delFrame" data-i="${i}" style="align-self:flex-start">Quitar</button></fieldset>`).join("")}
+   <button class="btn sm" data-hact="addFrame" style="align-self:flex-start">Agregar historia</button></div>
+  <div class="paperwrap">${(h.imagenes||[]).length?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px">${h.imagenes.map((x,i)=>`<button class="card" style="padding:0;overflow:hidden" data-hact="one" data-url="${esc(x.url)}" data-n="${i+1}" aria-label="Descargar historia ${i+1}"><img src="${esc(x.url)}" alt="Historia ${i+1}" style="width:100%;aspect-ratio:9/16;object-fit:cover;display:block"></button>`).join("")}</div><span class="small muted">Tocá una historia para descargarla. Los stickers se agregan en Instagram al subirla.</span>`:`<div class="empty">Generá las imágenes con tu plantilla de marca.</div>`}
+   <section class="panel"><h3>Stickers a agregar en Instagram</h3><ol class="small" style="margin:0;padding-left:18px">${(h.frames||[]).map((f,i)=>`<li>Historia ${i+1}: ${esc(stickerTip(f)||"sin sticker")}</li>`).join("")}</ol></section></div></div></div></div>`;
+  if(keep){const d=$(".drawer");if(d)d.scrollTop=st}}
+function openHist(id,seed){const h=id?S.historias.find(x=>x.id===id):Object.assign(blankHist(),seed||{});if(!h)return;histEditing=JSON.parse(JSON.stringify(h));drawHist()}
+async function saveHist(){const h=JSON.parse(JSON.stringify(histEditing));h.updatedAt=Date.now();await dbSet("historias/"+h.id,h);histEditing=h;toast("Secuencia guardada");drawHist(true)}
+async function histAgent(){if(!sample){toast("Los agentes no están disponibles en esta vista");return}const obj=$("#hfObj").value,tema=$("#hfTema").value.trim();
+  const hoyPost=S.posts.filter(p=>(p.scheduledAt||"").startsWith(todayAR())).map(p=>p.title).join(" / ");const hoyReel=S.reels.filter(r=>(r.scheduledAt||"").startsWith(todayAR())).map(r=>r.titulo).join(" / ");
+  histBusy="Armando la secuencia…";render();
+  try{const o=await sample.json(`${agentContext("contenido")}\nTAREA: Armá la secuencia de historias de Instagram de hoy (${todayAR()}). Objetivo: ${rLabel(H_OBJ,obj)}. ${tema?"Tema: "+tema+".":""} Publicaciones de hoy: ${hoyPost||"ninguna"}. Reels de hoy: ${hoyReel||"ninguno"}.\nReglas: 4 a 6 historias; la primera engancha con una pregunta o dato; al menos una interactiva (encuesta, quiz o caja de preguntas); la última lleva a la acción (ver el post, escribir por WhatsApp al 2920 60-2681 o comentar una palabra clave). Frases cortas (máximo 60 caracteres), texto chico de hasta 140. Español rioplatense, sin afirmar matrícula.\nRespondé SOLO un objeto JSON con: frames (array de {tipo: "texto"|"encuesta"|"pregunta"|"quiz"|"link"|"cuenta", kicker, titulo, texto, opciones}), afirmaciones_a_verificar (array).`,{cache:false});
+    const frames=arr(o.frames).map(f=>({tipo:H_TIPOS.some(t=>t[0]===f.tipo)?f.tipo:"texto",kicker:f.kicker||"",titulo:f.titulo||"",texto:f.texto||"",opciones:f.opciones||""}));
+    await logRun("historias","Secuencia del día: "+rLabel(H_OBJ,obj),frames.length+" historias",o);histBusy="";openHist(null,{objetivo:obj,frames,source:"agente",verificar:arr(o.afirmaciones_a_verificar)})}
+  catch(e){if(e?.code!=="cancelled")toast(sampleMsg(e))}finally{histBusy="";render();if(histEditing)drawHist()}}
+document.addEventListener("click",async ev=>{const el=ev.target.closest("[data-hact]");if(!el)return;const k=el.dataset.hact;const h=histEditing;
+  try{switch(k){
+  case"new":openHist();break;
+  case"open":openHist(el.dataset.id);break;
+  case"agent":await histAgent();break;
+  case"save":await saveHist();break;
+  case"addFrame":h.frames=[...(h.frames||[]),{tipo:"texto",kicker:"",titulo:"",texto:"",opciones:""}];drawHist(true);break;
+  case"delFrame":h.frames.splice(+el.dataset.i,1);drawHist(true);break;
+  case"gen":{if(!assetsCap){toast("Esta vista no puede guardar imágenes");break}el.disabled=true;el.textContent="Generando…";await brandFonts();const out=[];
+    for(let i=0;i<h.frames.length;i++){const f=h.frames[i];const b=await drawSlide({kicker:f.kicker||rLabel(H_TIPOS,f.tipo),titulo:f.titulo,texto:[f.texto,["encuesta","quiz"].includes(f.tipo)&&f.opciones?f.opciones.split("/").map(s=>s.trim()).join("   ·   "):""].filter(Boolean).join("\n"),tema:i%2?"marfil":"noche"},i,1,1080,1920,S.settings.igUser||"clausuladigitall");const r=await assetsCap.upload(b);out.push({id:r.id,url:r.url})}
+    h.imagenes=out;await saveHist();break}
+  case"zip":await zipAndSave(h.imagenes,"Historias "+h.fecha);break;
+  case"one":await saveOne(el.dataset.url,`Historia ${h.fecha} ${el.dataset.n}`);break;
+  case"tips":copy((h.frames||[]).map((f,i)=>`Historia ${i+1}: ${stickerTip(f)||"sin sticker"}`).join("\n"));break;
+  case"del":if(el.dataset.confirm){await dbDelete("historias/"+h.id);closeDrawer();toast("Secuencia eliminada")}else{el.dataset.confirm="1";el.textContent="Tocá de nuevo para eliminar"}break;
+  }}catch(e){if(e?.message!=="no-db"){console.error(e);toast("No se pudo completar la acción")}}});
+document.addEventListener("input",ev=>{const t=ev.target;if(!histEditing||!t.dataset?.hp)return;sp(histEditing,t.dataset.hp,t.value)});
+document.addEventListener("change",ev=>{const t=ev.target;if(!histEditing||!t.dataset?.hp)return;sp(histEditing,t.dataset.hp,t.value);if(/\.tipo$/.test(t.dataset.hp))drawHist(true)});
+
+/* ---------- Director ---------- */
+let dirBusy="";
+const A_TIPO={novedad:["Novedad","info"],alerta:["Alerta","bad"],recomendacion:["Recomendación","gold"]};
+function vDirector(){const al=S.alertas.slice().sort(byNewest);const nuevas=al.filter(a=>!a.leida);
+  return `<div class="head"><div><div class="eyebrow">Sección 4 · Estrategia</div><h1>Director</h1><p>Junta lo que hacen los agentes de publicaciones, reels e historias, lee tus métricas reales y sigue las novedades del mundo contractual para darte alertas y recomendaciones.</p></div>
+  <div class="btns"><button class="btn primary" data-dact="analyze" ${dirBusy?"disabled":""}>Analizar ahora</button></div></div>
+  ${dirBusy?`<div class="status"><span class="spin"></span>${esc(dirBusy)}</div>`:""}
+  <section class="panel"><div class="ph"><h2>Alertas y recomendaciones</h2><span class="small muted">${nuevas.length} sin leer</span></div>
+   <div class="list">${al.slice(0,30).map(a=>{const t=A_TIPO[a.tipo]||[a.tipo,""];return `<div class="row" style="${a.leida?"opacity:.62":""}"><div style="min-width:0"><div class="btns" style="gap:6px"><span class="chip ${t[1]}">${esc(t[0])}</span>${a.prioridad==="alta"?`<span class="chip bad">Prioridad alta</span>`:""}<span class="small muted">${ago(a.createdAt)} · ${a.origen==="web"?"novedades en la web":"análisis de la cuenta"}</span></div><div class="t" style="margin-top:4px">${esc(a.titulo)}</div><div class="small" style="white-space:pre-wrap">${esc(a.detalle)}</div>${a.fuente?`<a class="link small" href="${esc(a.fuente)}" target="_blank" rel="noopener">Ver fuente</a>`:""}</div><div class="btns" style="flex-direction:column;align-items:flex-end">${a.leida?"":`<button class="link" data-dact="read" data-id="${esc(a.id)}">Marcar leída</button>`}<button class="link" data-dact="del" data-id="${esc(a.id)}">Borrar</button></div></div>`}).join("")||`<div class="empty">Todavía no hay alertas. Tocá “Analizar ahora” para revisar la cuenta. Las novedades del ámbito contractual llegan solas cada mañana.</div>`}</div></section>
+  <div class="grid">
+   <section class="panel"><div class="ph"><h2>Lo que hicieron los agentes</h2></div><div class="list">${S.runs.slice(0,8).map(r=>`<div class="row"><div><div class="t small">${esc(agentName(r.agent))}: ${esc(r.task)}</div><div class="s">${esc(r.summary)}</div></div><span class="small muted" style="white-space:nowrap">${ago(r.createdAt)}</span></div>`).join("")||`<div class="empty">Sin actividad todavía.</div>`}</div></section>
+   <section class="panel"><div class="ph"><h2>Estado de la producción</h2></div><dl class="kv"><dt>Publicaciones en revisión</dt><dd>${S.posts.filter(p=>p.stage==="revision").length}</dd><dt>Reels para grabar</dt><dd>${S.reels.filter(r=>["guion","grabar"].includes(r.estado)).length}</dd><dt>Reels en edición o revisión</dt><dd>${S.reels.filter(r=>["editar","revision"].includes(r.estado)).length}</dd><dt>Historias listas</dt><dd>${S.historias.filter(h=>h.estado==="lista").length}</dd></dl></section>
+  </div>
+  ${typeof pilotPanel==="function"?pilotPanel():""}
+  ${agentCard("crecimiento",AGENTS.crecimiento)}
+  ${S.agentOut.crecimiento?outBlock("crecimiento"):""}`}
+async function directorAnalyze(){if(!sample){toast("Los agentes no están disponibles en esta vista");return}dirBusy="Leyendo métricas y el trabajo de los agentes…";render();
+  if(S.caps.mcp==="ok")await loadMetrics(true);
+  const rows=S.metrics.rows.map(r=>({fecha:r.dateLabel,tipo:r.type,texto:r.text.slice(0,90),alcance:r.reach,interacciones:r.interactions,guardados:r.saved,compartidos:r.shares,seguidores:r.follows}));
+  const prod={publicaciones:S.posts.map(p=>({t:p.title,etapa:p.stage,formato:p.format,fecha:p.scheduledAt})).slice(0,30),reels:S.reels.map(r=>({t:r.titulo,estado:r.estado,formato:r.formato,ep:r.episodio,seg:segs(r)})).slice(0,30),historias:S.historias.map(h=>({fecha:h.fecha,estado:h.estado,n:(h.frames||[]).length})).slice(0,20),agentes:S.runs.slice(0,15).map(r=>({agente:r.agent,tarea:r.task,resumen:r.summary})),novedades:S.alertas.filter(a=>a.origen==="web").slice(0,8).map(a=>({titulo:a.titulo,detalle:a.detalle}))};
+  dirBusy="Pensando recomendaciones…";render();
+  try{const o=await sample.json(`${BRAND_CONTEXT.replace("{ig}",S.settings.igUser)}\n${STUDY}\nFecha: ${todayAR()}.\nMÉTRICAS REALES (Metricool, 90 días, ${rows.length} publicaciones): ${JSON.stringify(rows)}\nPRODUCCIÓN Y AGENTES: ${JSON.stringify(prod)}\nPiloto automático: ${JSON.stringify(pilot())}\nTAREA: Sos el director de contenidos de la cuenta. Detectá problemas (por ejemplo: piezas trabadas en revisión, semanas sin reels, temas repetidos, reels sin gancho o sin palabra clave, novedades legales que conviene contar) y oportunidades. Separá lo que surge de los datos de lo que es hipótesis. Con pocos datos, decilo.\nRespondé SOLO un objeto JSON con: resumen (2 oraciones), alertas (array de hasta 6 {tipo: "alerta"|"recomendacion", titulo (máximo 80 caracteres), detalle (máximo 300), prioridad: "alta"|"media"|"baja"}).`,{modelTier:"complex",cache:false});
+    const now=Date.now();for(const [i,a] of arr(o.alertas).entries()){const id="al-"+now.toString(36)+i;await dbSet("alertas/"+id,{id,tipo:a.tipo==="alerta"?"alerta":"recomendacion",titulo:a.titulo||"",detalle:a.detalle||"",prioridad:a.prioridad||"media",origen:"analisis",leida:false,createdAt:now+i})}
+    await logRun("director","Análisis de la cuenta",o.resumen||"",o);toast("Análisis listo")}
+  catch(e){if(e?.code!=="cancelled"&&e?.message!=="no-db")toast(sampleMsg(e))}finally{dirBusy="";render()}}
+document.addEventListener("click",async ev=>{const el=ev.target.closest("[data-dact]");if(!el)return;const k=el.dataset.dact;
+  try{if(k==="analyze")await directorAnalyze();if(k==="read")await dbUpdate("alertas/"+el.dataset.id,{leida:true});if(k==="del")await dbDelete("alertas/"+el.dataset.id)}catch(e){}});
+
+try{route()}catch(e){}boot();
+
+</script>
+<style>
+.salatabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.salatabs button{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:99px;padding:7px 14px;font:600 13px var(--f-body);cursor:pointer;display:flex;gap:7px;align-items:center}
+.salatabs button span{font:500 11px var(--f-mono);background:var(--soft);border-radius:99px;padding:1px 7px}
+.salatabs button.on{background:var(--noche);color:var(--marfil);border-color:var(--noche)}.salatabs button.on span{background:var(--oro);color:var(--noche)}
+.salafeed{display:flex;flex-direction:column;gap:22px}
+.salacard{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:22px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;align-items:start}
+.salavid{background:#000;border-radius:12px;overflow:hidden;aspect-ratio:9/16;max-height:78vh}
+.salavid video{width:100%;height:100%;object-fit:contain;display:block;background:#000}
+.salainfo{display:flex;flex-direction:column;gap:12px;min-width:0}
+.salainfo h2{font-family:var(--f-display);font-weight:600;font-size:30px;line-height:1.08;margin:0}
+.salahook{font-family:var(--f-display);font-style:italic;font-size:20px;margin:0;color:var(--ink)}
+.salanote{font-size:14px;background:var(--soft);border-radius:8px;padding:10px 12px}.salanote.warn{background:rgba(242,210,27,.25)}
+.btn.big{padding:12px 22px;font-size:15px}
+.salabox{display:flex;flex-direction:column;gap:8px}
+.salasteps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:16px}.salasteps li{display:flex;flex-direction:column;gap:8px}.salasteps li::marker{font-weight:700;color:var(--oro-ink)}
+.salaopts{display:grid;grid-template-columns:1fr 1fr;gap:14px}.salaopts>div{display:flex;flex-direction:column;gap:6px;border:1px solid var(--line);border-radius:10px;padding:12px}
+@media (max-width:860px){.salacard{grid-template-columns:1fr;padding:0;border:0;background:none;gap:12px}.salavid{max-height:none;border-radius:14px}.salafeed{gap:34px}.salaopts{grid-template-columns:1fr}.salainfo .btns .btn.big{flex:1}}
+</style>
+
+<script>
+/* ============ Sala de reels: ver, aprobar o dejar en espera, y preparar la publicación ============ */
+VIEWS.splice(1,0,["sala","Sala de reels"]);SHORT.sala="Sala";
+const SALA_TABS=[["revision","Para revisar"],["espera","En espera"],["aprobado","Aprobados"],["programado","Programados"],["publicado","Publicados"]];
+let salaTab="revision",salaPrep=null,salaHold=null,salaConfirm=null;
+const salaOf=r=>r.sala||(r.estado==="publicado"?"publicado":r.estado==="listo"?"aprobado":"revision");
+const salaReels=()=>(S.reels||[]).filter(r=>r.video&&r.video.url);
+function salaCount(k){return salaReels().filter(r=>salaOf(r)===k).length}
+function vSala(){const list=salaReels().filter(r=>salaOf(r)===salaTab).sort((a,b)=>(a.orden||99)-(b.orden||99)||byNewest(a,b));
+  return `<div class="head"><div><div class="eyebrow">Tus reels terminados</div><h1>Sala de reels</h1><p>Miralos como en Instagram. Aprobá los que salen, dejá en espera los que pueden mejorar. Nada se publica sin que lo confirmes.</p></div></div>
+  <div class="salatabs" role="tablist">${SALA_TABS.map(([k,l])=>`<button role="tab" aria-selected="${k===salaTab}" class="${k===salaTab?"on":""}" data-sact="tab" data-k="${k}">${esc(l)}<span>${salaCount(k)}</span></button>`).join("")}</div>
+  ${S.loaded.reels&&!list.length?`<div class="empty">${salaTab==="revision"?"No hay reels esperando tu revisión. Cuando los agentes terminen uno, aparece acá.":"No hay reels en esta lista."}</div>`:""}
+  <div class="salafeed">${list.map(salaCard).join("")}</div>`}
+function salaCard(r){const st=salaOf(r);const prep=salaPrep===r.id,hold=salaHold===r.id;
+  return `<article class="salacard" id="sala-${esc(r.id)}">
+  <div class="salavid"><video src="${esc(r.video.url)}" ${r.portada?`poster="${esc(r.portada)}"`:""} controls playsinline preload="metadata"></video></div>
+  <div class="salainfo">
+    <div class="eyebrow">${r.episodio?"Episodio "+esc(r.episodio)+" · ":""}${r.articulos?"Art. "+esc(r.articulos):""}${r.video.dur?" · "+esc(r.video.dur)+" s":""}</div>
+    <h2>${esc(r.titulo||"Reel")}</h2>
+    ${r.gancho?`<p class="salahook">“${esc(r.gancho)}”</p>`:""}
+    ${st==="espera"&&r.notaEspera?`<div class="salanote"><b>Qué mejorar:</b> ${esc(r.notaEspera)}</div>`:""}
+    ${(r.verificar||[]).length?`<div class="salanote warn"><b>Revisar antes de publicar:</b> ${r.verificar.map(esc).join(" · ")}</div>`:""}
+    ${st==="revision"||st==="espera"?`<div class="btns"><button class="btn primary big" data-sact="aprobar" data-id="${esc(r.id)}">Aprobar</button><button class="btn big" data-sact="espera" data-id="${esc(r.id)}">${st==="espera"?"Cambiar nota":"En espera"}</button></div>`:""}
+    ${hold?`<div class="salabox"><label for="hold-${esc(r.id)}">¿Qué querés que mejore?</label><textarea id="hold-${esc(r.id)}" rows="3" placeholder="Ej.: el gancho no engancha, la voz va muy rápido, otra situación de ejemplo…">${esc(r.notaEspera||"")}</textarea><div class="btns"><button class="btn primary" data-sact="guardarEspera" data-id="${esc(r.id)}">Dejar en espera</button><button class="btn" data-sact="cerrar">Cancelar</button></div></div>`:""}
+    ${st==="aprobado"&&!prep?`<div class="btns"><button class="btn primary big" data-sact="preparar" data-id="${esc(r.id)}">Preparar publicación</button><button class="btn" data-sact="volver" data-id="${esc(r.id)}">Volver a revisión</button></div>`:""}
+    ${prep?salaSteps(r):""}
+    ${st==="programado"?`<div class="salanote">Programado para ${esc(niceDate(r.scheduledAt||""))}${r.plannerUrl?` · <a class="link" href="${esc(r.plannerUrl)}" target="_blank" rel="noopener">Ver en Metricool</a>`:""}</div>`:""}
+    ${st==="programado"||st==="aprobado"?`<button class="link" data-sact="publicado" data-id="${esc(r.id)}">Marcar como publicado</button>`:""}
+    <button class="link" data-sact="guion" data-id="${esc(r.id)}">Ver guion</button>
+  </div></article>`}
+function salaSteps(r){const cap=(r.caption||"")+(r.hashtags?"\n\n"+r.hashtags:"");const okM=S.caps.mcp==="ok";const conf=salaConfirm===r.id;
+  return `<ol class="salasteps">
+  <li><b>Revisá el texto</b><textarea id="cap-${esc(r.id)}" rows="6">${esc(cap)}</textarea><div class="btns"><button class="btn sm" data-sact="guardarCap" data-id="${esc(r.id)}">Guardar texto</button><button class="btn sm" data-sact="copiar" data-id="${esc(r.id)}">Copiar</button></div></li>
+  <li><b>Bajá el video</b><a class="btn sm" href="${esc(r.video.url)}" download="${esc((r.titulo||"reel").replace(/[^\wáéíóúñ -]/gi,"").slice(0,40))}.mp4">Descargar video</a></li>
+  <li><b>Publicalo</b>
+    <div class="salaopts"><div><span class="small">Opción A · desde tu celular</span><p class="small muted">Abrí Instagram, tocá +, elegí Reel, cargá el video descargado y pegá el texto copiado.</p></div>
+    <div><span class="small">Opción B · programarlo con Metricool</span><label for="when-${esc(r.id)}" class="small">Fecha y hora (Argentina)</label><input type="datetime-local" id="when-${esc(r.id)}" value="${esc(r.scheduledAt||"")}">
+      ${conf?`<div class="salanote warn">Vas a programar este reel en @${esc(S.settings.igUser)} para ${esc(niceDate(r.scheduledAt))}. Saldrá en tu perfil público a esa hora, salvo que lo canceles en Metricool antes. <div class="btns"><button class="btn primary" data-sact="programar" data-id="${esc(r.id)}">Sí, programar</button><button class="btn" data-sact="cerrar">No</button></div></div>`
+      :`<button class="btn sm" data-sact="pedirProgramar" data-id="${esc(r.id)}" ${okM?"":"disabled"}>Programar…</button>${okM?"":`<span class="small" style="color:var(--warn)">Metricool no está disponible en esta vista.</span>`}`}</div></div></li></ol>`}
+async function salaSet(id,patch){await dbUpdate("reels/"+id,{...patch,updatedAt:Date.now()})}
+document.addEventListener("click",async e=>{const el=e.target.closest("[data-sact]");if(!el)return;const id=el.dataset.id,a=el.dataset.sact;const r=id&&S.reels.find(x=>x.id===id);
+  switch(a){
+  case"tab":salaTab=el.dataset.k;salaPrep=salaHold=salaConfirm=null;render.keep=false;render();break;
+  case"aprobar":await salaSet(id,{sala:"aprobado",estado:"listo",aprobadoAt:Date.now(),aprobadoPor:S.uid||null});salaPrep=id;toast("Reel aprobado. Ya podés preparar la publicación");render();break;
+  case"espera":salaHold=id;render();break;
+  case"guardarEspera":{const t=$("#hold-"+id).value.trim();await salaSet(id,{sala:"espera",notaEspera:t});salaHold=null;toast("Quedó en espera"+(t?" con tu nota para los agentes":""));render();break}
+  case"cerrar":salaHold=salaConfirm=null;render();break;
+  case"preparar":salaPrep=id;render();break;
+  case"volver":await salaSet(id,{sala:"revision",estado:"revision"});salaPrep=null;render();break;
+  case"guardarCap":{const v=$("#cap-"+id).value;const i=v.lastIndexOf("\n\n#");const cap=i>=0?v.slice(0,i):v,hs=i>=0?v.slice(i+2):"";await salaSet(id,{caption:cap,hashtags:hs});toast("Texto guardado");break}
+  case"copiar":try{await navigator.clipboard.writeText($("#cap-"+id).value);toast("Texto copiado")}catch(_){toast("No se pudo copiar: seleccioná el texto y copialo a mano")}break;
+  case"pedirProgramar":{const w=$("#when-"+id).value;if(!w){toast("Elegí fecha y hora");break}if(w<=nowAR()){toast("Esa fecha ya pasó");break}await salaSet(id,{scheduledAt:w});salaConfirm=id;render();break}
+  case"programar":await salaSchedule(r);break;
+  case"publicado":await salaSet(id,{sala:"publicado",estado:"publicado",publishedAt:Date.now()});toast("Marcado como publicado");render();break;
+  case"guion":openReel(id);break}});
+async function salaSchedule(r){if(!r)return;salaConfirm=null;
+  const apId=newId("apr");await dbSet("approvals/"+apId,{id:apId,titulo:"Reel: "+(r.titulo||""),que:"Programar el reel en Metricool",cuenta:"@"+S.settings.igUser,cuando:niceDate(r.scheduledAt),contenido:(r.caption||"").slice(0,300),media:[r.video.url],status:"ejecutando",reelId:r.id,createdAt:Date.now(),decidedAt:Date.now(),decidedBy:S.uid||null,consecuencias:"Saldrá publicado en el perfil público a esa hora."});
+  const info={autoPublish:true,draft:false,descendants:[],firstCommentText:"",hasNotReadNotes:false,media:[r.video.url],mediaAltText:[],providers:[{network:"instagram"}],
+    publicationDate:{dateTime:r.scheduledAt+":00",timezone:TZ},shortener:false,smartLinkData:{ids:[]},instagramData:{type:"REEL",showReelOnFeed:true,isAiGenerated:true},text:(r.caption||"")+(r.hashtags?"\n\n"+r.hashtags:"")};
+  try{const res=await mcp.callTool(MC,"createScheduledPost",{blogId:String(S.settings.brandId),date:r.scheduledAt+":00-03:00",info:JSON.stringify(info)});const url=findKey(res.payload,"plannerUrl");
+    await dbUpdate("approvals/"+apId,{status:"ejecutada",resultado:"Reel programado en Metricool",plannerUrl:url||null});await salaSet(r.id,{sala:"programado",plannerUrl:url||null});salaPrep=null;toast("Reel programado en Metricool")}
+  catch(e){const amb=["server_unavailable","upstream_error","cancelled"].includes(e?.code);const msg=e?.code==="tool_error"?"Metricool rechazó el reel: "+String(e.message||"").slice(0,240)+". Usá la opción A desde el celular.":amb?"Sin respuesta clara de Metricool. Revisá su planificador antes de reintentar":"No se pudo programar ("+(e?.code||"error")+"). Usá la opción A desde el celular.";
+    await dbUpdate("approvals/"+apId,{status:amb?"incierta":"fallida",resultado:msg});toast(msg)}
+  render()}
+
+render();
+</script>
+<script>
+"use strict";
+/* ============ Mejoras: tablero de temporada, semana en Instagram y menú del celular ============ */
+/* --- Tablero de la temporada: cada episodio con su avance --- */
+const T_PASOS=[["guion","Guion"],["voces","Voces"],["video","Video"],["revision","Revisión"],["publicado","Publicado"]];
+function pasoDe(r){const pub=r.estado==="publicado"||r.sala==="publicado";const apr=pub||["aprobado","programado"].includes(r.sala);const vid=!!(r.video&&r.video.url);
+  const voc=vid||r.voces===true;const gui=voc||!!(r.guion||r.bloques||r.guionTexto||(r.escenas&&r.escenas.length));
+  return {guion:gui,voces:voc,video:vid&&!r.borrador,revision:apr,publicado:pub}}
+function temporadaBoard(){const all=(S.reels||[]).filter(r=>r.episodio);const eps=all.filter(r=>r.orden||!all.some(o=>o!==r&&o.orden&&String(o.episodio)===String(r.episodio))).sort((a,b)=>(+(a.orden||a.episodio)||99)-(+(b.orden||b.episodio)||99));
+  if(!eps.length)return"";
+  const done=eps.filter(r=>pasoDe(r).publicado).length;
+  return `<section class="panel tboard"><div class="ph"><h2>Temporada 1</h2><span class="small muted">${done} de ${eps.length} ${eps.length===1?"episodio publicado":"episodios publicados"}</span></div>
+  <div class="tlist">${eps.map(r=>{const p=pasoDe(r);const next=T_PASOS.find(([k])=>!p[k]);
+    return `<button class="trow" data-sact="${r.video&&r.video.url?"verEp":"guion"}" data-id="${esc(r.id)}"><span class="tep">Ep. ${esc(r.episodio)}</span><span class="tti"><b>${esc(r.titulo||"Sin título")}</b><span>${r.articulos?"Art. "+esc(r.articulos)+" · ":""}${next?"Falta: "+esc(next[1].toLowerCase()):"Completo"}</span></span>
+    <span class="tsteps" aria-label="Avance">${T_PASOS.map(([k,l])=>`<i class="${p[k]?"on":next&&next[0]===k?"now":""}" title="${esc(l)}"></i>`).join("")}</span></button>`}).join("")}</div>
+  <div class="tleg">Barras, en orden: guion · voces · video · revisión · publicado</div></section>`}
+document.addEventListener("click",e=>{const el=e.target.closest('[data-sact="verEp"]');if(!el)return;e.stopImmediatePropagation();
+  const r=(S.reels||[]).find(x=>x.id===el.dataset.id);if(!r)return;salaTab=salaOf(r);render();setTimeout(()=>document.getElementById("sala-"+r.id)?.scrollIntoView({behavior:"smooth",block:"start"}),60)},true);
+const _vSala=vSala;vSala=()=>{const h=_vSala();const i=h.indexOf(`<div class="salatabs"`);return i<0?h:h.slice(0,i)+temporadaBoard()+h.slice(i)};
+
+/* --- La semana en Instagram: publicaciones, reels e historias por día --- */
+function addDaysAR(d,n){const x=new Date(d+"T12:00:00-03:00");x.setDate(x.getDate()+n);return fmtAR.format(x).slice(0,10)}
+function semanaIG(){const t=todayAR();const dias=[...Array(7)].map((_,i)=>addDaysAR(t,i));const ev=[];
+  S.posts.filter(p=>p.scheduledAt).forEach(p=>ev.push({f:p.scheduledAt.slice(0,10),h:p.scheduledAt.slice(11,16),k:fmtLabel(p.format),t:p.title||"Sin título",st:p.stage,attr:`data-act="openPost" data-id="${esc(p.id)}"`}));
+  (S.reels||[]).filter(r=>r.scheduledAt).forEach(r=>ev.push({f:r.scheduledAt.slice(0,10),h:r.scheduledAt.slice(11,16),k:"Reel",t:r.titulo||"Reel",st:r.sala||r.estado,attr:`data-ract="open" data-id="${esc(r.id)}"`}));
+  (S.historias||[]).filter(x=>x.fecha).forEach(x=>ev.push({f:String(x.fecha).slice(0,10),h:"",k:"Historia",t:x.titulo||x.tema||"Historia",st:x.estado,attr:`href="#historias"`}));
+  const n=ev.filter(x=>dias.includes(x.f)).length;
+  return `<section class="panel" style="grid-column:1/-1"><div class="ph"><h2>Esta semana en Instagram</h2><span class="small muted">${n?n+(n===1?" pieza con fecha":" piezas con fecha"):"Sin piezas con fecha"}</span></div>
+  <div class="week">${dias.map((d,i)=>{const its=ev.filter(x=>x.f===d).sort((a,b)=>a.h.localeCompare(b.h));const lab=i===0?"Hoy":new Date(d+"T12:00:00-03:00").toLocaleDateString("es-AR",{timeZone:TZ,weekday:"short",day:"numeric"});
+    return `<div class="wday${its.length?" has":""}${i===0?" today":""}"><div class="wd">${esc(lab)}</div>${its.map(x=>`${x.attr.startsWith("href")?`<a class="wev" ${x.attr}>`:`<button class="wev" ${x.attr}>`}<span class="wk">${esc(x.k)}${x.h?" · "+esc(x.h):""}</span><b>${esc(x.t)}</b>${x.attr.startsWith("href")?"</a>":"</button>"}`).join("")||`<span class="wnone">—</span>`}</div>`}).join("")}</div>
+  ${!n?`<p class="small muted" style="margin:0">Cuando una publicación, un reel o una historia tenga fecha, aparece acá. Ningún día se publica solo: cada pieza pasa por tu aprobación.</p>`:""}</section>`}
+const _vPanel=vPanel;vPanel=()=>{const h=_vPanel();const i=h.indexOf(`<div class="grid">`);return i<0?h:h.slice(0,i)+`<div class="grid">`+semanaIG()+temporadaBoard().replace(`class="panel tboard"`,`class="panel tboard" style="grid-column:1/-1"`)+h.slice(i+`<div class="grid">`.length)};
+
+/* --- Menú del celular: 4 secciones principales + "Más" --- */
+const MAIN_MOBILE=["panel","sala","publicaciones","reels"];
+let masOpen=false;
+const _renderNav=renderNav;renderNav=()=>{_renderNav();const m=$("#mnav");if(!m)return;
+  const tmp=document.createElement("div");tmp.innerHTML=m.innerHTML;const links=[...tmp.querySelectorAll("a")];
+  const main=links.filter(a=>MAIN_MOBILE.includes(a.getAttribute("href").slice(1)));const rest=links.filter(a=>!MAIN_MOBILE.includes(a.getAttribute("href").slice(1)));
+  const restOn=rest.some(a=>a.classList.contains("on"));const restBadge=rest.reduce((s,a)=>s+(+(a.querySelector(".badge")?.textContent||0)),0);
+  m.innerHTML=main.map(a=>a.outerHTML).join("")+`<a href="#" data-mas="1" class="${restOn?"on":""}" aria-expanded="${masOpen}">Más${restBadge?`<span class="badge">${restBadge}</span>`:""}</a>`;
+  let sh=$("#masSheet");if(!sh){sh=document.createElement("div");sh.id="masSheet";document.body.appendChild(sh)}
+  sh.innerHTML=masOpen?`<div class="mas-bg" data-mas="close"></div><div class="mas" role="menu">${rest.map(a=>{const k=a.getAttribute("href").slice(1);const full=(VIEWS.find(v=>v[0]===k)||[k,k])[1];const b=a.querySelector(".badge");return `<a role="menuitem" href="#${k}" class="${a.classList.contains("on")?"on":""}" data-mas="close">${esc(full)}${b?`<span class="badge">${b.textContent}</span>`:""}</a>`}).join("")}</div>`:""};
+document.addEventListener("click",e=>{const el=e.target.closest("[data-mas]");if(!el)return;if(el.dataset.mas==="1"){e.preventDefault();masOpen=!masOpen;renderNav()}else{masOpen=false;setTimeout(renderNav,0)}});
+
+render();
+</script>
+<script>
+"use strict";
+/* ============ Mejoras (tanda 2): buscador, reels en el celular y controles antes de publicar ============ */
+/* --- Buscador general --- */
+let osQ="";
+const normOS=s=>String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+function osBuscar(q){q=normOS(q).trim();if(q.length<2)return[];const hit=(...v)=>v.some(x=>normOS(typeof x==="string"?x:JSON.stringify(x||"")).includes(q));const out=[];
+  S.posts.forEach(p=>{if(hit(p.title,p.caption,p.hashtags,p.slides))out.push({k:fmtLabel(p.format),t:p.title||"Sin título",s:stageLabel(p.stage)+(p.scheduledAt?" · "+niceDate(p.scheduledAt):""),attr:`data-act="openPost" data-id="${esc(p.id)}"`})});
+  (S.reels||[]).forEach(r=>{if(hit(r.titulo,r.articulos,r.gancho,r.caption,r.palabraClave))out.push({k:"Reel",t:r.titulo||"Reel",s:(r.episodio?"Ep. "+r.episodio+" · ":"")+(r.articulos?"Art. "+r.articulos:""),attr:`data-ract="open" data-id="${esc(r.id)}"`})});
+  (S.historias||[]).forEach(h=>{if(hit(h.tema,h.objetivo,h.frames))out.push({k:"Historias",t:(h.fecha?dia(h.fecha)+" · ":"")+rLabel(H_OBJ,h.objetivo),s:(h.frames||[]).length+" historias",attr:`data-hact="open" data-id="${esc(h.id)}"`})});
+  return out.slice(0,12)}
+function osSearch(){const r=osBuscar(osQ);return `<section class="panel srch" style="grid-column:1/-1"><label for="osSearch" class="sr-only">Buscar</label><input id="osSearch" type="search" placeholder="Buscar publicaciones, reels o historias…" value="${esc(osQ)}" autocomplete="off">
+  <div id="osRes">${osQ.trim().length>=2?(r.length?`<div class="list">${r.map(x=>`<button class="row srow" ${x.attr}><span><span class="chip gold">${esc(x.k)}</span> <b>${esc(x.t)}</b><span class="s" style="display:block">${esc(x.s)}</span></span><span class="link">Abrir</span></button>`).join("")}</div>`:`<div class="empty">Sin resultados para “${esc(osQ)}”.</div>`):""}</div></section>`}
+document.addEventListener("input",e=>{if(e.target.id!=="osSearch")return;osQ=e.target.value;const t=document.createElement("div");t.innerHTML=osSearch();$("#osRes").replaceWith(t.querySelector("#osRes"))});
+const _vPanelB=vPanel;vPanel=()=>{const h=_vPanelB();const i=h.indexOf(`<div class="grid">`);return i<0?h:h.slice(0,i)+`<div class="grid">`+osSearch()+h.slice(i+`<div class="grid">`.length)};
+
+/* --- Reels en el celular: lista con filtros por estado --- */
+let reelF="activos";
+function reelLista(){const act=r=>!["publicado"].includes(r.estado||"idea");
+  const items=(S.reels||[]).filter(r=>reelF==="activos"?act(r):(r.estado||"idea")===reelF).sort((a,b)=>(+(a.orden||a.episodio)||99)-(+(b.orden||b.episodio)||99)||byNewest(a,b));
+  const cnt=k=>k==="activos"?(S.reels||[]).filter(act).length:(S.reels||[]).filter(r=>(r.estado||"idea")===k).length;
+  return `<section class="panel reel-m"><div class="fchips" role="tablist" aria-label="Filtrar reels">${[["activos","En curso"],...R_ESTADOS].map(([k,l])=>`<button role="tab" aria-selected="${k===reelF}" class="fchip${k===reelF?" on":""}" data-reelf="${k}">${esc(l)} <span>${cnt(k)}</span></button>`).join("")}</div>
+  <div class="list">${items.map(r=>`<button class="row srow" data-ract="open" data-id="${esc(r.id)}"><span><b>${esc(r.titulo||"Sin título")}</b><span class="s" style="display:block">${r.episodio?"T1 · Ep. "+esc(r.episodio)+" · ":""}${esc(rLabel(R_ESTADOS,r.estado||"idea"))}</span></span><span class="link">Abrir</span></button>`).join("")||`<div class="empty">No hay reels en este estado.</div>`}</div></section>`}
+document.addEventListener("click",e=>{const el=e.target.closest("[data-reelf]");if(!el)return;reelF=el.dataset.reelf;render()});
+const _vReelsB=vReels;vReels=()=>{const h=_vReelsB();const i=h.indexOf(`<div class="board">`);return i<0?h:h.slice(0,i)+reelLista()+h.slice(i)};
+
+/* --- Controles antes de publicar (Sala de reels) --- */
+function capChecks(v){const w=[];const tags=(v.match(/#[\wáéíóúñü]+/gi)||[]);
+  if(v.length>2200)w.push(["bad",`El texto tiene ${v.length} caracteres: Instagram permite hasta 2.200.`]);
+  if(tags.length>30)w.push(["bad",`Hay ${tags.length} hashtags: Instagram permite hasta 30.`]);else if(tags.length>8)w.push(["warn",`${tags.length} hashtags: con 3 a 8 bien elegidos alcanza.`]);
+  if(/abogad[oa]\s+matriculad|matr[ií]cula\s+(n|prof)|soy\s+abogad|\bdr\.?\s|\bdoctor\b/i.test(v.replace(/(asesoramiento|revisi[oó]n|firma|consulta)[^.\n]{0,40}abogad[oa]\s+matriculad[oa]/gi,"")))w.push(["bad","El texto menciona una matrícula o el título de abogado/doctor: todavía no corresponde."]);
+  if(!/\b(guard|compart|coment|escrib|seguí|link|enlace|DM|mensaje)/i.test(v))w.push(["warn","Falta una llamada a la acción (guardalo, compartilo, comentá…)."]);
+  if(!/no (constituye|reemplaza|es) asesoramiento|informativ|educativ/i.test(v))w.push(["warn","Conviene sumar la aclaración: contenido informativo, no reemplaza el asesoramiento profesional."]);
+  return `<div class="capchk" aria-live="polite"><span class="small muted">${v.length} / 2.200 caracteres · ${tags.length} hashtags</span>${w.map(([k,t])=>`<span class="chip ${k}" style="white-space:normal">${esc(t)}</span>`).join("")||`<span class="chip ok">Listo para copiar</span>`}</div>`}
+const _salaSteps=salaSteps;salaSteps=r=>{const h=_salaSteps(r);const cap=(r.caption||"")+(r.hashtags?"\n\n"+r.hashtags:"");return h.replace(/(<textarea id="cap-[^"]+"[^>]*>[\s\S]*?<\/textarea>)/,`$1${capChecks(cap)}`)};
+document.addEventListener("input",e=>{const t=e.target;if(!t.id||!t.id.startsWith("cap-"))return;const c=t.parentElement.querySelector(".capchk");if(c){const d=document.createElement("div");d.innerHTML=capChecks(t.value);c.replaceWith(d.firstElementChild)}});
+
+render();
+</script>
+<script>
+"use strict";
+/* ============ Mejoras (tanda 3): lo próximo, copia de seguridad y atajo de búsqueda ============ */
+function loProximo(){const out=[];
+  const sala=(S.reels||[]).filter(r=>r.video&&r.video.url&&(r.sala||"revision")==="revision"&&r.estado!=="publicado");
+  sala.forEach(r=>out.push({t:`Mirá y aprobá el reel “${r.titulo||"sin título"}”`,a:`href="#sala"`,k:"Sala"}));
+  S.approvals.filter(a=>a.status==="pendiente").forEach(a=>out.push({t:a.titulo,a:`href="#aprobaciones"`,k:"Aprobar"}));
+  const eps=(S.reels||[]).filter(r=>r.orden&&r.estado!=="publicado").sort((a,b)=>a.orden-b.orden);
+  const ep=eps.find(r=>!(r.video&&r.video.url));if(ep&&typeof pasoDe==="function"){const p=pasoDe(ep);const f=T_PASOS.find(([k])=>!p[k]);if(f)out.push({t:`Ep. ${ep.episodio} (art. ${ep.articulos||"?"}): ${({guion:"falta el guion",voces:"faltan las voces",video:"falta el video",revision:"falta tu revisión",publicado:"falta publicarlo"})[f[0]]}`,a:`data-ract="open" data-id="${esc(ep.id)}"`,k:"Temporada"})}
+  if(!out.length)return"";const x=out[0];
+  return `<section class="panel next" style="grid-column:1/-1"><span class="eyebrow">Lo próximo</span><div class="nrow"><b>${esc(x.t)}</b>${x.a.startsWith("href")?`<a class="btn primary sm" ${x.a} style="text-decoration:none">Ir</a>`:`<button class="btn primary sm" ${x.a}>Abrir</button>`}</div>${out.length>1?`<span class="small muted">Después: ${out.slice(1,3).map(o=>esc(o.t)).join(" · ")}</span>`:""}</section>`}
+const _vPanelC=vPanel;vPanel=()=>{const h=_vPanelC();const i=h.indexOf(`<div class="grid">`);return i<0?h:h.slice(0,i)+`<div class="grid">`+loProximo()+h.slice(i+`<div class="grid">`.length)};
+let dlOS=null;claude.use("downloads").then(d=>{dlOS=d}).catch(()=>{});
+async function backupOS(){if(!dlOS){toast("La descarga no está disponible en esta vista");return}
+  const data={app:"Cláusula Legal OS",exportado:new Date().toISOString(),publicaciones:S.posts,reels:S.reels,historias:S.historias,aprobaciones:S.approvals,tareas:S.tasks,ajustes:S.settings};
+  try{await dlOS.save({filename:"clausula-os-copia-"+todayAR()+".json",data:new Blob([JSON.stringify(data,null,2)],{type:"application/json"})});toast("Copia descargada")}catch(e){toast(e?.code==="declined"?"Descarga cancelada":"No se pudo descargar")}}
+const _vConfigC=vConfig;vConfig=()=>{const h=_vConfigC();const add=`<section class="panel"><h2>Copia de seguridad</h2><p class="small muted" style="margin:0">Descargá publicaciones, reels, historias y aprobaciones en un archivo, por si algún día necesitás recuperarlos.</p><button class="btn sm" data-osbk="1" style="align-self:flex-start">Descargar copia</button></section>`;
+  const j=h.lastIndexOf("</div>");return j<0?h+add:h.slice(0,j)+add+h.slice(j)};
+document.addEventListener("click",e=>{if(e.target.closest("[data-osbk]"))backupOS()});
+document.addEventListener("keydown",e=>{if(e.key!=="/"||/input|textarea|select/i.test(document.activeElement?.tagName||""))return;const s=$("#osSearch");if(s){e.preventDefault();s.focus()}});
+
+render();
+</script>
+<script>
+"use strict";
+/* ============ Mejoras (tanda 4): vista de la grilla del perfil y comparar versiones de un reel ============ */
+function gridItems(){const it=[];const ts=x=>x.publishedAt||Date.parse((x.scheduledAt||"")+":00-03:00")||x.updatedAt||x.createdAt||0;
+  S.posts.filter(p=>["aprobado","programado","publicado"].includes(p.stage)).forEach(p=>{const m=((p.imagenes||[])[0]||{}).url||(p.media||"").split(/\n+/)[0]||"";it.push({k:fmtLabel(p.format),t:p.title||"",img:/\.(png|jpe?g|webp)(\?|$)|_blob\//i.test(m)?m:"",ts:ts(p),st:p.stage,attr:`data-act="openPost" data-id="${esc(p.id)}"`})});
+  (S.reels||[]).filter(r=>r.video&&r.video.url).forEach(r=>it.push({k:"Reel",t:r.titulo||"",img:r.portada||"",ts:ts(r),st:r.sala||r.estado,attr:`data-sact="verEp" data-id="${esc(r.id)}"`}));
+  return it.sort((a,b)=>b.ts-a.ts).slice(0,12)}
+function gridPreview(){const it=gridItems();if(!it.length)return"";
+  return `<section class="panel"><h2>Así se ve tu perfil</h2><span class="small muted" style="margin-top:-6px">Piezas aprobadas, programadas y publicadas · la más nueva arriba a la izquierda</span>
+  <div class="iggrid">${it.map(x=>`<button class="igt" ${x.attr} aria-label="${esc(x.k+": "+x.t)}">${x.img?`<img src="${esc(x.img)}" alt="" loading="lazy">`:`<span class="igph"><b>${esc(x.t)}</b></span>`}<span class="igk">${esc(x.k)}${x.st==="publicado"?"":" · "+esc(x.st==="programado"?"programada":x.st==="aprobado"?"aprobada":"en revisión")}</span></button>`).join("")}</div>
+  <p class="small muted" style="margin:0">Instagram recorta las portadas en la grilla: mantené títulos y caras en el centro de la imagen.</p></section>`}
+const _vPubD=vPublicaciones;vPublicaciones=()=>{const h=_vPubD();const i=h.indexOf(`<div class="board">`);return i<0?h+gridPreview():h.slice(0,i)+gridPreview()+h.slice(i)};
+
+/* comparar con la versión anterior del reel */
+const _salaCardD=salaCard;salaCard=r=>{let h=_salaCardD(r);if(r.videoAnterior&&r.videoAnterior.url){h=h.replace(`<button class="link" data-sact="guion"`,`<button class="link" data-vcmp="${esc(r.id)}">Comparar con la versión anterior</button> <button class="link" data-sact="guion"`)}return h};
+document.addEventListener("click",e=>{const el=e.target.closest("[data-vcmp]");if(!el)return;const r=(S.reels||[]).find(x=>x.id===el.dataset.vcmp);const v=document.querySelector("#sala-"+CSS.escape(el.dataset.vcmp)+" video");if(!r||!v)return;
+  const ant=v.dataset.ant!=="1";v.src=ant?r.videoAnterior.url:r.video.url;v.dataset.ant=ant?"1":"0";el.textContent=ant?"Volver a la versión nueva":"Comparar con la versión anterior";toast(ant?"Mostrando la versión anterior":"Mostrando la versión nueva");v.play?.().catch(()=>{})});
+
+render();
+</script>
+<script>
+"use strict";
+/* ============ Mejoras (tanda 5, inspiradas en Later, Planoly, Plann, SocialPilot y Metricool) ============ */
+/* --- Bloques guardados: conjuntos de hashtags y textos que se insertan con un toque --- */
+const BLOQUES_BASE=[{n:"Serie del Código",t:"#ClausulaLegal #CodigoCivil #Contratos #DerechoArgentino",h:true},{n:"Alquileres",t:"#Alquileres #Inquilinos #Propietarios #ContratoDeAlquiler",h:true},
+  {n:"Aclaración legal",t:"Contenido informativo: no reemplaza el asesoramiento de un abogado matriculado.",h:false},{n:"Llamada a la acción",t:"¿Te pasó algo así? Contalo en comentarios 👇 Guardalo y compartilo con quien lo necesite.",h:false}];
+const bloques=()=>Array.isArray(S.settings.bloques)&&S.settings.bloques.length?S.settings.bloques:BLOQUES_BASE;
+function bloquesBar(target){return `<div class="blqbar"><span class="small muted">Insertar:</span>${bloques().map((b,i)=>`<button class="fchip" data-blq="${i}" data-target="${esc(target)}" title="${esc(b.t)}">${b.h?"# ":""}${esc(b.n)}</button>`).join("")}</div>`}
+function insertarBloque(ta,b){let v=ta.value.trimEnd();if(b.h){const have=new Set((v.match(/#[\wáéíóúñü]+/gi)||[]).map(x=>x.toLowerCase()));const add=b.t.split(/\s+/).filter(x=>!have.has(x.toLowerCase()));if(!add.length){toast("Esos hashtags ya están");return}
+    v=/(^|\n)#\S+(\s+#\S+)*$/.test(v)?v+" "+add.join(" "):v+"\n\n"+add.join(" ")}
+  else{if(v.includes(b.t)){toast("Ese texto ya está");return}const m=v.match(/\n\n(#\S+(\s+#\S+)*)$/);v=m?v.slice(0,m.index)+"\n\n"+b.t+m[0]:v+"\n\n"+b.t}
+  ta.value=v;ta.dispatchEvent(new Event("input",{bubbles:true}));toast("Insertado: "+b.n)}
+document.addEventListener("click",async e=>{const el=e.target.closest("[data-blq]");if(!el)return;const ta=document.getElementById(el.dataset.target);const b=bloques()[+el.dataset.blq];if(!ta||!b)return;insertarBloque(ta,b);
+  if(ta.id.startsWith("cap-")){const v=ta.value;const i=v.lastIndexOf("\n\n#");try{await salaSet(ta.id.slice(4),{caption:i>=0?v.slice(0,i):v,hashtags:i>=0?v.slice(i+2):""})}catch(_){}}});
+
+/* --- Primer comentario y horario sugerido en la Sala --- */
+const _salaStepsE=salaSteps;salaSteps=r=>{let h=_salaStepsE(r);const id=esc(r.id);
+  h=h.replace(/(<textarea id="cap-[^"]+"[^>]*>[\s\S]*?<\/textarea>)/,`$1${bloquesBar("cap-"+r.id)}`);
+  h=h.replace(`<li><b>Bajá el video</b>`,`<li><b>Primer comentario (opcional)</b><span class="small muted">Sirve para sumar un dato extra o la fuente sin alargar la descripción. Si programás con Metricool, se publica solo.</span><textarea id="fc-${id}" rows="3" placeholder="Ej.: 📚 Fuente: art. 1059 del Código Civil y Comercial (texto vigente en InfoLEG).">${esc(r.primerComentario||"")}</textarea><div class="btns"><button class="btn sm" data-fcsave="${id}">Guardar</button><button class="btn sm" data-fccopy="${id}">Copiar</button></div></li><li><b>Bajá el video</b>`);
+  h=h.replace(/(<input type="datetime-local" id="when-[^"]+"[^>]*>)/,`$1<button class="btn sm" data-besttime="${id}" ${S.caps.mcp==="ok"?"":"disabled"}>Sugerir horario según tu audiencia</button><span class="small muted" id="bt-${id}"></span>`);
+  return h};
+document.addEventListener("click",async e=>{const el=e.target.closest("[data-fcsave],[data-fccopy],[data-besttime]");if(!el)return;
+  if(el.dataset.fcsave){const id=el.dataset.fcsave;try{await salaSet(id,{primerComentario:$("#fc-"+CSS.escape(id)).value.trim()});toast("Primer comentario guardado")}catch(_){}}
+  if(el.dataset.fccopy){try{await navigator.clipboard.writeText($("#fc-"+CSS.escape(el.dataset.fccopy)).value);toast("Copiado: pegalo como primer comentario apenas publiques")}catch(_){toast("Seleccioná el texto y copialo a mano")}}
+  if(el.dataset.besttime){const id=el.dataset.besttime;const out=$("#bt-"+CSS.escape(id));if(!mcp){toast("Metricool no está disponible");return}out.textContent="Consultando Metricool…";
+    try{const from=todayAR(),to=fmtAR.format(new Date(Date.now()+6*864e5)).slice(0,10);
+      const r=await mcp.callTool(MC,"getBestTimeToPostByNetwork",{brandId:String(S.settings.brandId),fromDate:from+"T00:00:00-03:00",toDate:to+"T23:59:59-03:00",timezone:TZ,socialNetwork:"instagram"});
+      const slots=[];arr(r.payload?.data).forEach(d=>arr(d.bestTimesByHour).forEach(h=>slots.push({dow:+d.dayOfWeek,h:+h.hourOfDay,v:+h.value||0})));
+      const top=slots.filter(s=>s.v>0).sort((a,b)=>b.v-a.v);if(!top.length){out.textContent="Metricool todavía no tiene datos suficientes de tu audiencia.";return}
+      const now=Date.now()+3600e3;let pick=null;
+      for(const s of top){for(let k=0;k<7&&!pick;k++){const d=fmtAR.format(new Date(Date.now()+k*864e5)).slice(0,10);const dow=((new Date(d+"T12:00:00-03:00").getUTCDay()+6)%7)+1;const iso=d+"T"+String(s.h).padStart(2,"0")+":00";
+        if(dow===s.dow&&Date.parse(iso+":00-03:00")>now)pick=iso}if(pick)break}
+      if(!pick){out.textContent="No encontré un horario fuerte en los próximos 7 días.";return}
+      $("#when-"+CSS.escape(id)).value=pick;out.textContent="Sugerido: "+niceDate(pick)+" (de los horarios con más actividad según Metricool). Revisalo antes de programar."}
+    catch(err){out.textContent="Metricool no respondió. Elegí el horario a mano."}}});
+/* el primer comentario viaja con la programación (sigue pidiendo tu confirmación como antes) */
+const _salaScheduleE=salaSchedule;salaSchedule=async r=>{if(r){const fc=$("#fc-"+CSS.escape(r.id));if(fc&&fc.value.trim()!==(r.primerComentario||""))await salaSet(r.id,{primerComentario:fc.value.trim()});r={...r,primerComentario:fc?fc.value.trim():r.primerComentario}}
+  const orig=mcp.callTool.bind(mcp);mcp.callTool=(srv,tool,args)=>{if(tool==="createScheduledPost"&&r&&r.primerComentario){try{const info=JSON.parse(args.info);info.firstCommentText=r.primerComentario;args={...args,info:JSON.stringify(info)}}catch(_){}}return orig(srv,tool,args)};
+  try{return await _salaScheduleE(r)}finally{mcp.callTool=orig}};
+
+/* --- Planificador visual: reordenar lo que todavía no se publicó --- */
+const _gridItemsE=gridItems;gridItems=()=>{const it=_gridItemsE();it.forEach(x=>{const m=x.attr.match(/data-id="([^"]+)"/);x.id=m&&m[1];x.col=x.k==="Reel"?"reels":"posts";const src=(x.col==="reels"?S.reels:S.posts).find(o=>esc(o.id)===x.id);x.gp=src&&src.gridPos});
+  const pend=it.filter(x=>x.st!=="publicado"),pub=it.filter(x=>x.st==="publicado");pend.sort((a,b)=>(b.gp??b.ts)-(a.gp??a.ts));return[...pend,...pub]};
+gridPreview=()=>{const it=gridItems();if(!it.length)return"";let pi=-1;
+  const tiles=it.map(x=>{const tile=`<button class="igt" ${x.attr} aria-label="${esc(x.k+": "+x.t)}">${x.img?`<img src="${esc(x.img)}" alt="" loading="lazy">`:`<span class="igph"><b>${esc(x.t)}</b></span>`}<span class="igk">${esc(x.k)}${x.st==="publicado"?"":" · "+esc(x.st==="programado"?"programada":x.st==="aprobado"?"aprobada":"en revisión")}</span></button>`;
+    if(x.st==="publicado")return tile;pi++;return `<div class="igwrap">${tile}<span class="igmv"><button data-gmv="-1" data-gi="${pi}" aria-label="Mover antes">◀</button><button data-gmv="1" data-gi="${pi}" aria-label="Mover después">▶</button></span></div>`}).join("");
+  return `<section class="panel"><h2>Así se ve tu perfil</h2><span class="small muted" style="margin-top:-6px">Lo pendiente arriba, lo publicado abajo · la pieza más nueva va arriba a la izquierda</span>
+  <div class="iggrid">${tiles}</div><p class="small muted" style="margin:0">Usá ◀ ▶ para probar el orden de lo que todavía no salió. Instagram recorta las portadas en la grilla: mantené títulos y caras en el centro.</p></section>`};
+document.addEventListener("click",async e=>{const el=e.target.closest("[data-gmv]");if(!el)return;e.stopPropagation();const pend=gridItems().filter(x=>x.st!=="publicado");const i=+el.dataset.gi,j=i+ +el.dataset.gmv;if(j<0||j>=pend.length)return;
+  const a=pend[i],b=pend[j];const ga=a.gp??a.ts,gb=b.gp??b.ts;const na=gb,nb=ga===gb?ga+(+el.dataset.gmv>0?1:-1):ga;
+  const raw=x=>(x.col==="reels"?S.reels:S.posts).find(o=>esc(o.id)===x.id)?.id;
+  try{await dbUpdate(a.col+"/"+raw(a),{gridPos:na});await dbUpdate(b.col+"/"+raw(b),{gridPos:nb});toast("Orden de la grilla actualizado")}catch(_){}},true);
+
+/* --- Ajustes: administrar los bloques guardados --- */
+const _vConfigE=vConfig;vConfig=()=>{const h=_vConfigE();const add=`<section class="panel"><h2>Bloques guardados</h2><p class="small muted" style="margin:0">Conjuntos de hashtags y textos fijos que insertás con un toque en la Sala.</p>
+  <div class="list">${bloques().map((b,i)=>`<div class="row"><span><b>${b.h?"# ":""}${esc(b.n)}</b><span class="s" style="display:block">${esc(b.t)}</span></span><button class="link" data-blqdel="${i}">Quitar</button></div>`).join("")}</div>
+  <div class="fields"><label for="bqN">Nombre<input id="bqN" placeholder="Ej.: Contratos"></label><label for="bqT">Texto o hashtags<input id="bqT" placeholder="#Contratos #Firmas"></label></div><button class="btn sm" data-blqadd="1" style="align-self:flex-start">Agregar bloque</button></section>`;
+  const j=h.lastIndexOf("</div>");return j<0?h+add:h.slice(0,j)+add+h.slice(j)};
+document.addEventListener("click",async e=>{const el=e.target.closest("[data-blqadd],[data-blqdel]");if(!el)return;const list=[...bloques()];
+  if(el.dataset.blqadd){const n=$("#bqN").value.trim(),t=$("#bqT").value.trim();if(!n||!t){toast("Completá nombre y texto");return}list.push({n,t,h:/^#/.test(t)})}else list.splice(+el.dataset.blqdel,1);
+  try{await saveSettings({bloques:list});toast("Bloques guardados");render()}catch(_){}});
+
+render();
+</script>
+
+</body></html>
