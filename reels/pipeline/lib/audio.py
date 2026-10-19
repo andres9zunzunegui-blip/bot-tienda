@@ -169,6 +169,8 @@ def musica(duracion, bpm=92):
             bombo = np.sin(2 * np.pi * (55 + 50 * np.exp(-tt * 30)) * tt) * _env(len(tt), 0.002, 0.08) * 0.12
             i0 = int(k * beat * SR)
             seg[i0:i0 + len(bombo)] += bombo[: len(seg) - i0]
+        if ini >= len(x):
+            break
         fin = min(len(x), ini + len(seg))
         x[ini:fin] += seg[: fin - ini]
     x = _reverb(x, 1.6, 0.3)[:n]
@@ -221,8 +223,9 @@ def mezclar(tramos, total, ruta_salida, vol_musica=0.55, vol_musica_voz=0.16):
             poner(efx, sfx(e["s"]), tr["t0"] + e["t"], e.get("g", 0.8))
         if tr.get("voz"):
             v = leer_wav(tr["voz"])
-            poner(voz, v, tr["t0"] + 0.08)
-            i = int((tr["t0"] + 0.08) * SR)
+            off = tr.get("voz_off", 0.08)
+            poner(voz, v, tr["t0"] + off)
+            i = int((tr["t0"] + off) * SR)
             activo[i:min(n, i + len(v))] = 1.0
         elif tr.get("texto"):  # sin audio todavía: igual se baja la música en la ventana prevista
             i = int(tr["t0"] * SR)

@@ -112,11 +112,18 @@ def linea_de_tiempo(guion, dir_voces):
                                sfx=s.get("sfx", []), voz=ruta, voz_dur=dv, palabras=pal, estimada=est))
             t += dur
         elif tipo == "ley":
+            n = len(s["frases"])
             for i, f in enumerate(s["frases"], 1):
                 vid = f"{s['id']}_f{i}"
                 ruta, dv, pal, est = _voz(dir_voces, vid, "ley", f["tts"])
-                dur = max(1.3, INICIO_VOZ + dv + 0.18)
-                tramos.append(dict(id=vid, tipo="ley", t0=t, dur=dur, personaje="voz_ley",
+                if s.get("continuo") and ruta:
+                    # lectura de corrido cortada en frases: se pegan sin huecos, como se grabó
+                    off = INICIO_VOZ if i == 1 else 0.0
+                    dur = off + dv + (0.3 if i == n else 0.0)
+                else:
+                    off = INICIO_VOZ
+                    dur = max(1.3, INICIO_VOZ + dv + 0.18)
+                tramos.append(dict(id=vid, tipo="ley", t0=t, dur=dur, personaje="voz_ley", voz_off=off,
                                    articulo=s["articulo"], texto=f["texto"], resaltar=f.get("resaltar", []),
                                    planos=f["planos"], sfx=f.get("sfx", []), voz=ruta, voz_dur=dv,
                                    palabras=pal, estimada=est))

@@ -593,7 +593,8 @@
             }
           ]
         }
-      ]
+      ],
+      "continuo": true
     },
     {
       "id": "s07_papeles",
@@ -637,13 +638,9 @@
     },
     {
       "id": "s08_mil_quince",
-      "tipo": "dialogo",
-      "personaje": "clausulo",
-      "texto": "Para eso está el 1015.",
-      "tts": "Para eso está el mil quince.",
-      "resaltar": [
-        "1015"
-      ],
+      "tipo": "accion",
+      "dur": 1.5,
+      "nota": "Sin voz por ahora: ElevenLabs bloqueó la cuenta gratuita antes de generar esta línea.",
       "planos": [
         {
           "img": "k12_clausulo_1015",
@@ -885,7 +882,8 @@
             }
           ]
         }
-      ]
+      ],
+      "continuo": true
     },
     {
       "id": "s10_cierre_a",

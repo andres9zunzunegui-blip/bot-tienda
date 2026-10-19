@@ -101,7 +101,7 @@ class Compositor:
             objetivo = R.re.sub(r"[^\wáéíóúñü]", "", frase.split()[0].lower())
             for w in tr["palabras"]:
                 if R.re.sub(r"[^\wáéíóúñü]", "", w["palabra"].lower()) == objetivo:
-                    return tr["t0"] + INICIO_VOZ + w["inicio"]
+                    return tr["t0"] + tr.get("voz_off", INICIO_VOZ) + w["inicio"]
         pos = max(0, tr["texto"].lower().find(frase.lower()))
         return tr["t0"] + INICIO_VOZ + pos / max(len(tr["texto"]), 1) * tr["voz_dur"]
 

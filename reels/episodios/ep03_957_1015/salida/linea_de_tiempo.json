@@ -1,32 +1,17 @@
 {
- "duracion_s": 58.04,
+ "duracion_s": 52.42,
  "voces_faltantes": [
-  "s01_gancho",
-  "s03_inciso_ofrece",
-  "s04_codiguito_duda",
-  "s05_que_lo_diga",
-  "s06_957_f1",
-  "s06_957_f2",
-  "s06_957_f3",
-  "s06_957_f4",
-  "s06_957_f5",
-  "s06_957_f6",
-  "s06_957_f7",
-  "s08_mil_quince",
   "s09_1015_f1",
   "s09_1015_f2",
   "s09_1015_f3",
-  "s09_1015_f4",
-  "s10_cierre_a",
-  "s11_cierre_b",
-  "s12_queda_resaltado"
+  "s09_1015_f4"
  ],
  "tramos": [
   {
    "id": "s01_gancho",
    "tipo": "dialogo",
    "t0": 0.0,
-   "dur": 3.145714285714286,
+   "dur": 2.8100000000000005,
    "personaje": "clausulo",
    "texto": "¿Un apretón de manos… es un contrato?",
    "resaltar": [
@@ -46,14 +31,14 @@
      "s": "whoosh"
     }
    ],
-   "voz": "None",
-   "voz_dur": 2.7857142857142856,
-   "estimada": true
+   "voz": "/home/user/bot-tienda/reels/episodios/ep03_957_1015/salida/voces/s01_gancho.wav",
+   "voz_dur": 2.45,
+   "estimada": false
   },
   {
    "id": "s02_apertura",
    "tipo": "apertura",
-   "t0": 3.145714285714286,
+   "t0": 2.8100000000000005,
    "dur": 2.4,
    "articulo": 957,
    "sfx": [
@@ -76,8 +61,8 @@
   {
    "id": "s03_inciso_ofrece",
    "tipo": "dialogo",
-   "t0": 5.545714285714286,
-   "dur": 3.8600000000000003,
+   "t0": 5.210000000000001,
+   "dur": 3.7800000000000002,
    "personaje": "inciso",
    "texto": "¡Te vendo mi bici! Cincuenta mil pesos y es tuya.",
    "resaltar": [
@@ -93,14 +78,14 @@
      "s": "pop"
     }
    ],
-   "voz": "None",
-   "voz_dur": 3.5,
-   "estimada": true
+   "voz": "/home/user/bot-tienda/reels/episodios/ep03_957_1015/salida/voces/s03_inciso_ofrece.wav",
+   "voz_dur": 3.42,
+   "estimada": false
   },
   {
    "id": "s04_codiguito_duda",
    "tipo": "dialogo",
-   "t0": 9.405714285714286,
+   "t0": 8.990000000000002,
    "dur": 1.5,
    "personaje": "codiguito",
    "texto": "Pará, pará…",
@@ -111,15 +96,15 @@
      "s": "freno"
     }
    ],
-   "voz": "None",
-   "voz_dur": 0.9285714285714286,
-   "estimada": true
+   "voz": "/home/user/bot-tienda/reels/episodios/ep03_957_1015/salida/voces/s04_codiguito_duda.wav",
+   "voz_dur": 1.075,
+   "estimada": false
   },
   {
    "id": "s05_que_lo_diga",
    "tipo": "dialogo",
-   "t0": 10.905714285714286,
-   "dur": 1.7171428571428573,
+   "t0": 10.490000000000002,
+   "dur": 1.6600000000000001,
    "personaje": "clausulo",
    "texto": "Que lo diga la ley.",
    "resaltar": [
@@ -135,16 +120,17 @@
      "s": "brillo"
     }
    ],
-   "voz": "None",
-   "voz_dur": 1.3571428571428572,
-   "estimada": true
+   "voz": "/home/user/bot-tienda/reels/episodios/ep03_957_1015/salida/voces/s05_que_lo_diga.wav",
+   "voz_dur": 1.3,
+   "estimada": false
   },
   {
    "id": "s06_957_f1",
    "tipo": "ley",
-   "t0": 12.622857142857143,
-   "dur": 3.2600000000000002,
+   "t0": 12.150000000000002,
+   "dur": 2.7600000000000002,
    "personaje": "voz_ley",
+   "voz_off": 0.08,
    "articulo": 957,
    "texto": "ARTÍCULO 957.-",
    "resaltar": [],
@@ -154,16 +140,17 @@
      "s": "pagina"
     }
    ],
-   "voz": "None",
-   "voz_dur": 3.0,
-   "estimada": true
+   "voz": "/home/user/bot-tienda/reels/episodios/ep03_957_1015/salida/voces/s06_957_f1.wav",
+   "voz_dur": 2.68,
+   "estimada": false
   },
   {
    "id": "s06_957_f2",
    "tipo": "ley",
-   "t0": 15.882857142857143,
-   "dur": 1.3,
+   "t0": 14.910000000000002,
+   "dur": 1.12,
    "personaje": "voz_ley",
+   "voz_off": 0.0,
    "articulo": 957,
    "texto": "Definición.",
    "resaltar": [
@@ -179,16 +166,17 @@
      "s": "brillo"
     }
    ],
-   "voz": "None",
-   "voz_dur": 0.9,
-   "estimada": true
+   "voz": "/home/user/bot-tienda/reels/episodios/ep03_957_1015/salida/voces/s06_957_f2.wav",
+   "voz_dur": 1.12,
+   "estimada": false
   },
   {
    "id": "s06_957_f3",
    "tipo": "ley",
-   "t0": 17.18285714285714,
-   "dur": 2.413846153846154,
+   "t0": 16.03,
+   "dur": 2.26,
    "personaje": "voz_ley",
+   "voz_off": 0.0,
    "articulo": 957,
    "texto": "Contrato es el acto jurídico",
    "resaltar": [
@@ -201,16 +189,17 @@
      "s": "holograma"
     }
    ],
-   "voz": "None",
-   "voz_dur": 2.1538461538461537,
-   "estimada": true
+   "voz": "/home/user/bot-tienda/reels/episodios/ep03_957_1015/salida/voces/s06_957_f3.wav",
+   "voz_dur": 2.26,
+   "estimada": false
   },
   {
    "id": "s06_957_f4",
    "tipo": "ley",
-   "t0": 19.596703296703296,
-   "dur": 2.7984615384615386,
+   "t0": 18.29,
+   "dur": 2.3,
    "personaje": "voz_ley",
+   "voz_off": 0.0,
    "articulo": 957,
    "texto": "mediante el cual dos o más partes",
    "resaltar": [
@@ -226,16 +215,17 @@
      "s": "reflector"
     }
    ],
-   "voz": "None",
-   "voz_dur": 2.5384615384615383,
-   "estimada": true
+   "voz": "/home/user/bot-tienda/reels/episodios/ep03_957_1015/salida/voces/s06_957_f4.wav",
+   "voz_dur": 2.3,
+   "estimada": false
   },
   {
    "id": "s06_957_f5",
    "tipo": "ley",
-   "t0": 22.395164835164834,
-   "dur": 2.490769230769231,
+   "t0": 20.59,
+   "dur": 1.6799791666666666,
    "personaje": "voz_ley",
+   "voz_off": 0.0,
    "articulo": 957,
    "texto": "manifiestan su consentimiento",
    "resaltar": [
@@ -251,16 +241,17 @@
      "s": "brillo"
     }
    ],
-   "voz": "None",
-   "voz_dur": 2.230769230769231,
-   "estimada": true
+   "voz": "/home/user/bot-tienda/reels/episodios/ep03_957_1015/salida/voces/s06_957_f5.wav",
+   "voz_dur": 1.6799791666666666,
+   "estimada": false
   },
   {
    "id": "s06_957_f6",
    "tipo": "ley",
-   "t0": 24.885934065934066,
-   "dur": 4.413846153846154,
+   "t0": 22.269979166666666,
+   "dur": 4.240020833333333,
    "personaje": "voz_ley",
+   "voz_off": 0.0,
    "articulo": 957,
    "texto": "para crear, regular, modificar, transferir o extinguir",
    "resaltar": [
@@ -280,16 +271,17 @@
      "s": "ding"
     }
    ],
-   "voz": "None",
-   "voz_dur": 4.153846153846154,
-   "estimada": true
+   "voz": "/home/user/bot-tienda/reels/episodios/ep03_957_1015/salida/voces/s06_957_f6.wav",
+   "voz_dur": 4.240020833333333,
+   "estimada": false
   },
   {
    "id": "s06_957_f7",
    "tipo": "ley",
-   "t0": 29.29978021978022,
-   "dur": 2.9523076923076927,
+   "t0": 26.509999999999998,
+   "dur": 2.6599999999999997,
    "personaje": "voz_ley",
+   "voz_off": 0.0,
    "articulo": 957,
    "texto": "relaciones jurídicas patrimoniales.",
    "resaltar": [
@@ -301,14 +293,14 @@
      "s": "timbre_bici"
     }
    ],
-   "voz": "None",
-   "voz_dur": 2.6923076923076925,
-   "estimada": true
+   "voz": "/home/user/bot-tienda/reels/episodios/ep03_957_1015/salida/voces/s06_957_f7.wav",
+   "voz_dur": 2.36,
+   "estimada": false
   },
   {
    "id": "s07_papeles",
    "tipo": "accion",
-   "t0": 32.252087912087916,
+   "t0": 29.169999999999998,
    "dur": 2.4,
    "articulo": null,
    "sfx": [
@@ -330,14 +322,10 @@
   },
   {
    "id": "s08_mil_quince",
-   "tipo": "dialogo",
-   "t0": 34.652087912087914,
-   "dur": 2.3600000000000003,
-   "personaje": "clausulo",
-   "texto": "Para eso está el 1015.",
-   "resaltar": [
-    "1015"
-   ],
+   "tipo": "accion",
+   "t0": 31.569999999999997,
+   "dur": 1.5,
+   "articulo": null,
    "sfx": [
     {
      "t": 0.0,
@@ -349,15 +337,15 @@
     }
    ],
    "voz": "None",
-   "voz_dur": 2.0,
-   "estimada": true
+   "texto": ""
   },
   {
    "id": "s09_1015_f1",
    "tipo": "ley",
-   "t0": 37.012087912087914,
+   "t0": 33.06999999999999,
    "dur": 1.7984615384615386,
    "personaje": "voz_ley",
+   "voz_off": 0.08,
    "articulo": 1015,
    "texto": "ARTÍCULO 1015.-",
    "resaltar": [],
@@ -374,9 +362,10 @@
   {
    "id": "s09_1015_f2",
    "tipo": "ley",
-   "t0": 38.81054945054945,
+   "t0": 34.86846153846153,
    "dur": 1.7215384615384615,
    "personaje": "voz_ley",
+   "voz_off": 0.08,
    "articulo": 1015,
    "texto": "Libertad de formas.",
    "resaltar": [
@@ -399,9 +388,10 @@
   {
    "id": "s09_1015_f3",
    "tipo": "ley",
-   "t0": 40.53208791208792,
+   "t0": 36.58999999999999,
    "dur": 2.644615384615385,
    "personaje": "voz_ley",
+   "voz_off": 0.08,
    "articulo": 1015,
    "texto": "Sólo son formales los contratos",
    "resaltar": [
@@ -420,9 +410,10 @@
   {
    "id": "s09_1015_f4",
    "tipo": "ley",
-   "t0": 43.1767032967033,
+   "t0": 39.234615384615374,
    "dur": 4.336923076923076,
    "personaje": "voz_ley",
+   "voz_off": 0.08,
    "articulo": 1015,
    "texto": "a los cuales la ley les impone una forma determinada.",
    "resaltar": [
@@ -445,8 +436,8 @@
   {
    "id": "s10_cierre_a",
    "tipo": "dialogo",
-   "t0": 47.51362637362638,
-   "dur": 4.145714285714286,
+   "t0": 43.57153846153845,
+   "dur": 3.33,
    "personaje": "clausulo",
    "texto": "Para vender una bici, la ley no impone ninguna forma.",
    "resaltar": [
@@ -462,15 +453,15 @@
      "s": "pop"
     }
    ],
-   "voz": "None",
-   "voz_dur": 3.7857142857142856,
-   "estimada": true
+   "voz": "/home/user/bot-tienda/reels/episodios/ep03_957_1015/salida/voces/s10_cierre_a.wav",
+   "voz_dur": 2.97,
+   "estimada": false
   },
   {
    "id": "s11_cierre_b",
    "tipo": "dialogo",
-   "t0": 51.659340659340664,
-   "dur": 3.0028571428571427,
+   "t0": 46.90153846153845,
+   "dur": 2.5300000000000002,
    "personaje": "clausulo",
    "texto": "Si están de acuerdo, ya hay contrato.",
    "resaltar": [
@@ -486,15 +477,15 @@
      "s": "pop"
     }
    ],
-   "voz": "None",
-   "voz_dur": 2.642857142857143,
-   "estimada": true
+   "voz": "/home/user/bot-tienda/reels/episodios/ep03_957_1015/salida/voces/s11_cierre_b.wav",
+   "voz_dur": 2.17,
+   "estimada": false
   },
   {
    "id": "s12_queda_resaltado",
    "tipo": "final",
-   "t0": 54.66219780219781,
-   "dur": 2.876666666666667,
+   "t0": 49.43153846153845,
+   "dur": 2.487354166666667,
    "personaje": "clausulo",
    "texto": "¡Queda resaltado!",
    "resaltar": [],
@@ -508,14 +499,14 @@
      "s": "marcador"
     }
    ],
-   "voz": "None",
-   "voz_dur": 1.4166666666666667,
-   "estimada": true
+   "voz": "/home/user/bot-tienda/reels/episodios/ep03_957_1015/salida/voces/s12_queda_resaltado.wav",
+   "voz_dur": 1.0273541666666666,
+   "estimada": false
   },
   {
    "id": "s13_loop",
    "tipo": "loop",
-   "t0": 57.538864468864475,
+   "t0": 51.91889262820512,
    "dur": 0.5,
    "articulo": null,
    "sfx": [
