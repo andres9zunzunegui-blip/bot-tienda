@@ -7,6 +7,7 @@ import * as THREE from "three";
 import type { GameState } from "../core/state.ts";
 import { effectiveAvatar } from "../content/items.ts";
 import { levelFromXp } from "../systems/gamification.ts";
+import { chapterDone, missingChapters } from "../modules/reels/progress.ts";
 import { animateIdle, animateWalk, buildAvatar, type AvatarRig } from "./avatarMesh.ts";
 import { BUILDINGS, constructionSite, type BuildingSpec } from "./buildings.ts";
 
@@ -325,8 +326,8 @@ export class World {
 
   private updateMarkers(state: GameState) {
     const pending: Record<string, boolean> = {
-      tribunal: !state.log.some((l) => l.kind === "simulacion" && l.quality >= 0.6),
-      facultad: !state.log.some((l) => l.kind === "oral" && l.quality >= 0.6) || state.cards.some((c) => c.due <= Date.now()),
+      tribunal: missingChapters(state, "sim:clausura").length === 0 && !state.log.some((l) => l.kind === "simulacion" && l.quality >= 0.6),
+      facultad: missingChapters(state, "sim:clausura").length > 0 || !chapterDone(state, "cap1") || !state.log.some((l) => l.kind === "oral" && l.quality >= 0.6) || state.cards.some((c) => c.due <= Date.now()),
       biblioteca: state.unlocked.includes("biblioteca") && state.materials.some((m) => m.processed === "no"),
       estudio: state.unlocked.includes("estudio"),
     };

@@ -16,7 +16,8 @@ export function openStudy() {
     add(body, 
       h(
         "div",
-        { class: "grid c3", style: "margin-bottom:14px" },
+        { class: "grid c2", style: "margin-bottom:14px" },
+        h("div", { class: "card click", onclick: () => go("learn") }, h("h3", null, "🎬 Aula de reels"), h("p", null, `${Object.values(s.chapters).filter((c) => c.done).length} capítulos completados`)),
         h("div", { class: "card click", onclick: () => go("memory") }, h("h3", null, "🧠 Entrenador de memoria"), h("p", null, `${due} tarjeta(s) para repasar hoy · ${s.cards.length} en total`)),
         h("div", { class: "card click", onclick: () => go("upload") }, h("h3", null, "📤 Cargar material"), h("p", { class: "muted" }, "PDF, DOCX, PPTX, TXT o texto pegado.")),
         h("div", { class: "card click", onclick: () => go("materials") }, h("h3", null, "📚 Mis materiales"), h("p", null, `${s.materials.length} cargado(s)`)),

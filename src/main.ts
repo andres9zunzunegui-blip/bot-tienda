@@ -11,6 +11,8 @@ import "./ui/screens/study.ts";
 import "./ui/screens/memory.ts";
 import "./ui/screens/materials.ts";
 import "./ui/screens/meta.ts";
+import "./ui/screens/reels.ts";
+import { showWelcome } from "./ui/welcome.ts";
 import { store } from "./core/state.ts";
 import { World } from "./engine/world.ts";
 import { ensureDailyMissions } from "./systems/gamification.ts";
@@ -52,6 +54,7 @@ const menu = renderMenu(menuEl, () => {
   menu.hide();
   hudEl.style.display = "";
   world.setPaused(panelOpen());
+  if (!store.state.welcomed) showWelcome();
 });
 
 function showMenu() {

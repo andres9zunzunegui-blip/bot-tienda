@@ -8,6 +8,7 @@ import { recordActivity } from "../../systems/gamification.ts";
 import { topicName } from "../../systems/topics.ts";
 import { add, clear, h, openPanel, pct } from "../dom.ts";
 import { go, registerScreen } from "../nav.ts";
+import { guard } from "../gate.ts";
 
 const PORTRAITS: Record<string, string> = {
   "Funcionarios fiscales de ARCA": "🕵️",
@@ -36,7 +37,7 @@ export function openSimulations() {
         { class: "grid c2" },
         h(
           "div",
-          { class: "card click", onclick: () => openSimulator(CLAUSURA) },
+          { class: "card click", onclick: () => guard("sim:clausura", () => openSimulator(CLAUSURA)) },
           h("div", { class: "row between" }, h("h3", null, "⚖️ ", CLAUSURA.title), h("span", { class: "tag ok" }, "Disponible")),
           h("p", { class: "muted" }, CLAUSURA.summary),
           h("div", { class: "kv" }, h("b", null, "Tu rol"), h("span", null, CLAUSURA.role), h("b", null, "Jurisdicción"), h("span", null, CLAUSURA.jurisdiccion), h("b", null, "Etapas"), h("span", null, "10 fases, con ramificaciones")),

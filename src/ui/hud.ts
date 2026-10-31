@@ -5,6 +5,8 @@ import type { BuildingSpec } from "../engine/buildings.ts";
 import { levelFromXp, rankFor, xpForLevel } from "../systems/gamification.ts";
 import { add, bar, clear, h } from "./dom.ts";
 import { go } from "./nav.ts";
+import { nextStep } from "../modules/reels/progress.ts";
+import { guard } from "./gate.ts";
 
 export function renderHud(root: HTMLElement, onMenu: () => void) {
   const top = h("div", { class: "hud-top" });
@@ -40,6 +42,8 @@ export function renderHud(root: HTMLElement, onMenu: () => void) {
       h("div", { class: "hud-res" }, h("div", { class: "hud-card", title: "Monedas" }, "🪙 ", String(s.coins)), h("div", { class: "hud-card", title: "Tarjetas para repasar" }, "🧠 ", String(due)), h("div", { class: "hud-card", title: "Insignias" }, "🏅 ", String(s.badges.length))),
     );
     clear(missions);
+    const step = nextStep(s);
+    add(missions, h("div", { class: "next-step", onclick: (e: Event) => (e.stopPropagation(), runStep(step.action)) }, h("h4", null, "SIGUIENTE PASO"), h("div", null, "➜ ", step.text)));
     add(missions, 
       h("h4", null, "MISIONES DE HOY"),
       s.missions.list.map((m) => h("div", { class: `m ${m.done ? "done" : ""}` }, m.done ? (m.claimed ? "✔ " : "🎁 ") : "◻ ", m.title, h("span", { class: "muted" }, ` ${Math.min(m.progress, m.target)}/${m.target}`))),
@@ -72,7 +76,7 @@ export function renderMenu(root: HTMLElement, onPlay: () => void) {
         "div",
         { class: "menu-grid" },
         btn("🏙️", "JUGAR", "Entrar a la ciudad", onPlay, "primary"),
-        btn("📖", "ESTUDIAR", "Materias y unidades", () => go("study")),
+        btn("🎬", "ESTUDIAR", "Capítulos en reels", () => go("learn")),
         btn("⚖️", "SIMULACIONES", "Procedimientos jurídicos", () => go("simulations")),
         btn("🕸️", "REDES CONCEPTUALES", "Mapas de conocimiento", () => go("maps")),
         btn("🎓", "EXÁMENES", "Orales y escritos", () => go("exams")),
@@ -100,4 +104,12 @@ export function renderMenu(root: HTMLElement, onPlay: () => void) {
       screen.style.display = "none";
     },
   };
+}
+
+function runStep(a: ReturnType<typeof nextStep>["action"]) {
+  if (a.type === "chapter") go("reels", a.id);
+  else if (a.type === "sim") guard("sim:clausura", () => go("simulations"));
+  else if (a.type === "oral") go("exams", "profesor");
+  else if (a.type === "memory") go("memory");
+  else go("maps", "evaluar");
 }

@@ -6,6 +6,7 @@ import { BUILDING_UNLOCKS } from "../systems/gamification.ts";
 import { add, h, openPanel } from "./dom.ts";
 import { go, type ScreenId } from "./nav.ts";
 import { openSimulator } from "./screens/simulator.ts";
+import { guard } from "./gate.ts";
 
 interface Action {
   icon: string;
@@ -20,8 +21,9 @@ const INTERIORS: Record<string, { bg: string; npc: string; speech: string; actio
   facultad: {
     bg: "linear-gradient(135deg,#3a2c1c,#6b5537)",
     npc: "👨‍🏫",
-    speech: "Prof. Ibarra: «Bienvenido/a. Acá se estudia en serio: le voy a preguntar y repreguntar.»",
+    speech: "Prof. Ibarra: «Bienvenido/a. Primero, la teoría en el Aula de reels. Después le voy a preguntar y repreguntar.»",
     actions: [
+      { icon: "🎬", title: "Aula de reels", desc: "Aprendé la teoría con capítulos animados.", run: nav("learn") },
       { icon: "🎓", title: "Examen oral", desc: "Con el Prof. Ibarra, con repreguntas.", run: nav("exams", "profesor") },
       { icon: "📖", title: "Estudiar unidades", desc: "Materias, unidades y comprensión.", run: nav("study") },
       { icon: "🕸️", title: "Redes conceptuales", desc: "Explorar, construir, reconstruir.", run: nav("maps") },
@@ -33,7 +35,7 @@ const INTERIORS: Record<string, { bg: string; npc: string; speech: string; actio
     npc: "👩‍⚖️",
     speech: "Jueza Salvatierra: «Tengo en mi despacho una clausura de la Ley 11.683. ¿Asume la defensa?»",
     actions: [
-      { icon: "⚖️", title: "Caso: clausura — La Espiga", desc: "Simulador completo del procedimiento.", run: () => openSimulator(CLAUSURA) },
+      { icon: "⚖️", title: "Caso: clausura — La Espiga", desc: "Simulador completo del procedimiento.", run: () => guard("sim:clausura", () => openSimulator(CLAUSURA)) },
       { icon: "🔨", title: "Audiencia oral", desc: "Fundamentá ante la jueza.", run: nav("exams", "juez") },
       { icon: "📚", title: "Normas aplicables", desc: "Biblioteca del motor jurídico.", run: nav("library") },
     ],
@@ -54,7 +56,7 @@ const INTERIORS: Record<string, { bg: string; npc: string; speech: string; actio
     speech: "Marta Gómez: «Gracias por defenderme, doctor/a. ¿Revisamos cómo salió todo?»",
     actions: [
       { icon: "📂", title: "Laboratorio de casos", desc: "Expedientes ficticios (no implementado).", run: nav("cases") },
-      { icon: "⚖️", title: "Volver a defender a Marta", desc: "Reintentar el caso de clausura.", run: () => openSimulator(CLAUSURA) },
+      { icon: "⚖️", title: "Volver a defender a Marta", desc: "Reintentar el caso de clausura.", run: () => guard("sim:clausura", () => openSimulator(CLAUSURA)) },
       { icon: "📊", title: "Desempeño en casos", desc: "Historial y errores.", run: nav("progress") },
     ],
   },

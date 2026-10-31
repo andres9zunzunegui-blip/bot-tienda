@@ -12,7 +12,9 @@ export type ScreenId =
   | "memory"
   | "materials"
   | "upload"
-  | "cases";
+  | "cases"
+  | "learn"
+  | "reels";
 
 const registry = new Map<ScreenId, (arg?: unknown) => void>();
 

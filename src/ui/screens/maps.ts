@@ -7,6 +7,8 @@ import { toConceptMap } from "../../modules/materials/processor.ts";
 import { recordActivity } from "../../systems/gamification.ts";
 import { add, clear, h, openPanel, pct } from "../dom.ts";
 import { registerScreen } from "../nav.ts";
+import { guard } from "../gate.ts";
+import { missingChapters } from "../../modules/reels/progress.ts";
 import { refCard } from "./simulator.ts";
 
 type Mode = "explorar" | "construir" | "evaluar";
@@ -41,6 +43,7 @@ async function availableMaps(): Promise<ConceptMap[]> {
 
 export function openMaps(initial?: unknown) {
   let mode: Mode = (typeof initial === "string" && ["explorar", "construir", "evaluar"].includes(initial) ? initial : "explorar") as Mode;
+  if (mode !== "explorar" && missingChapters(store.state, "red:practica").length) return guard("red:practica", () => openMaps(mode));
   let maps: ConceptMap[] = [TRIBUTARIO_MAP];
   let map = TRIBUTARIO_MAP;
   openPanel({ title: "Redes conceptuales", subtitle: "Explorá, construí y reconstruí de memoria", wide: true }, (body) => {
@@ -49,7 +52,7 @@ export function openMaps(initial?: unknown) {
       const top = h("div", { class: "row between" });
       const tabs = h("div", { class: "tabs" });
       for (const m of ["explorar", "construir", "evaluar"] as Mode[])
-        add(tabs, h("button", { class: mode === m ? "on" : "", onclick: () => ((mode = m), render()) }, { explorar: "🔭 Exploración", construir: "🧩 Construcción", evaluar: "🧠 Evaluación" }[m]));
+        add(tabs, h("button", { class: mode === m ? "on" : "", onclick: () => (m === "explorar" || map.origin === "material" ? ((mode = m), render()) : guard("red:practica", () => ((mode = m), render()))) }, { explorar: "🔭 Exploración", construir: "🧩 Construcción", evaluar: "🧠 Evaluación" }[m]));
       const sel = h("select", { style: "width:auto", onchange: () => ((map = maps[Number(sel.value)]), render()) }, maps.map((m, i) => h("option", { value: i, selected: m === map }, `${m.title}${m.origin === "material" ? " (tu material)" : ""}`)));
       add(top, tabs, sel);
       add(body, top);

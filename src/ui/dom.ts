@@ -48,6 +48,7 @@ export interface PanelOptions {
   wide?: boolean;
   onClose?: () => void;
   back?: () => void;
+  cls?: string;
 }
 
 export function openPanel(opts: PanelOptions, render: (body: HTMLElement) => void): HTMLElement {
@@ -58,7 +59,7 @@ export function openPanel(opts: PanelOptions, render: (body: HTMLElement) => voi
     { class: "overlay", onclick: (e: Event) => e.target === root && closePanel() },
     h(
       "section",
-      { class: `panel ${opts.wide ? "wide" : ""}`, role: "dialog", "aria-label": opts.title },
+      { class: `panel ${opts.wide ? "wide" : ""} ${opts.cls ?? ""}`, role: "dialog", "aria-label": opts.title },
       h(
         "header",
         { class: "panel-head" },

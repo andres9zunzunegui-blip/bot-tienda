@@ -92,6 +92,9 @@ export interface GameState {
   topicScores: Record<string, { at: number; q: number }[]>;
   missions: { date: string; list: Mission[] };
   specialMissions: Mission[];
+  /** Progreso en los capítulos de teoría (reels). */
+  chapters: Record<string, { seen: number; done: boolean; best: number; at?: number }>;
+  welcomed: boolean;
   materials: MaterialMeta[];
   settings: { jurisdiccion: Jurisdiccion; fechaReferencia: string; oralRigor: "normal" | "exigente" };
   playerPos: { x: number; z: number };
@@ -122,6 +125,8 @@ export function defaultState(): GameState {
     topicScores: {},
     missions: { date: "", list: [] },
     specialMissions: [],
+    chapters: {},
+    welcomed: false,
     materials: [],
     settings: { jurisdiccion: "Nacional", fechaReferencia: today(), oralRigor: "normal" },
     playerPos: { x: 0, z: 6 },

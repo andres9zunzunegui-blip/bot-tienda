@@ -239,6 +239,20 @@ export function generateDailyMissions(s: GameState, now = Date.now()): Mission[]
     claimed: false,
     personalized: due > 0,
   });
+  const pendingChapters = ["cap1", "cap2", "cap3", "cap4"].filter((c) => !s.chapters?.[c]?.done);
+  if (pendingChapters.length)
+    list.push({
+      id: `d-cap-${today()}`,
+      title: "Aula de reels",
+      description: "Completá un capítulo de teoría en la Facultad respondiendo bien sus preguntas.",
+      kind: "estudio",
+      target: 1,
+      progress: 0,
+      reward: { xp: 50, coins: 15 },
+      done: false,
+      claimed: false,
+      personalized: true,
+    });
   const weak = weakestTopics(s, 2);
   if (weak[0]) {
     const t = weak[0];

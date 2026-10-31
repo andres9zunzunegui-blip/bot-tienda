@@ -7,8 +7,10 @@ import { store } from "../../core/state.ts";
 import { evaluateLocal } from "../../modules/oral/localEvaluator.ts";
 import { recordActivity } from "../../systems/gamification.ts";
 import { TOPICS } from "../../systems/topics.ts";
-import { add, bar, clear, h, openPanel, pct } from "../dom.ts";
+import { add, bar, clear, h, openPanel, pct, toast } from "../dom.ts";
 import { registerScreen } from "../nav.ts";
+import { guard } from "../gate.ts";
+import { TOPIC_CHAPTER, chapterLabel, topicUnlocked } from "../../modules/reels/progress.ts";
 
 const CRIT_LABELS: Record<string, string> = {
   precision: "Precisión conceptual",
@@ -26,13 +28,13 @@ export function openExams(arg?: unknown) {
       h(
         "div",
         { class: "grid c3" },
-        h("div", { class: "card click", onclick: () => oralSetup("profesor") }, h("h3", null, "🎓 Examen oral"), h("p", { class: "muted" }, "El Prof. Ibarra pregunta, evalúa y repregunta según tu respuesta."), h("p", null, `${oral.filter((o) => o.id.startsWith("oral:profesor")).length} rendidos`)),
-        h("div", { class: "card click", onclick: () => oralSetup("juez") }, h("h3", null, "👩‍⚖️ Audiencia con la jueza"), h("p", { class: "muted" }, "La jueza Salvatierra te pide fundamentar como abogado/a del caso de clausura."), h("p", null, `${oral.filter((o) => o.id.startsWith("oral:juez")).length} audiencias`)),
-        h("div", { class: "card click", onclick: () => writtenExam() }, h("h3", null, "📝 Simulacro escrito"), h("p", { class: "muted" }, "10 preguntas de opción múltiple corregidas automáticamente. Aprobar da monedas."), h("p", null, `${written.length} rendidos`)),
+        h("div", { class: "card click", onclick: () => guard("oral:profesor", () => oralSetup("profesor")) }, h("h3", null, "🎓 Examen oral"), h("p", { class: "muted" }, "El Prof. Ibarra pregunta, evalúa y repregunta según tu respuesta."), h("p", null, `${oral.filter((o) => o.id.startsWith("oral:profesor")).length} rendidos`)),
+        h("div", { class: "card click", onclick: () => guard("oral:juez", () => oralSetup("juez")) }, h("h3", null, "👩‍⚖️ Audiencia con la jueza"), h("p", { class: "muted" }, "La jueza Salvatierra te pide fundamentar como abogado/a del caso de clausura."), h("p", null, `${oral.filter((o) => o.id.startsWith("oral:juez")).length} audiencias`)),
+        h("div", { class: "card click", onclick: () => guard("escrito", writtenExam) }, h("h3", null, "📝 Simulacro escrito"), h("p", { class: "muted" }, "10 preguntas de opción múltiple corregidas automáticamente. Aprobar da monedas."), h("p", null, `${written.length} rendidos`)),
       ),
     );
-    if (arg === "juez") oralSetup("juez");
-    else if (arg === "profesor") oralSetup("profesor");
+    if (arg === "juez") guard("oral:juez", () => oralSetup("juez"));
+    else if (arg === "profesor") guard("oral:profesor", () => oralSetup("profesor"));
   });
 }
 
@@ -40,7 +42,7 @@ function oralSetup(role: "profesor" | "juez") {
   openPanel({ title: role === "juez" ? "Audiencia con la jueza" : "Examen oral", back: () => openExams() }, async (body) => {
     const hh = await getHealth();
     const topics = [...new Set(ORAL_BANK.filter((q) => role === "profesor" || q.role === "juez" || q.topic.includes("clausura")).map((q) => q.topic))];
-    const topicSel = h("select", null, h("option", { value: "" }, "Todos los temas disponibles"), topics.map((t) => h("option", { value: t }, TOPICS[t]?.name ?? t)));
+    const topicSel = h("select", null, h("option", { value: "" }, "Todos los temas que ya estudiaste"), topics.map((t) => h("option", { value: t, disabled: !topicUnlocked(store.state, t) }, `${TOPICS[t]?.name ?? t}${topicUnlocked(store.state, t) ? "" : ` (🔒 ${chapterLabel(TOPIC_CHAPTER[t])})`}`)));
     const rigor = h("select", null, h("option", { value: "normal", selected: store.state.settings.oralRigor === "normal" }, "Normal"), h("option", { value: "exigente", selected: store.state.settings.oralRigor === "exigente" }, "Exigente (más repreguntas, exige citas)"));
     const voice = h("input", { type: "checkbox", checked: "speechSynthesis" in window });
     add(body, 
@@ -55,8 +57,9 @@ function oralSetup(role: "profesor" | "juez") {
           class: "btn gold",
           onclick: () => {
             store.update("settings", (s) => (s.settings.oralRigor = rigor.value as "normal" | "exigente"));
-            const pool = ORAL_BANK.filter((q) => (topicSel.value ? q.topic === topicSel.value : topics.includes(q.topic)) && (role === "juez" ? q.role === "juez" || q.topic.includes("clausura") : true));
+            const pool = ORAL_BANK.filter((q) => (topicSel.value ? q.topic === topicSel.value : topics.includes(q.topic) && topicUnlocked(store.state, q.topic)) && (role === "juez" ? q.role === "juez" || q.topic.includes("clausura") : true));
             const qs = shuffle(pool).slice(0, 3);
+            if (!qs.length) return toast("Todavía no estudiaste ningún tema de este examen: pasá por el Aula de reels.", "warn");
             oralSession(role, rigor.value as "normal" | "exigente", qs, voice.checked, hh.ai);
           },
         }, "Comenzar"),
