@@ -6,7 +6,7 @@ import { LEGAL_REFS, OFFICIAL_SOURCES, getRef, refLabel, type Jurisdiccion } fro
 import { BADGES, BUILDING_UNLOCKS, RANKS, claimMission, levelFromXp, rankFor, topicMastery, xpForLevel } from "../../systems/gamification.ts";
 import { retention } from "../../systems/memory.ts";
 import { SUBJECTS, TOPICS, topicName } from "../../systems/topics.ts";
-import { add, bar, clear, h, openPanel, pct, toast } from "../dom.ts";
+import { add, bar, clear, confirmTwice, h, openPanel, pct, toast } from "../dom.ts";
 import { go, registerScreen } from "../nav.ts";
 import { refCard } from "./simulator.ts";
 
@@ -106,7 +106,7 @@ export function openProgress() {
             }
           },
         })),
-        h("button", { class: "btn", onclick: () => confirm("¿Borrar todo el progreso? No se puede deshacer.") && (store.reset(), openProgress()) }, "Reiniciar progreso"),
+        h("button", { class: "btn", onclick: (e: Event) => confirmTwice(e.currentTarget as HTMLButtonElement, "Tocá otra vez para borrar todo", () => (store.reset(), openProgress())) }, "Reiniciar progreso"),
       ),
     );
   });

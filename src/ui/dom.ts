@@ -115,3 +115,15 @@ export function bar(value: number, cls = ""): HTMLElement {
 export function pct(v: number): string {
   return `${Math.round(v * 100)} %`;
 }
+
+/** Confirmación en dos toques (los diálogos nativos no están disponibles en todos los entornos). */
+export function confirmTwice(btn: HTMLButtonElement, prompt: string, action: () => void) {
+  if (btn.dataset.armed === "1") return action();
+  const original = btn.textContent ?? "";
+  btn.dataset.armed = "1";
+  btn.textContent = prompt;
+  setTimeout(() => {
+    btn.dataset.armed = "";
+    btn.textContent = original;
+  }, 4000);
+}

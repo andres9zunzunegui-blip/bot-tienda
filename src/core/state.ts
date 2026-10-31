@@ -197,7 +197,15 @@ class Store {
   }
 }
 
-const browserStorage: StorageLike | null = typeof localStorage !== "undefined" ? localStorage : null;
+function detectStorage(): StorageLike | null {
+  try {
+    // En ventanas privadas u orígenes aislados el acceso mismo puede lanzar una excepción.
+    return typeof localStorage !== "undefined" ? localStorage : null;
+  } catch {
+    return null;
+  }
+}
+const browserStorage = detectStorage();
 export const store = new Store(browserStorage);
 export { Store };
 

@@ -6,7 +6,7 @@ import { deleteMaterial, loadMaterial, saveMaterial } from "../../modules/materi
 import { newCard, upsertCard } from "../../systems/memory.ts";
 import { BUILDING_UNLOCKS, BADGES } from "../../systems/gamification.ts";
 import { SUBJECTS } from "../../systems/topics.ts";
-import { add, clear, h, openPanel } from "../dom.ts";
+import { add, clear, confirmTwice, h, openPanel } from "../dom.ts";
 import { go, registerScreen } from "../nav.ts";
 
 export function openUpload(subject?: unknown) {
@@ -129,15 +129,14 @@ function openMaterial(id: string): void {
     add(body, 
       h("div", { class: "row" }, h("button", { class: "btn gold", onclick: () => go("maps") }, "Ver como red conceptual"), h("button", { class: "btn", onclick: () => go("memory") }, `Repasar sus ${p.questions.length} preguntas`), h("button", {
         class: "btn",
-        onclick: async () => {
-          if (!confirm("¿Eliminar este material?")) return;
+        onclick: (e: Event) => confirmTwice(e.currentTarget as HTMLButtonElement, "Tocá otra vez para eliminar", async () => {
           await deleteMaterial(id);
           store.update("material-del", (s) => {
             s.materials = s.materials.filter((m) => m.id !== id);
             s.cards = s.cards.filter((c) => c.topic !== `mat:${id}`);
           });
           openMaterials();
-        },
+        }),
       }, "Eliminar")),
       h("h3", null, "Unidades de estudio"),
       p.units.map((u) => h("div", { class: "card", style: "margin-bottom:8px" }, h("h4", { style: "margin-top:0" }, u.title), h("p", null, u.summary), u.concepts.length ? h("p", { class: "muted" }, `Conceptos: ${u.concepts.join(", ")}`) : null)),
