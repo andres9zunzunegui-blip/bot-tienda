@@ -1,6 +1,7 @@
 /** Construcción procedural del personaje (low-poly) y su animación de caminata. */
 import * as THREE from "three";
 import type { Avatar } from "../core/state.ts";
+import { stylize } from "./style.ts";
 
 export interface AvatarRig {
   root: THREE.Group;
@@ -92,6 +93,7 @@ export function buildAvatar(a: Avatar): AvatarRig {
       o.receiveShadow = true;
     }
   });
+  stylize(root, 0.12, 0.03);
   return { root, legL, legR, armL, armR, body };
 }
 

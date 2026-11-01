@@ -1,4 +1,5 @@
 /** Utilidades mínimas de interfaz: creación de nodos, paneles y notificaciones. */
+import { sfx } from "../audio/sfx.ts";
 
 type Child = Node | string | number | null | undefined | false | Child[];
 type Attrs = Record<string, unknown> & { class?: string; style?: string };
@@ -53,6 +54,7 @@ export interface PanelOptions {
 
 export function openPanel(opts: PanelOptions, render: (body: HTMLElement) => void): HTMLElement {
   closePanel();
+  sfx.paper();
   const body = h("div", { class: "panel-body" });
   const root = h(
     "div",

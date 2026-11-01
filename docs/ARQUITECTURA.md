@@ -62,3 +62,20 @@ Toda actividad académica termina en `recordActivity()` (`src/systems/gamificati
 2. Cargar sus referencias en `src/legal/sources.ts` con su estado de verificación.
 3. Registrarlo en la lista de `src/ui/screens/simulator.ts`.
 4. Agregar pruebas del camino óptimo y de los desenlaces en `tests/`.
+
+## Dirección de arte: "Expediente porteño"
+
+La identidad visual sale del mundo del estudiante de Derecho en Buenos Aires:
+
+| Disciplina | Cómo se aplica |
+|---|---|
+| Dirección de arte con identidad local | Expediente judicial (carátula manila, fojas, sellos de goma) + fileteado porteño (volutas, bandas, dorado/rojo/verde/celeste). |
+| Tipografía con carácter | Abril Fatface (letrero fileteado), Special Elite (máquina de escribir de expediente), Inter/Atkinson para lectura. |
+| Color | Paleta cálida de tinta, cuero y papel en lugar del azul genérico; colores semánticos aparte. |
+| Game feel | Sellos que golpean la pantalla al aprobar, XP flotante, papel picado en colores de filete. |
+| Diseño sonoro | Efectos sintetizados: tecla de máquina, papel, sello, acierto, error, fanfarria (src/audio/sfx.ts). |
+| Estilo 3D | Sombreado cartoon de 3 bandas y contornos de tinta (src/engine/style.ts). |
+| Ambientación | Adoquines, jacarandás en flor, kiosco con toldo, colectivo fileteado, faroles. |
+| Motivación visible | Edificios bloqueados como planos fantasma del edificio real. |
+| UI temática | Portada como carátula de expediente; secciones como separadores de bibliorato; monedas = estampillas fiscales. |
+| Rendimiento adaptativo | Mide los FPS al arrancar y, si el equipo no llega a ~35, baja resolución, sombras, faroles y contornos. |

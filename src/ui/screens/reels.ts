@@ -10,6 +10,8 @@ import { newCard, upsertCard } from "../../systems/memory.ts";
 import { contentCardsFor } from "../../systems/seed.ts";
 import { add, clear, h, openPanel, pct, toast } from "../dom.ts";
 import { go, registerScreen } from "../nav.ts";
+import { sfx } from "../../audio/sfx.ts";
+import { stamp } from "../fx.ts";
 import { AIUnavailable, aiMode, explainSimply } from "../../core/ai.ts";
 
 /* ------------------------------ Índice de capítulos ------------------------------ */
@@ -257,9 +259,13 @@ export function openReels(ch: Chapter) {
                 const firstAttempt = answers[idx] === null;
                 answers[idx] = k;
                 if (k === r.correct) {
+                  sfx.good();
                   if (firstAttempt) firstTry[idx] = true;
                   elapsed = 0;
-                } else if (navigator.vibrate) navigator.vibrate(80);
+                } else {
+                  sfx.bad();
+                  if (navigator.vibrate) navigator.vibrate(80);
+                }
                 clear(content);
                 add(content, renderReel(r, idx));
               },
@@ -352,6 +358,7 @@ export function openReels(ch: Chapter) {
             return { topic: ch.topic, description: `Reel: ${c.question}`, prompt: c.question, answer: `${c.options[c.correct]}. ${c.explain}` };
           }),
       });
+      stamp(`Capítulo ${ch.number || ""}`.trim(), quality >= 0.5 ? "Aprobado" : "Visto", ch.title, quality >= 0.5 ? "#2f8f6b" : "#1f5fa8");
       const unlocked = Object.entries(REQUIREMENTS).filter(([k]) => missingBefore[k] > 0 && missingChapters(store.state, k).length === 0).map(([, v]) => v.label);
       const nextCh = CHAPTERS.find((c) => !chapterDone(store.state, c.id));
       clear(content);

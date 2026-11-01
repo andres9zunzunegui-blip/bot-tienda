@@ -10,6 +10,7 @@ import { topicName } from "../../systems/topics.ts";
 import { add, clear, h, openPanel, pct } from "../dom.ts";
 import { go, registerScreen } from "../nav.ts";
 import { guard } from "../gate.ts";
+import { stamp } from "../fx.ts";
 
 const PORTRAITS: Record<string, string> = {
   "Funcionarios fiscales de ARCA": "🕵️",
@@ -272,6 +273,7 @@ function renderEnd(body: HTMLElement, run: SimulationRun) {
     })),
     badges: ["primera-defensa", ...(score >= 0.9 ? ["defensa-impecable"] : [])],
   });
+  if (!recorded.has(run)) stamp(end.tone === "ok" ? "Resolución" : end.tone === "parcial" ? "Resolución" : "Sentencia", end.tone === "ok" ? "Favorable" : end.tone === "parcial" ? "Parcial" : "Firme", end.title, end.tone === "ok" ? "#2f8f6b" : end.tone === "parcial" ? "#1f5fa8" : "#b3282d");
   recorded.set(run, reward);
   const tone = end.tone === "ok" ? "ok" : end.tone === "parcial" ? "" : "bad";
   add(body, 

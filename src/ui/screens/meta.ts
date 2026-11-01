@@ -120,7 +120,7 @@ export function openInventory() {
       clear(body);
       const s = store.state;
       add(body, 
-        h("p", null, h("b", null, `🪙 ${s.coins} monedas`), h("span", { class: "muted" }, " — se ganan aprobando actividades, nunca por tiempo conectado.")),
+        h("p", null, h("b", null, `🪙 ${s.coins} estampillas fiscales`), h("span", { class: "muted" }, " — se ganan aprobando actividades, nunca por tiempo conectado.")),
         h("h3", null, "Tienda y objetos"),
         h(
           "div",

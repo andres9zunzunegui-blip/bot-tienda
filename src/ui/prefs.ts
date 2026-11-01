@@ -1,5 +1,6 @@
 /** Preferencias: accesibilidad, música y modo simple. */
 import { STATIONS, lofi } from "../audio/lofi.ts";
+import { setSfx } from "../audio/sfx.ts";
 import { store, type Prefs } from "../core/state.ts";
 import { add, clear, h, openPanel, toast } from "./dom.ts";
 import { icon } from "./icons.ts";
@@ -10,6 +11,7 @@ export function applyPrefs(p: Prefs = store.state.prefs) {
   r.dataset.contrast = p.contrast ? "1" : "";
   r.dataset.legible = p.legible ? "1" : "";
   r.dataset.reduceMotion = p.reduceMotion ? "1" : "";
+  setSfx(p.sfx !== false);
 }
 
 export function setPrefs(fn: (p: Prefs) => void) {
@@ -165,6 +167,7 @@ export function openSettings() {
           h("div", { class: "seg", role: "radiogroup", "aria-labelledby": "set-weather" }, ([["auto", "Según la música"], ["despejado", "Despejado"], ["lluvia", "Lluvia"]] as const).map(([v, l]) => h("button", { role: "radio", "aria-checked": String(p.weather === v), class: p.weather === v ? "on" : "", onclick: () => (setPrefs((q) => (q.weather = v)), render()) }, l))),
         ),
         h("h3", null, "Sonido"),
+        sw("set-sfx", "Efectos de sonido", "Máquina de escribir, papel, sellos y aciertos.", p.sfx !== false, (v) => setPrefs((q) => (q.sfx = v))),
         h("button", { class: "btn", onclick: () => openMusic() }, icon("music", 18), "Música para estudiar"),
         h("p", { class: "muted" }, "Atajos de teclado: WASD o flechas para caminar · E para entrar · Esc para cerrar · en reels, flechas para avanzar y espacio para pausar."),
       );

@@ -1,11 +1,18 @@
-/** Efectos visuales de progresión: XP flotante, subida de nivel, insignias y desbloqueos. */
+/**
+ * "Game feel": cada logro se sella como en un expediente. XP flotante, sellos
+ * de goma que golpean la pantalla, papel picado con colores de fileteado y sonido.
+ */
+import { sfx } from "../audio/sfx.ts";
 import { events } from "../core/state.ts";
-import { banner, h, toast } from "./dom.ts";
+import { h, toast } from "./dom.ts";
+import { stampSvg } from "./ornaments.ts";
 
 let anchor: () => { x: number; y: number } = () => ({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
 export function setFxAnchor(fn: () => { x: number; y: number }) {
   anchor = fn;
 }
+
+const reduced = () => document.documentElement.dataset.reduceMotion === "1";
 
 function floatText(text: string) {
   const p = anchor();
@@ -15,8 +22,8 @@ function floatText(text: string) {
 }
 
 export function confetti(n = 60) {
-  if (document.documentElement.dataset.reduceMotion === "1") return;
-  const colors = ["#f5d47e", "#e3b448", "#5aa2f0", "#4cc38a", "#ef5b5b", "#ffffff"];
+  if (reduced()) return;
+  const colors = ["#e8b23a", "#b3282d", "#2f8f6b", "#6fa8dc", "#f4ead2"];
   for (let i = 0; i < n; i++) {
     const c = h("div", {
       class: "confetti",
@@ -27,22 +34,45 @@ export function confetti(n = 60) {
   }
 }
 
+let stampQueue = Promise.resolve();
+
+/** Un sello de goma golpea la pantalla (en cola, para que no se pisen). */
+export function stamp(top: string, main: string, sub = "", color = "#b3282d") {
+  stampQueue = stampQueue.then(
+    () =>
+      new Promise<void>((resolve) => {
+        const el = h(
+          "div",
+          { class: "stamp-fx", role: "status", "aria-live": "polite" },
+          h("div", { class: "stamp-mark", html: stampSvg(top.toUpperCase(), main.toUpperCase(), color) }),
+          sub ? h("p", null, sub) : null,
+        );
+        document.body.appendChild(el);
+        setTimeout(() => sfx.stamp(), reduced() ? 0 : 230);
+        setTimeout(() => el.classList.add("out"), 1700);
+        setTimeout(() => (el.remove(), resolve()), 2100);
+      }),
+  );
+}
+
 export function installFx() {
   events.on((e) => {
     switch (e.type) {
       case "reward":
         if (e.xp) floatText(`+${e.xp} XP`);
-        toast(`${e.label}: ${e.xp ? `+${e.xp} XP` : ""} ${e.coins ? `+${e.coins} 🪙` : ""}`.trim(), "ok");
+        if (e.xp || e.coins) sfx.good();
+        toast(`📜 ${e.label}: ${e.xp ? `+${e.xp} XP` : ""} ${e.coins ? `· +${e.coins} estampillas` : ""}`.trim(), "ok");
         break;
       case "levelup":
-        banner(`¡Nivel ${e.level}!`, e.rank);
+        sfx.fanfare();
+        stamp("Promovido/a", `Nivel ${e.level}`, e.rank, "#2f8f6b");
         confetti();
         break;
       case "badge":
-        banner(`🏅 ${e.name}`, "Nueva insignia", "badge");
+        stamp("Insignia", "Otorgada", e.name, "#b3282d");
         break;
       case "unlock":
-        banner(`🏗️ ${e.name}`, "¡Nuevo edificio desbloqueado en la ciudad!", "unlock");
+        stamp("Edificio", "Habilitado", e.name, "#1f5fa8");
         confetti(40);
         break;
       case "toast":

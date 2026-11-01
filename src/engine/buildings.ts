@@ -246,26 +246,37 @@ export const BUILDINGS: BuildingSpec[] = [
   },
 ];
 
-/** Obra en construcción: representa un edificio todavía bloqueado. */
+/**
+ * Edificio bloqueado: se ve como un PLANO FANTASMA del edificio real (lo que vas
+ * a construir) dentro de un andamio, para que la recompensa sea visible.
+ */
 export function constructionSite(spec: BuildingSpec): THREE.Group {
   const g = new THREE.Group();
-  const wood = M("#a87b47");
+  const ghostMat = new THREE.MeshBasicMaterial({ color: "#8ec5ff", transparent: true, opacity: 0.22, depthWrite: false });
+  const edgeMat = new THREE.LineBasicMaterial({ color: "#cfe6ff", transparent: true, opacity: 0.55 });
+  const ghost = spec.build();
+  ghost.traverse((o) => {
+    const m = o as THREE.Mesh;
+    if (!m.isMesh) return;
+    m.material = ghostMat;
+    m.castShadow = false;
+    m.userData.styled = true; // sin estilo cartoon ni contorno
+    if (m.geometry.boundingSphere === null) m.geometry.computeBoundingSphere();
+    if ((m.geometry.boundingSphere?.radius ?? 0) > 0.6) m.add(new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry, 30), edgeMat));
+  });
+  g.add(ghost);
   const pole = M("#d9a441");
-  g.add(box(spec.w, 0.4, spec.d, M("#8a8577")));
+  const wood = M("#a87b47");
+  g.add(box(spec.w + 0.4, 0.3, spec.d + 0.4, M("#8a8577")));
   for (const [x, z] of [
     [-1, -1],
     [1, -1],
     [-1, 1],
     [1, 1],
   ])
-    g.add(box(0.15, 3.5, 0.15, pole, (x * spec.w) / 2.2, 0.4, (z * spec.d) / 2.2));
-  g.add(box(spec.w * 0.95, 0.12, 0.15, wood, 0, 2, spec.d / 2.2));
-  g.add(box(spec.w * 0.95, 0.12, 0.15, wood, 0, 3.4, spec.d / 2.2));
-  g.add(box(spec.w * 0.6, 1.2, spec.d * 0.6, M("#c9c1ad"), 0, 0.4, 0));
-  // Grúa
-  g.add(box(0.3, 7, 0.3, M("#e3b448"), spec.w / 2 - 0.5, 0, -spec.d / 2 + 0.5));
-  g.add(box(4, 0.25, 0.25, M("#e3b448"), spec.w / 2 - 1.8, 7, -spec.d / 2 + 0.5));
-  // Cartel
-  g.add(box(1.8, 1, 0.08, M("#f0a83a"), 0, 0.7, spec.d / 2 + 0.3));
+    g.add(box(0.15, 4, 0.15, pole, (x * (spec.w + 0.2)) / 2, 0.3, (z * (spec.d + 0.2)) / 2));
+  g.add(box(spec.w, 0.12, 0.15, wood, 0, 2.2, (spec.d + 0.2) / 2), box(spec.w, 0.12, 0.15, wood, 0, 3.6, (spec.d + 0.2) / 2));
+  // Vallado de obra con franjas
+  for (let k = -2; k <= 2; k++) g.add(box(spec.w / 5 - 0.1, 0.9, 0.08, M(k % 2 ? "#f4ead2" : "#b3282d"), (k * spec.w) / 5, 0.3, spec.d / 2 + 0.9));
   return g;
 }

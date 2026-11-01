@@ -10,6 +10,7 @@ import { TOPICS } from "../../systems/topics.ts";
 import { add, bar, clear, h, openPanel, pct, toast } from "../dom.ts";
 import { registerScreen } from "../nav.ts";
 import { guard } from "../gate.ts";
+import { stamp } from "../fx.ts";
 import { TOPIC_CHAPTER, chapterLabel, topicUnlocked } from "../../modules/reels/progress.ts";
 
 const CRIT_LABELS: Record<string, string> = {
@@ -30,7 +31,7 @@ export function openExams(arg?: unknown) {
         { class: "grid c3" },
         h("div", { class: "card click", onclick: () => guard("oral:profesor", () => oralSetup("profesor")) }, h("h3", null, "🎓 Examen oral"), h("p", { class: "muted" }, "El Prof. Ibarra pregunta, evalúa y repregunta según tu respuesta."), h("p", null, `${oral.filter((o) => o.id.startsWith("oral:profesor")).length} rendidos`)),
         h("div", { class: "card click", onclick: () => guard("oral:juez", () => oralSetup("juez")) }, h("h3", null, "👩‍⚖️ Audiencia con la jueza"), h("p", { class: "muted" }, "La jueza Salvatierra te pide fundamentar como abogado/a del caso de clausura."), h("p", null, `${oral.filter((o) => o.id.startsWith("oral:juez")).length} audiencias`)),
-        h("div", { class: "card click", onclick: () => guard("escrito", writtenExam) }, h("h3", null, "📝 Simulacro escrito"), h("p", { class: "muted" }, "10 preguntas de opción múltiple corregidas automáticamente. Aprobar da monedas."), h("p", null, `${written.length} rendidos`)),
+        h("div", { class: "card click", onclick: () => guard("escrito", writtenExam) }, h("h3", null, "📝 Simulacro escrito"), h("p", { class: "muted" }, "10 preguntas de opción múltiple corregidas automáticamente. Aprobar da estampillas."), h("p", null, `${written.length} rendidos`)),
       ),
     );
     if (arg === "juez") guard("oral:juez", () => oralSetup("juez"));
@@ -226,6 +227,7 @@ function oralSession(role: "profesor" | "juez", rigor: "normal" | "exigente", qu
         errors: results.filter((r) => r.score < 0.7).map((r) => ({ topic: r.q.topic, description: `Oral: "${r.q.question}" — faltó: ${r.missed.join("; ") || "desarrollo"}`, prompt: r.q.question, answer: r.q.modelAnswer })),
         badges: passed ? ["oral-aprobado", ...(rigor === "exigente" ? ["oral-exigente"] : [])] : [],
       });
+      stamp("Examen oral", passed ? `Aprobado ${nota}` : `Desaprobado ${nota}`, "", passed ? "#2f8f6b" : "#b3282d");
       say("exam", passed ? `Muy bien. Su calificación es ${nota} (${notaTexto(nota)}).` : `Lamentablemente no alcanza: ${nota}. Le recomiendo repasar y volver a presentarse.`);
       clear(evalBox);
       add(evalBox, 

@@ -87,12 +87,13 @@ export interface Prefs {
   narrate: boolean; // narración automática en reels
   dayCycle: boolean; // ciclo de día y noche según la hora real
   weather: "auto" | "despejado" | "lluvia"; // auto = llueve si suena música con lluvia
+  sfx: boolean; // efectos de sonido de la interfaz
   music: { on: boolean; station: string; volume: number; rain: boolean };
 }
 
 export function defaultPrefs(): Prefs {
   const rm = typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
-  return { scale: 1, legible: false, contrast: false, reduceMotion: rm, simple: false, autoAdvance: true, reelPace: 1, narrate: false, dayCycle: true, weather: "auto", music: { on: false, station: "biblioteca", volume: 0.5, rain: false } };
+  return { scale: 1, legible: false, contrast: false, reduceMotion: rm, simple: false, autoAdvance: true, reelPace: 1, narrate: false, dayCycle: true, weather: "auto", sfx: true, music: { on: false, station: "biblioteca", volume: 0.5, rain: false } };
 }
 
 export interface GameState {

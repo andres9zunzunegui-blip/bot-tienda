@@ -11,6 +11,7 @@ import { chapterDone, missingChapters } from "../modules/reels/progress.ts";
 import { animateIdle, animateWalk, buildAvatar, type AvatarRig } from "./avatarMesh.ts";
 import { BUILDINGS, constructionSite, type BuildingSpec } from "./buildings.ts";
 import { animateInterior, buildInterior, type Interior } from "./interiors3d.ts";
+import { setOutlines, stylize } from "./style.ts";
 
 export interface WorldCallbacks {
   onEnter: (id: string) => void;
@@ -21,6 +22,29 @@ const ISO = new THREE.Vector3(1, 1.15, 1).normalize();
 const SCREEN_UP = new THREE.Vector3(-1, 0, -1).normalize();
 const SCREEN_RIGHT = new THREE.Vector3(1, 0, -1).normalize();
 const WORLD_HALF = 34;
+/** Textura de adoquines porteños, dibujada en un canvas. */
+function adoquines(): THREE.CanvasTexture {
+  const c = document.createElement("canvas");
+  c.width = c.height = 128;
+  const g = c.getContext("2d")!;
+  g.fillStyle = "#6f6a63";
+  g.fillRect(0, 0, 128, 128);
+  for (let row = 0; row < 8; row++)
+    for (let col = 0; col < 5; col++) {
+      const off = row % 2 ? 13 : 0;
+      const shade = 140 + Math.floor(Math.random() * 40);
+      g.fillStyle = `rgb(${shade},${shade - 6},${shade - 14})`;
+      g.beginPath();
+      g.roundRect(col * 26 + off - 12, row * 16 + 2, 23, 13, 4);
+      g.fill();
+    }
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.repeat.set(1, 1);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
 /** Puntos de paso de los estudiantes, sobre calles y plaza. */
 const WAYPOINTS = [
   [7, 0], [-7, 0], [0, 7], [0, -7], [24, 0], [-24, 0], [0, 26], [0, -14], [14, 0], [-14, 0], [0, 14],
@@ -85,6 +109,10 @@ export class World {
   private decor = new THREE.Group();
   private npcs: { rig: AvatarRig; base: THREE.Vector3; phase: number }[] = [];
   private walkers: { rig: AvatarRig; target: THREE.Vector3; speed: number; wait: number }[] = [];
+  private bus: THREE.Group | null = null;
+  private busX = -30;
+  private busDir = 1;
+  private perf = { frames: 0, time: 0, decided: false };
   private attract = false;
   private interior: Interior | null = null;
   private interiorCache = new Map<string, Interior>();
@@ -135,9 +163,12 @@ export class World {
     this.rebuildPlayer(state);
     this.buildNPCs();
     this.buildWalkers();
+    this.buildBus();
+    this.buildKiosk();
     this.buildLamps();
     this.buildGardens();
     this.refresh(state, true);
+    stylize(this.scene);
     this.bindInput();
     this.resize();
     window.addEventListener("resize", this.resize);
@@ -169,15 +200,19 @@ export class World {
     this.ground.rotation.x = -Math.PI / 2;
     this.ground.receiveShadow = true;
     this.scene.add(this.ground);
-    const road = new THREE.MeshStandardMaterial({ color: "#c9c2b0", roughness: 0.95 });
+    const road = new THREE.MeshStandardMaterial({ map: adoquines(), roughness: 0.95 });
     const strip = (x: number, z: number, w: number, d: number) => {
-      const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), road);
+      const geo = new THREE.PlaneGeometry(w, d);
+      const uv = geo.getAttribute("uv") as THREE.BufferAttribute;
+      for (let i = 0; i < uv.count; i++) uv.setXY(i, (uv.getX(i) * w) / 3, (uv.getY(i) * d) / 3);
+      const m = new THREE.Mesh(geo, road);
       m.rotation.x = -Math.PI / 2;
       m.position.set(x, 0.02, z);
       m.receiveShadow = true;
       this.scene.add(m);
     };
     strip(0, 0, WORLD_HALF * 2, 3.2);
+    strip(0, 29.5, WORLD_HALF * 2, 4); // avenida por la que pasa el colectivo
     strip(0, 0, 3.2, WORLD_HALF * 2);
     for (const b of BUILDINGS) {
       const dz = b.z + b.d / 2 + 1.5;
@@ -208,13 +243,26 @@ export class World {
       }
   }
 
-  private tree(x: number, z: number, s = 1) {
+  /** Árbol: tilo verde o jacarandá en flor (el violeta de Buenos Aires en noviembre). */
+  private tree(x: number, z: number, s = 1, jacaranda = false) {
     const g = new THREE.Group();
     const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.15 * s, 0.22 * s, 1.2 * s, 6), new THREE.MeshStandardMaterial({ color: "#6b4a2b", flatShading: true }));
     trunk.position.y = 0.6 * s;
-    const top = new THREE.Mesh(new THREE.IcosahedronGeometry(1 * s, 0), new THREE.MeshStandardMaterial({ color: "#3f8a3a", flatShading: true }));
+    const leaf = new THREE.MeshStandardMaterial({ color: jacaranda ? "#9b6fd6" : "#3f8a3a", flatShading: true });
+    const top = new THREE.Mesh(new THREE.IcosahedronGeometry(1 * s, 0), leaf);
     top.position.y = 1.8 * s;
     g.add(trunk, top);
+    if (jacaranda) {
+      const top2 = new THREE.Mesh(new THREE.IcosahedronGeometry(0.7 * s, 0), new THREE.MeshStandardMaterial({ color: "#b48be8", flatShading: true }));
+      top2.position.set(0.5 * s, 2.3 * s, 0.2 * s);
+      g.add(top2);
+      // Flores caídas en el pasto
+      const petals = new THREE.Mesh(new THREE.CircleGeometry(1.5 * s, 12), new THREE.MeshStandardMaterial({ color: "#a982df", roughness: 1 }));
+      petals.rotation.x = -Math.PI / 2;
+      petals.position.y = 0.02;
+      petals.receiveShadow = true;
+      g.add(petals);
+    }
     g.position.set(x, 0, z);
     g.traverse((o) => ((o as THREE.Mesh).isMesh ? ((o.castShadow = true), (o.receiveShadow = true)) : null));
     return g;
@@ -366,6 +414,83 @@ export class World {
     }
   }
 
+  /** Colectivo fileteado que recorre la avenida. */
+  private buildBus() {
+    const g = new THREE.Group();
+    const M = (c: string) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.6, flatShading: true });
+    const body = new THREE.Mesh(new THREE.BoxGeometry(6.4, 2.2, 2.3), M("#1f5fa8"));
+    body.position.y = 1.5;
+    const roof = new THREE.Mesh(new THREE.BoxGeometry(6.4, 0.2, 2.3), M("#f4ead2"));
+    roof.position.y = 2.7;
+    const win = new THREE.Mesh(new THREE.BoxGeometry(5.2, 0.8, 2.34), new THREE.MeshStandardMaterial({ color: "#1b2433", emissive: "#ffd98a", emissiveIntensity: 0.15 }));
+    win.position.set(-0.3, 1.95, 0);
+    const stripe1 = new THREE.Mesh(new THREE.BoxGeometry(6.42, 0.18, 2.34), M("#b3282d"));
+    stripe1.position.y = 1.1;
+    const stripe2 = new THREE.Mesh(new THREE.BoxGeometry(6.42, 0.1, 2.34), M("#e8b23a"));
+    stripe2.position.y = 0.9;
+    const front = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1, 2), new THREE.MeshStandardMaterial({ color: "#cfe6ff", emissive: "#9cc8ff", emissiveIntensity: 0.2 }));
+    front.position.set(3.22, 1.9, 0);
+    g.add(body, roof, win, stripe1, stripe2, front);
+    for (const x of [-2.2, 2.2])
+      for (const z of [-1.1, 1.1]) {
+        const w = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, 0.3, 12), M("#1a1a1a"));
+        w.rotation.x = Math.PI / 2;
+        w.position.set(x, 0.45, z);
+        g.add(w);
+      }
+    const sign = textSprite("60 · Facultad", "", "#e8b23a");
+    sign.scale.set(3.6, 0.9, 1);
+    sign.position.set(0, 3.5, 0);
+    g.add(sign);
+    g.position.set(this.busX, 0, 29.5);
+    g.traverse((o) => ((o as THREE.Mesh).isMesh ? (o.castShadow = true) : null));
+    this.bus = g;
+    this.scene.add(g);
+  }
+
+  /** Kiosco de diarios con toldo a rayas, junto a la plaza. */
+  private buildKiosk() {
+    const g = new THREE.Group();
+    const M = (c: string) => new THREE.MeshStandardMaterial({ color: c, flatShading: true });
+    const base = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.8, 1.6), M("#2f8f6b"));
+    base.position.y = 0.9;
+    g.add(base);
+    for (let k = 0; k < 5; k++) {
+      const s = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.12, 2.2), M(k % 2 ? "#f4ead2" : "#b3282d"));
+      s.position.set(-0.88 + k * 0.44, 2.05, 0.2);
+      s.rotation.x = 0.25;
+      g.add(s);
+    }
+    const lbl = textSprite("KIOSCO", "", "#e8b23a");
+    lbl.scale.set(2.6, 0.65, 1);
+    lbl.position.y = 2.9;
+    g.add(lbl);
+    g.position.set(-6.8, 0, 9.5);
+    g.rotation.y = 0.5;
+    g.traverse((o) => ((o as THREE.Mesh).isMesh ? (o.castShadow = true) : null));
+    this.scene.add(g);
+  }
+
+  /** Calidad adaptativa: si el equipo no llega a ~35 cuadros por segundo, se aliviana. */
+  private adaptQuality(dt: number) {
+    if (this.perf.decided) return;
+    this.perf.frames++;
+    if (this.perf.frames < 30) return; // ignora el arranque
+    this.perf.time += dt;
+    if (this.perf.frames < 150) return;
+    this.perf.decided = true;
+    const fps = 120 / this.perf.time;
+    if (fps < 35) this.setLowQuality(true);
+  }
+
+  setLowQuality(low: boolean) {
+    this.renderer.setPixelRatio(low ? 1 : Math.min(2, window.devicePixelRatio));
+    this.sun.castShadow = !low;
+    for (const l of this.lamps) l.visible = !low;
+    setOutlines(this.scene, !low);
+    this.resize();
+  }
+
   /** Modo portada: la cámara gira lentamente alrededor de la plaza. */
   setAttract(on: boolean) {
     this.attract = on;
@@ -412,6 +537,7 @@ export class World {
       });
       const label = textSprite(`${spec.icon} ${spec.name}`, unlocked ? "" : "🔒 En construcción");
       label.position.set(spec.x, unlocked ? 10.5 : 8, spec.z);
+      stylize(group);
       this.scene.add(group, label);
       this.buildings.set(spec.id, { spec, group, unlocked, label, rise: initial || !unlocked ? 1 : 0 });
     }
@@ -433,7 +559,7 @@ export class World {
       const z = (r() * 2 - 1) * (WORLD_HALF - 3);
       if (Math.abs(x) < 3 || Math.abs(z) < 3 || Math.hypot(x, z) < 8) continue;
       if (BUILDINGS.some((b) => Math.abs(x - b.x) < b.w / 2 + 2.5 && z > b.z - b.d / 2 - 2.5 && z < b.z + b.d / 2 + 4)) continue;
-      this.decor.add(this.tree(x, z, 0.8 + r() * 0.6));
+      this.decor.add(this.tree(x, z, 0.8 + r() * 0.6, r() < 0.42));
       placed++;
     }
     const stone = new THREE.MeshStandardMaterial({ color: "#cfc7b4", flatShading: true });
@@ -495,6 +621,7 @@ export class World {
       }
     }
     this.decor.traverse((o) => ((o as THREE.Mesh).isMesh ? ((o.castShadow = true), (o.receiveShadow = true)) : null));
+    stylize(this.decor);
   }
 
   private updateMarkers(state: GameState) {
@@ -588,8 +715,10 @@ export class World {
     this.raycaster.setFromCamera(ndc, this.camera);
     const objs = [...this.buildings.values()].map((b) => b.group);
     const hit = this.raycaster.intersectObjects(objs, true)[0];
-    if (hit?.object.userData.building) {
-      const spec = this.buildings.get(hit.object.userData.building)!.spec;
+    let ho: THREE.Object3D | null = hit?.object ?? null;
+    while (ho && !ho.userData.building) ho = ho.parent;
+    if (ho?.userData.building) {
+      const spec = this.buildings.get(ho.userData.building)!.spec;
       this.walkTo(this.doorOf(spec), spec.id);
       return;
     }
@@ -780,6 +909,15 @@ export class World {
       }
       p.needsUpdate = true;
     }
+    if (this.bus) {
+      this.busX += this.busDir * dt * 6;
+      if (Math.abs(this.busX) > 36) {
+        this.busDir *= -1;
+        this.bus.rotation.y = this.busDir > 0 ? 0 : Math.PI;
+      }
+      this.bus.position.set(this.busX, Math.abs(Math.sin(t * 9)) * 0.03, 29.5 + (this.busDir > 0 ? 0.9 : -0.9));
+    }
+    this.adaptQuality(dt);
     const cm = this.clickMarker.material as THREE.MeshBasicMaterial;
     cm.opacity = Math.max(0, cm.opacity - dt * 1.2);
 

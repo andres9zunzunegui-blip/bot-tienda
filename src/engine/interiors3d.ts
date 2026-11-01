@@ -1,6 +1,7 @@
 /** Interiores 3D de los edificios: aula, sala de audiencias, biblioteca, oficinas. */
 import * as THREE from "three";
 import { animateIdle, buildAvatar, type AvatarRig } from "./avatarMesh.ts";
+import { stylize } from "./style.ts";
 
 export interface Interior {
   scene: THREE.Scene;
@@ -172,6 +173,7 @@ export function buildInterior(id: string): Interior {
     target = new THREE.Vector3(0, 1.5, -2.5);
   }
   camera.lookAt(target);
+  stylize(scene, 0.4, 0.04);
   return { scene, camera, npcs, target };
 }
 

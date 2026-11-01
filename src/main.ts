@@ -22,6 +22,7 @@ import { installFx, setFxAnchor } from "./ui/fx.ts";
 import { openSimpleCity, renderHud, renderMenu } from "./ui/hud.ts";
 import { applyPrefs, initMusic } from "./ui/prefs.ts";
 import { lofi } from "./audio/lofi.ts";
+import { sfx } from "./audio/sfx.ts";
 import { interiorHooks, openInterior } from "./ui/interiors.ts";
 
 applyPrefs();
@@ -104,3 +105,8 @@ function syncEnv() {
   const rain = p.weather === "lluvia" || (p.weather === "auto" && lofi.playing && lofi.rain);
   world.setEnvironment(hour, rain);
 }
+
+// Sonido de "tecla" en todos los botones (los efectos se pueden apagar en Ajustes).
+document.addEventListener("pointerdown", (e) => {
+  if ((e.target as HTMLElement)?.closest?.("button, .btn, [role=radio]")) sfx.click();
+}, true);
