@@ -20,6 +20,10 @@ const ISO = new THREE.Vector3(1, 1.15, 1).normalize();
 const SCREEN_UP = new THREE.Vector3(-1, 0, -1).normalize();
 const SCREEN_RIGHT = new THREE.Vector3(1, 0, -1).normalize();
 const WORLD_HALF = 34;
+/** Puntos de paso de los estudiantes, sobre calles y plaza. */
+const WAYPOINTS = [
+  [7, 0], [-7, 0], [0, 7], [0, -7], [24, 0], [-24, 0], [0, 26], [0, -14], [14, 0], [-14, 0], [0, 14],
+].map(([x, z]) => new THREE.Vector3(x, 0, z));
 
 function rng(seed: number) {
   let s = seed;
@@ -79,6 +83,9 @@ export class World {
   private buildings = new Map<string, BuildingInstance>();
   private decor = new THREE.Group();
   private npcs: { rig: AvatarRig; base: THREE.Vector3; phase: number }[] = [];
+  private walkers: { rig: AvatarRig; target: THREE.Vector3; speed: number; wait: number }[] = [];
+  private attract = false;
+  private attractAngle = 0;
   private ground!: THREE.Mesh;
   private raycaster = new THREE.Raycaster();
   private running = false;
@@ -102,6 +109,7 @@ export class World {
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 1.08;
     container.appendChild(this.renderer.domElement);
     this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -200, 400);
     this.scene.background = new THREE.Color("#9fc6e8");
@@ -117,6 +125,8 @@ export class World {
     this.scene.add(this.clickMarker);
     this.rebuildPlayer(state);
     this.buildNPCs();
+    this.buildWalkers();
+    this.buildGardens();
     this.refresh(state, true);
     this.bindInput();
     this.resize();
@@ -196,6 +206,71 @@ export class World {
     g.position.set(x, 0, z);
     g.traverse((o) => ((o as THREE.Mesh).isMesh ? ((o.castShadow = true), (o.receiveShadow = true)) : null));
     return g;
+  }
+
+  /** Estudiantes que caminan por la ciudad: le dan vida al mundo. */
+  private buildWalkers() {
+    const looks = [
+      { suit: "#7a3b2e", hair: "#2b1d14", skin: "#e8c39e" },
+      { suit: "#2f5d50", hair: "#c9a15a", skin: "#f1d0b5" },
+      { suit: "#4a4f8a", hair: "#1d1611", skin: "#9a6a43" },
+      { suit: "#8a6d2e", hair: "#6b1f1f", skin: "#c68e62" },
+      { suit: "#3a3a3a", hair: "#9a9a9a", skin: "#e0b48a" },
+      { suit: "#5a2f5a", hair: "#3b2a1f", skin: "#d9a77c" },
+    ];
+    for (const [k, l] of looks.entries()) {
+      const rig = buildAvatar({ name: "", accessory: k % 2 ? "codigo" : "ninguno", glasses: k % 3 === 0, ...l });
+      rig.root.scale.setScalar(0.92);
+      const p = WAYPOINTS[k % WAYPOINTS.length];
+      rig.root.position.set(p.x, 0, p.z);
+      this.scene.add(rig.root);
+      this.walkers.push({ rig, target: WAYPOINTS[(k + 3) % WAYPOINTS.length].clone(), speed: 1.6 + Math.random() * 0.8, wait: Math.random() * 3 });
+    }
+  }
+
+  /** Canteros con flores y variaciones de césped. */
+  private buildGardens() {
+    const r = rng(42);
+    const patchGeo = new THREE.CircleGeometry(1, 10);
+    const patchMat = new THREE.MeshStandardMaterial({ color: "#5f9448", roughness: 1 });
+    const patches = new THREE.InstancedMesh(patchGeo, patchMat, 90);
+    const m = new THREE.Matrix4();
+    const q = new THREE.Quaternion().setFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0));
+    for (let i = 0; i < 90; i++) {
+      const s = 1 + r() * 2.5;
+      m.compose(new THREE.Vector3((r() * 2 - 1) * (WORLD_HALF - 2), 0.01, (r() * 2 - 1) * (WORLD_HALF - 2)), q, new THREE.Vector3(s, s * (0.6 + r() * 0.6), 1));
+      patches.setMatrixAt(i, m);
+    }
+    patches.receiveShadow = true;
+    this.scene.add(patches);
+    const colors = ["#f5d47e", "#ef7b8f", "#ffffff", "#b38cf0", "#ff9f5a"];
+    const flowerGeo = new THREE.IcosahedronGeometry(0.16, 0);
+    const flowers = new THREE.InstancedMesh(flowerGeo, new THREE.MeshStandardMaterial({ roughness: 0.6, flatShading: true }), 240);
+    const bedMat = new THREE.MeshStandardMaterial({ color: "#6b4a2b", roughness: 1 });
+    let fi = 0;
+    for (const b of BUILDINGS) {
+      for (const side of [-1, 1]) {
+        const x = b.x + side * (b.w / 2 - 0.9);
+        const z = b.z + b.d / 2 + 1.2;
+        const bed = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.25, 1.1), bedMat);
+        bed.position.set(x, 0.12, z);
+        bed.receiveShadow = true;
+        this.scene.add(bed);
+        for (let k = 0; k < 12 && fi < 240; k++, fi++) {
+          m.makeTranslation(x + (r() - 0.5) * 1.5, 0.32 + r() * 0.1, z + (r() - 0.5) * 0.8);
+          flowers.setMatrixAt(fi, m);
+          flowers.setColorAt(fi, new THREE.Color(colors[Math.floor(r() * colors.length)]));
+        }
+      }
+    }
+    flowers.count = fi;
+    flowers.castShadow = true;
+    this.scene.add(flowers);
+  }
+
+  /** Modo portada: la cámara gira lentamente alrededor de la plaza. */
+  setAttract(on: boolean) {
+    this.attract = on;
   }
 
   private buildNPCs() {
@@ -546,6 +621,24 @@ export class World {
     else animateIdle(this.player, t);
 
     for (const n of this.npcs) animateIdle(n.rig, t + n.phase);
+    for (const w of this.walkers) {
+      if (w.wait > 0) {
+        w.wait -= dt;
+        animateIdle(w.rig, t);
+        continue;
+      }
+      const to = w.target.clone().sub(w.rig.root.position).setY(0);
+      if (to.length() < 0.3) {
+        w.wait = 1 + Math.random() * 4;
+        w.target = WAYPOINTS[Math.floor(Math.random() * WAYPOINTS.length)].clone();
+        continue;
+      }
+      to.normalize();
+      w.rig.root.position.addScaledVector(to, w.speed * dt);
+      w.rig.root.rotation.y = Math.atan2(to.x, to.z);
+      animateWalk(w.rig, t * 0.8, 0.8);
+      w.rig.root.position.y = 0;
+    }
     const cm = this.clickMarker.material as THREE.MeshBasicMaterial;
     cm.opacity = Math.max(0, cm.opacity - dt * 1.2);
 
@@ -574,9 +667,15 @@ export class World {
 
     // Cámara isométrica siguiendo al jugador
     const focus = new THREE.Vector3(this.playerPos.x, 1, this.playerPos.z);
-    const desired = focus.clone().add(ISO.clone().multiplyScalar(60));
+    let camDir = ISO.clone();
+    if (this.attract) {
+      this.attractAngle += dt * 0.05;
+      focus.set(0, 1, 0);
+      camDir = ISO.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), this.attractAngle);
+    } else this.attractAngle = 0;
+    const desired = focus.clone().add(camDir.clone().multiplyScalar(60));
     this.camera.position.lerp(desired, Math.min(1, dt * 5));
-    const look = this.camera.position.clone().sub(ISO.clone().multiplyScalar(60));
+    const look = this.camera.position.clone().sub(camDir.clone().multiplyScalar(60));
     this.camera.lookAt(look);
     this.renderer.render(this.scene, this.camera);
   };

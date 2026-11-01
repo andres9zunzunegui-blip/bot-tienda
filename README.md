@@ -30,6 +30,9 @@ Sin `ANTHROPIC_API_KEY` el juego funciona igual con un **evaluador local** (reco
 |---|---|
 | **Aula de reels**: 4 capítulos de teoría (ilícitos, clausura, acta y audiencia, recursos) en reels verticales animados, con avance automático, narración por voz, gestos, guardado en memoria y mini-preguntas obligatorias. También se generan reels a partir de tu material | ✅ |
 | **Primero aprender, después aplicar**: el caso, los exámenes y la red práctica se habilitan al completar sus capítulos; una guía de "siguiente paso" y una bienvenida orientan el recorrido | ✅ |
+| **Portada y botones rediseñados**: iconos de línea propios, botones con relieve y foco visible, ficha del estudiante, botón "Continuar" que lleva al siguiente paso, y la ciudad girando de fondo | ✅ |
+| **Música para estudiar**: lofi generado en vivo (3 estaciones y lluvia opcional). No se repite y dura lo que quieras. También acepta un archivo de audio propio | ✅ |
+| **Accesibilidad**: tamaño de texto, letra de alta legibilidad, alto contraste, reducir animaciones, velocidad y narración de los reels, y modo simple sin ciudad 3D | ✅ |
 | Ciudad isométrica 3D con 9 edificios, NPCs y marcadores de misión | ✅ |
 | Personaje controlable y personalizable (piel, pelo, trajes, accesorios) | ✅ |
 | Facultad y Tribunales con interiores interactivos | ✅ |

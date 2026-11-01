@@ -75,6 +75,24 @@ export interface MaterialMeta {
   warnings: string[];
 }
 
+/** Preferencias de accesibilidad y música. */
+export interface Prefs {
+  scale: number; // 1, 1.15, 1.3
+  legible: boolean; // tipografía de alta legibilidad
+  contrast: boolean; // alto contraste
+  reduceMotion: boolean;
+  simple: boolean; // modo simple: sin ciudad 3D, navegación por listas
+  autoAdvance: boolean; // reels avanzan solos
+  reelPace: number; // multiplicador de duración de reels (1 normal, 1.5 lento, 2 muy lento)
+  narrate: boolean; // narración automática en reels
+  music: { on: boolean; station: string; volume: number; rain: boolean };
+}
+
+export function defaultPrefs(): Prefs {
+  const rm = typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  return { scale: 1, legible: false, contrast: false, reduceMotion: rm, simple: false, autoAdvance: true, reelPace: 1, narrate: false, music: { on: false, station: "biblioteca", volume: 0.5, rain: false } };
+}
+
 export interface GameState {
   version: number;
   createdAt: number;
@@ -95,6 +113,7 @@ export interface GameState {
   /** Progreso en los capítulos de teoría (reels). */
   chapters: Record<string, { seen: number; done: boolean; best: number; at?: number }>;
   welcomed: boolean;
+  prefs: Prefs;
   materials: MaterialMeta[];
   settings: { jurisdiccion: Jurisdiccion; fechaReferencia: string; oralRigor: "normal" | "exigente" };
   playerPos: { x: number; z: number };
@@ -127,6 +146,7 @@ export function defaultState(): GameState {
     specialMissions: [],
     chapters: {},
     welcomed: false,
+    prefs: defaultPrefs(),
     materials: [],
     settings: { jurisdiccion: "Nacional", fechaReferencia: today(), oralRigor: "normal" },
     playerPos: { x: 0, z: 6 },
@@ -156,7 +176,10 @@ class Store {
       const raw = this.storage?.getItem(KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (parsed.version === STATE_VERSION) return { ...defaultState(), ...parsed };
+        if (parsed.version === STATE_VERSION) {
+          const d = defaultState();
+          return { ...d, ...parsed, prefs: { ...d.prefs, ...(parsed.prefs ?? {}), music: { ...d.prefs.music, ...(parsed.prefs?.music ?? {}) } } };
+        }
       }
     } catch {
       /* estado corrupto: se reinicia */

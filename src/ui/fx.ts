@@ -15,6 +15,7 @@ function floatText(text: string) {
 }
 
 export function confetti(n = 60) {
+  if (document.documentElement.dataset.reduceMotion === "1") return;
   const colors = ["#f5d47e", "#e3b448", "#5aa2f0", "#4cc38a", "#ef5b5b", "#ffffff"];
   for (let i = 0; i < n; i++) {
     const c = h("div", {

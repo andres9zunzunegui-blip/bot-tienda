@@ -70,18 +70,19 @@ export function openLearn() {
 
 /* ------------------------------ Reproductor ------------------------------ */
 
-const reduceMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+/** Sin avance automático si el jugador lo desactivó. */
+const manualOnly = () => !store.state.prefs.autoAdvance;
 
 function durationOf(r: Reel): number {
   if (r.kind === "check") return Infinity;
   const text = JSON.stringify(r).length;
-  return Math.min(17000, 6500 + text * 18);
+  return Math.min(17000, 6500 + text * 18) * (store.state.prefs.reelPace || 1);
 }
 
 export function openReels(ch: Chapter) {
   let i = 0;
   let paused = false;
-  let voice = false;
+  let voice = store.state.prefs.narrate;
   let elapsed = 0;
   let last = performance.now();
   let raf = 0;
@@ -100,9 +101,9 @@ export function openReels(ch: Chapter) {
     const bars = h("div", { class: "reel-bars" }, ch.reels.map(() => h("span", null, h("i"))));
     const content = h("div", { class: "reel-content" });
     const caption = h("div", { class: "reel-caption" });
-    const pauseBtn = h("button", { class: "reel-btn", title: "Pausar", onclick: () => togglePause() }, "⏸");
-    const voiceBtn = h("button", { class: "reel-btn", title: "Narración por voz", onclick: () => ((voice = !voice), voiceBtn.classList.toggle("on", voice), voice ? speak() : speechSynthesis?.cancel()) }, "🔊");
-    const saveBtn = h("button", { class: "reel-btn", title: "Guardar en el entrenador de memoria", onclick: () => save() }, "❤");
+    const pauseBtn = h("button", { class: "reel-btn", title: "Pausar", "aria-label": "Pausar o reanudar", onclick: () => togglePause() }, "⏸");
+    const voiceBtn = h("button", { class: `reel-btn ${voice ? "on" : ""}`, title: "Narración por voz", "aria-label": "Narración por voz", onclick: () => ((voice = !voice), voiceBtn.classList.toggle("on", voice), voice ? speak() : speechSynthesis?.cancel()) }, "🔊");
+    const saveBtn = h("button", { class: "reel-btn", title: "Guardar en el entrenador de memoria", "aria-label": "Guardar en repaso", onclick: () => save() }, "❤");
     const phone = h(
       "div",
       { class: "reel-phone", style: `--c:${ch.color}` },
@@ -296,8 +297,8 @@ export function openReels(ch: Chapter) {
         elapsed += dt;
         const bar = bars.children[i]?.firstChild as HTMLElement | undefined;
         if (bar) bar.style.width = `${Math.min(100, (elapsed / dur) * 100)}%`;
-        if (elapsed >= dur && !speaking && !reduceMotion()) next();
-        else if (elapsed >= dur && !speaking && reduceMotion()) bar && (bar.style.width = "100%");
+        if (elapsed >= dur && !speaking && !manualOnly()) next();
+        else if (elapsed >= dur && !speaking && manualOnly() && bar) bar.style.width = "100%";
       }
       raf = requestAnimationFrame(tick);
     };

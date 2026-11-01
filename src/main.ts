@@ -18,9 +18,12 @@ import { World } from "./engine/world.ts";
 import { ensureDailyMissions } from "./systems/gamification.ts";
 import { h, panelOpen, toast } from "./ui/dom.ts";
 import { installFx, setFxAnchor } from "./ui/fx.ts";
-import { renderHud, renderMenu } from "./ui/hud.ts";
+import { openSimpleCity, renderHud, renderMenu } from "./ui/hud.ts";
+import { applyPrefs, initMusic } from "./ui/prefs.ts";
 import { openInterior } from "./ui/interiors.ts";
 
+applyPrefs();
+initMusic();
 ensureDailyMissions();
 setInterval(ensureDailyMissions, 60_000);
 installFx();
@@ -41,6 +44,7 @@ try {
   world.start();
   (window as unknown as { __legalLifeWorld: World }).__legalLifeWorld = world; // depuración / pruebas E2E
   world.setPaused(true);
+  world.setAttract(true);
   store.subscribe((s) => world?.refresh(s));
   setFxAnchor(() => (playing && world ? world.playerScreen() : { x: innerWidth / 2, y: innerHeight / 2 }));
 } catch (e) {
@@ -49,8 +53,13 @@ try {
 }
 
 const menu = renderMenu(menuEl, () => {
-  if (!world) return toast("El mundo 3D no está disponible en este navegador.", "warn");
+  if (store.state.prefs.simple || !world) {
+    if (!world && !store.state.prefs.simple) toast("El mundo 3D no está disponible: usamos el modo simple.", "warn");
+    if (!store.state.welcomed) return showWelcome();
+    return openSimpleCity();
+  }
   playing = true;
+  world.setAttract(false);
   menu.hide();
   hudEl.style.display = "";
   world.setPaused(panelOpen());
@@ -62,6 +71,7 @@ function showMenu() {
   hudEl.style.display = "none";
   menu.show();
   world?.setPaused(true);
+  world?.setAttract(true);
 }
 
 // Pausa el mundo mientras hay un panel abierto.
