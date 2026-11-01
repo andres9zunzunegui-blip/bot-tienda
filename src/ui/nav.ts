@@ -14,7 +14,8 @@ export type ScreenId =
   | "upload"
   | "cases"
   | "learn"
-  | "reels";
+  | "reels"
+  | "plan";
 
 const registry = new Map<ScreenId, (arg?: unknown) => void>();
 

@@ -1,5 +1,6 @@
 /** Interiores de los edificios: cada uno da acceso a los sistemas correspondientes. */
 import { CLAUSURA } from "../content/clausura.ts";
+import { DETERMINACION } from "../content/determinacion.ts";
 import { store } from "../core/state.ts";
 import { BUILDINGS } from "../engine/buildings.ts";
 import { BUILDING_UNLOCKS } from "../systems/gamification.ts";
@@ -65,7 +66,8 @@ const INTERIORS: Record<string, { bg: string; npc: string; speech: string; actio
     npc: "🕵️",
     speech: "Inspector Ledesma: «Desde acá se labran las actas. Conocer cómo trabajamos te hace mejor defensor/a.»",
     actions: [
-      { icon: "📚", title: "Facultades del organismo", desc: "Arts. 35, 40 y 41 en la biblioteca.", run: nav("library") },
+      { icon: "🧮", title: "Caso: determinación de oficio", desc: "Defendé a la Imprenta Los Andes.", run: () => guard("sim:determinacion", () => openSimulator(DETERMINACION)) },
+      { icon: "📚", title: "Facultades del organismo", desc: "Arts. 16, 17, 35, 40 y 41 en la biblioteca.", run: nav("library") },
       { icon: "🕸️", title: "Red: procedimientos", desc: "Ubicá el organismo en la red.", run: nav("maps", "evaluar") },
     ],
   },
@@ -104,6 +106,13 @@ const INTERIORS: Record<string, { bg: string; npc: string; speech: string; actio
   },
 };
 
+/** Ganchos hacia el motor 3D (los registra main.ts cuando hay ciudad 3D). */
+export const interiorHooks = {
+  available: () => false,
+  show: (_id: string) => {},
+  hide: () => {},
+};
+
 export function openInterior(id: string) {
   const spec = BUILDINGS.find((b) => b.id === id)!;
   const unlocked = store.state.unlocked.includes(id);
@@ -115,9 +124,13 @@ export function openInterior(id: string) {
     return;
   }
   const it = INTERIORS[id];
-  openPanel({ title: `${spec.icon} ${spec.name}` }, (body) => {
-    add(body, 
-      h("div", { class: "interior", style: `background:${it.bg}` }, h("div", { class: "npc" }, it.npc), h("div", { class: "speech" }, it.speech)),
+  const in3d = interiorHooks.available();
+  if (in3d) interiorHooks.show(id);
+  openPanel({ title: `${spec.icon} ${spec.name}`, cls: in3d ? "interior-panel" : "", onClose: in3d ? () => interiorHooks.hide() : undefined }, (body) => {
+    add(body,
+      in3d
+        ? h("div", { class: "speech-3d" }, it.speech)
+        : h("div", { class: "interior", style: `background:${it.bg}` }, h("div", { class: "npc" }, it.npc), h("div", { class: "speech" }, it.speech)),
       h("div", { class: "grid c2" }, it.actions.map((a) => h("div", { class: "card click", onclick: a.run }, h("h3", null, `${a.icon} ${a.title}`), h("p", { class: "muted" }, a.desc)))),
     );
   });

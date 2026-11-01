@@ -67,6 +67,8 @@ export interface Scenario {
   role: string;
   summary: string;
   jurisdiccion: string;
+  /** Tema principal para el registro de progreso. */
+  topic?: string;
   start: string;
   stages: Record<string, Stage>;
   docs: Record<string, Doc>;

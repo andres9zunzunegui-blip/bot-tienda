@@ -12,6 +12,7 @@ import "./ui/screens/memory.ts";
 import "./ui/screens/materials.ts";
 import "./ui/screens/meta.ts";
 import "./ui/screens/reels.ts";
+import "./ui/screens/plan.ts";
 import { showWelcome } from "./ui/welcome.ts";
 import { store } from "./core/state.ts";
 import { World } from "./engine/world.ts";
@@ -20,7 +21,8 @@ import { h, panelOpen, toast } from "./ui/dom.ts";
 import { installFx, setFxAnchor } from "./ui/fx.ts";
 import { openSimpleCity, renderHud, renderMenu } from "./ui/hud.ts";
 import { applyPrefs, initMusic } from "./ui/prefs.ts";
-import { openInterior } from "./ui/interiors.ts";
+import { lofi } from "./audio/lofi.ts";
+import { interiorHooks, openInterior } from "./ui/interiors.ts";
 
 applyPrefs();
 initMusic();
@@ -45,7 +47,16 @@ try {
   (window as unknown as { __legalLifeWorld: World }).__legalLifeWorld = world; // depuración / pruebas E2E
   world.setPaused(true);
   world.setAttract(true);
-  store.subscribe((s) => world?.refresh(s));
+  store.subscribe((s) => {
+    world?.refresh(s);
+    syncEnv();
+  });
+  lofi.onChange(syncEnv);
+  interiorHooks.available = () => playing && !store.state.prefs.simple;
+  interiorHooks.show = (id) => world?.showInterior(id);
+  interiorHooks.hide = () => world?.hideInterior();
+  setInterval(syncEnv, 60_000);
+  syncEnv();
   setFxAnchor(() => (playing && world ? world.playerScreen() : { x: innerWidth / 2, y: innerHeight / 2 }));
 } catch (e) {
   console.error(e);
@@ -83,3 +94,13 @@ setInterval(() => {
   store.state.playerPos = world.getPlayerPos();
   store.save();
 }, 5000);
+
+/** Hora del día y clima de la ciudad según las preferencias y la música. */
+function syncEnv() {
+  if (!world) return;
+  const p = store.state.prefs;
+  const d = new Date();
+  const hour = p.dayCycle ? d.getHours() + d.getMinutes() / 60 : 12;
+  const rain = p.weather === "lluvia" || (p.weather === "auto" && lofi.playing && lofi.rain);
+  world.setEnvironment(hour, rain);
+}

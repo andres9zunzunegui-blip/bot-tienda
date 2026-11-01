@@ -10,6 +10,7 @@ import { newCard, upsertCard } from "../../systems/memory.ts";
 import { contentCardsFor } from "../../systems/seed.ts";
 import { add, clear, h, openPanel, pct, toast } from "../dom.ts";
 import { go, registerScreen } from "../nav.ts";
+import { AIUnavailable, aiMode, explainSimply } from "../../core/ai.ts";
 
 /* ------------------------------ Índice de capítulos ------------------------------ */
 
@@ -103,6 +104,24 @@ export function openReels(ch: Chapter) {
     const caption = h("div", { class: "reel-caption" });
     const pauseBtn = h("button", { class: "reel-btn", title: "Pausar", "aria-label": "Pausar o reanudar", onclick: () => togglePause() }, "⏸");
     const voiceBtn = h("button", { class: `reel-btn ${voice ? "on" : ""}`, title: "Narración por voz", "aria-label": "Narración por voz", onclick: () => ((voice = !voice), voiceBtn.classList.toggle("on", voice), voice ? speak() : speechSynthesis?.cancel()) }, "🔊");
+    const explainBox = h("div", { class: "reel-explain", hidden: true });
+    const explainBtn = h("button", { class: "reel-btn", title: "Explicámelo de otra forma", "aria-label": "Explicámelo de otra forma", hidden: true, onclick: () => explain() }, "?");
+    aiMode().then((m) => (explainBtn.hidden = m !== "cuenta"));
+    const explain = async () => {
+      const r = ch.reels[i];
+      if (r.kind === "check") return toast("Primero intentá responder: después te lo explico.", "info", 2000);
+      setPaused(true);
+      explainBox.hidden = false;
+      clear(explainBox);
+      const txt = h("p", null, "Pensando una explicación más simple…");
+      add(explainBox, h("div", { class: "row between" }, h("b", null, "En palabras simples"), h("button", { class: "icon-btn", "aria-label": "Cerrar", onclick: () => ((explainBox.hidden = true), setPaused(false)) }, "✕")), txt);
+      try {
+        await explainSimply(r.title, reelSpoken(r), (t) => (txt.textContent = t));
+      } catch (e) {
+        txt.textContent = e instanceof AIUnavailable ? "La IA no está habilitada en esta vista." : (e as Error).message;
+        if (e instanceof AIUnavailable) explainBtn.hidden = true;
+      }
+    };
     const saveBtn = h("button", { class: "reel-btn", title: "Guardar en el entrenador de memoria", "aria-label": "Guardar en repaso", onclick: () => save() }, "❤");
     const phone = h(
       "div",
@@ -111,7 +130,8 @@ export function openReels(ch: Chapter) {
       h("div", { class: "reel-top" }, h("span", null, `Cap. ${ch.number} · ${ch.title}`), h("span", { class: "reel-count" })),
       content,
       caption,
-      h("div", { class: "reel-rail" }, saveBtn, voiceBtn, pauseBtn),
+      h("div", { class: "reel-rail" }, explainBtn, saveBtn, voiceBtn, pauseBtn),
+      explainBox,
       h("button", { class: "reel-tap left", "aria-label": "Reel anterior", onclick: () => prev() }),
       h("button", { class: "reel-tap right", "aria-label": "Reel siguiente", onclick: () => next() }),
     );
@@ -168,6 +188,7 @@ export function openReels(ch: Chapter) {
     };
 
     const render = () => {
+      explainBox.hidden = true;
       elapsed = 0;
       const r = ch.reels[i];
       phone.querySelector(".reel-count")!.textContent = `${i + 1}/${ch.reels.length}`;

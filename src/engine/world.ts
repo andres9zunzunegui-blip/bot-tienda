@@ -10,6 +10,7 @@ import { levelFromXp } from "../systems/gamification.ts";
 import { chapterDone, missingChapters } from "../modules/reels/progress.ts";
 import { animateIdle, animateWalk, buildAvatar, type AvatarRig } from "./avatarMesh.ts";
 import { BUILDINGS, constructionSite, type BuildingSpec } from "./buildings.ts";
+import { animateInterior, buildInterior, type Interior } from "./interiors3d.ts";
 
 export interface WorldCallbacks {
   onEnter: (id: string) => void;
@@ -85,6 +86,14 @@ export class World {
   private npcs: { rig: AvatarRig; base: THREE.Vector3; phase: number }[] = [];
   private walkers: { rig: AvatarRig; target: THREE.Vector3; speed: number; wait: number }[] = [];
   private attract = false;
+  private interior: Interior | null = null;
+  private interiorCache = new Map<string, Interior>();
+  private hemi!: THREE.HemisphereLight;
+  private sun!: THREE.DirectionalLight;
+  private rain: THREE.LineSegments | null = null;
+  private rainOn = false;
+  private nightFactor = 0;
+  private lamps: THREE.PointLight[] = [];
   private attractAngle = 0;
   private ground!: THREE.Mesh;
   private raycaster = new THREE.Raycaster();
@@ -126,6 +135,7 @@ export class World {
     this.rebuildPlayer(state);
     this.buildNPCs();
     this.buildWalkers();
+    this.buildLamps();
     this.buildGardens();
     this.refresh(state, true);
     this.bindInput();
@@ -136,8 +146,10 @@ export class World {
   /* ------------------------------ Escena ------------------------------ */
 
   private buildLights() {
-    this.scene.add(new THREE.HemisphereLight("#dfefff", "#4b6b3a", 1.1));
+    this.hemi = new THREE.HemisphereLight("#dfefff", "#4b6b3a", 1.1);
+    this.scene.add(this.hemi);
     const sun = new THREE.DirectionalLight("#fff2d6", 2.2);
+    this.sun = sun;
     sun.position.set(30, 50, 20);
     sun.castShadow = true;
     sun.shadow.mapSize.set(2048, 2048);
@@ -266,6 +278,92 @@ export class World {
     flowers.count = fi;
     flowers.castShadow = true;
     this.scene.add(flowers);
+  }
+
+  /**
+   * Ambiente: hora del día (0-24) y lluvia. Interpola cielo, sol y luz ambiente,
+   * enciende ventanas y faroles de noche y muestra gotas cuando llueve.
+   */
+  setEnvironment(hour: number, rain: boolean) {
+    const keys: [number, string, string, number, number][] = [
+      // hora, cielo, color del sol, intensidad del sol, intensidad ambiente
+      [0, "#0d1630", "#8aa2ff", 0.25, 0.35],
+      [5.5, "#1c2448", "#9aa8ff", 0.3, 0.45],
+      [7, "#f0b48c", "#ffc79a", 1.3, 0.8],
+      [9, "#9fc6e8", "#fff2d6", 2.2, 1.1],
+      [17, "#9fc6e8", "#fff2d6", 2.2, 1.1],
+      [19, "#e98b6b", "#ffab73", 1.2, 0.75],
+      [20.5, "#2a2550", "#9a8cff", 0.4, 0.45],
+      [24, "#0d1630", "#8aa2ff", 0.25, 0.35],
+    ];
+    let a = keys[0];
+    let b = keys[keys.length - 1];
+    for (let i = 0; i < keys.length - 1; i++)
+      if (hour >= keys[i][0] && hour <= keys[i + 1][0]) {
+        a = keys[i];
+        b = keys[i + 1];
+        break;
+      }
+    const t = (hour - a[0]) / Math.max(0.001, b[0] - a[0]);
+    const sky = new THREE.Color(a[1]).lerp(new THREE.Color(b[1]), t);
+    const sunCol = new THREE.Color(a[2]).lerp(new THREE.Color(b[2]), t);
+    let sunI = a[3] + (b[3] - a[3]) * t;
+    let hemiI = a[4] + (b[4] - a[4]) * t;
+    if (rain) {
+      sky.lerp(new THREE.Color("#5d6b7d"), 0.55);
+      sunI *= 0.45;
+      hemiI *= 0.8;
+    }
+    (this.scene.background as THREE.Color).copy(sky);
+    (this.scene.fog as THREE.Fog).color.copy(sky);
+    this.sun.color.copy(sunCol);
+    this.sun.intensity = sunI;
+    this.hemi.intensity = hemiI;
+    const ang = ((hour - 6) / 12) * Math.PI; // el sol recorre el cielo de 6 a 18
+    this.sun.position.set(Math.cos(ang) * 40, Math.max(12, Math.sin(ang) * 55), 25);
+    this.nightFactor = Math.max(0, Math.min(1, (0.9 - sunI) / 0.6));
+    for (const inst of this.buildings.values())
+      inst.group.traverse((o) => {
+        const m = (o as THREE.Mesh).material as THREE.MeshStandardMaterial | undefined;
+        if (m?.emissive && m.emissive.getHex() !== 0) m.emissiveIntensity = 0.35 + this.nightFactor * 1.4;
+      });
+    for (const l of this.lamps) l.intensity = this.nightFactor * 14;
+    this.setRain(rain);
+  }
+
+  private setRain(on: boolean) {
+    this.rainOn = on;
+    if (on && !this.rain) {
+      const n = 1400;
+      const pos = new Float32Array(n * 6);
+      for (let i = 0; i < n; i++) {
+        const x = (Math.random() * 2 - 1) * 40;
+        const y = Math.random() * 30;
+        const z = (Math.random() * 2 - 1) * 40;
+        pos.set([x, y, z, x + 0.15, y - 0.9, z + 0.15], i * 6);
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+      this.rain = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ color: "#cfe0ff", transparent: true, opacity: 0.45 }));
+      this.scene.add(this.rain);
+    }
+    if (this.rain) this.rain.visible = on;
+  }
+
+  /** Faroles con luz real alrededor de la plaza (se encienden de noche). */
+  private buildLamps() {
+    const metal = new THREE.MeshStandardMaterial({ color: "#2b2f38", metalness: 0.5 });
+    const glass = new THREE.MeshStandardMaterial({ color: "#ffe9a8", emissive: "#ffd66b", emissiveIntensity: 1 });
+    for (const [x, z] of [[6.8, 2.6], [-6.8, 2.6], [6.8, -2.6], [-6.8, -2.6]]) {
+      const p = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.12, 3.4, 6), metal);
+      p.position.set(x, 1.7, z);
+      const g = new THREE.Mesh(new THREE.SphereGeometry(0.28, 10, 8), glass);
+      g.position.set(x, 3.5, z);
+      const light = new THREE.PointLight("#ffcf7a", 0, 14, 1.6);
+      light.position.set(x, 3.3, z);
+      this.lamps.push(light);
+      this.scene.add(p, g, light);
+    }
   }
 
   /** Modo portada: la cámara gira lentamente alrededor de la plaza. */
@@ -567,9 +665,31 @@ export class World {
     return Math.abs(x) > WORLD_HALF - 2 || Math.abs(z) > WORLD_HALF - 2;
   }
 
+  /** Entra a la vista interior 3D de un edificio. */
+  showInterior(id: string) {
+    let it = this.interiorCache.get(id);
+    if (!it) {
+      it = buildInterior(id);
+      this.interiorCache.set(id, it);
+    }
+    this.interior = it;
+  }
+
+  hideInterior() {
+    this.interior = null;
+  }
+
   private tick = () => {
     const dt = Math.min(0.05, this.clock.getDelta());
     const t = this.clock.elapsedTime;
+    if (this.interior) {
+      const r = this.renderer.domElement;
+      this.interior.camera.aspect = r.clientWidth / Math.max(1, r.clientHeight);
+      this.interior.camera.updateProjectionMatrix();
+      animateInterior(this.interior, t);
+      this.renderer.render(this.interior.scene, this.interior.camera);
+      return;
+    }
     const dir = new THREE.Vector3();
     if (!this.paused) {
       if (this.keys.has("w") || this.keys.has("arrowup")) dir.add(SCREEN_UP);
@@ -638,6 +758,27 @@ export class World {
       w.rig.root.rotation.y = Math.atan2(to.x, to.z);
       animateWalk(w.rig, t * 0.8, 0.8);
       w.rig.root.position.y = 0;
+    }
+    if (this.rain && this.rainOn) {
+      const p = this.rain.geometry.getAttribute("position") as THREE.BufferAttribute;
+      const arr = p.array as Float32Array;
+      const cx = this.attract ? 0 : this.playerPos.x;
+      const cz = this.attract ? 0 : this.playerPos.z;
+      for (let i = 0; i < arr.length; i += 6) {
+        let y = arr[i + 1] - dt * 28;
+        if (y < 0) {
+          y = 26 + Math.random() * 6;
+          const x = cx + (Math.random() * 2 - 1) * 40;
+          const z = cz + (Math.random() * 2 - 1) * 40;
+          arr[i] = x;
+          arr[i + 2] = z;
+          arr[i + 3] = x + 0.15;
+          arr[i + 5] = z + 0.15;
+        }
+        arr[i + 1] = y;
+        arr[i + 4] = y - 0.9;
+      }
+      p.needsUpdate = true;
     }
     const cm = this.clickMarker.material as THREE.MeshBasicMaterial;
     cm.opacity = Math.max(0, cm.opacity - dt * 1.2);

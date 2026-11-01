@@ -12,6 +12,7 @@ export const REQUIREMENTS: Record<string, { label: string; chapters: string[] }>
   escrito: { label: "el simulacro escrito", chapters: ["cap1", "cap2", "cap3", "cap4"] },
   "oral:juez": { label: "la audiencia con la jueza", chapters: ["cap4"] },
   "oral:profesor": { label: "el examen oral", chapters: ["cap1"] },
+  "sim:determinacion": { label: "el caso de determinación de oficio", chapters: ["cap5"] },
 };
 
 /** Capítulo que habilita cada tema de examen oral. */
@@ -35,15 +36,23 @@ export function topicUnlocked(s: GameState, topic: string): boolean {
 
 export interface NextStep {
   text: string;
-  action: { type: "chapter"; id: string } | { type: "sim" } | { type: "oral" } | { type: "memory" } | { type: "map" };
+  action: { type: "chapter"; id: string } | { type: "sim"; id: "clausura" | "determinacion" } | { type: "oral" } | { type: "memory" } | { type: "map" };
 }
 
 /** Guía del jugador: primero aprender, después aplicar, después consolidar. */
 export function nextStep(s: GameState): NextStep {
-  const pending = CHAPTERS.find((c) => !chapterDone(s, c.id));
-  if (pending) return { text: `Facultad · Aula de reels: Capítulo ${pending.number} — ${pending.title}`, action: { type: "chapter", id: pending.id } };
-  if (!s.log.some((l) => l.kind === "simulacion" && l.quality >= 0.6)) return { text: "Tribunales: defendé a Marta en el caso de clausura", action: { type: "sim" } };
+  const sim = (id: string) => s.log.some((l) => l.kind === "simulacion" && l.id === id && l.quality >= 0.6);
+  const firstPending = (ids: string[]) => CHAPTERS.find((c) => ids.includes(c.id) && !chapterDone(s, c.id));
+  const chap = (c: (typeof CHAPTERS)[number]): NextStep => ({ text: `Facultad · Aula de reels: Capítulo ${c.number} — ${c.title}`, action: { type: "chapter", id: c.id } });
+  const base = firstPending(["cap1", "cap2", "cap3", "cap4"]);
+  if (base) return chap(base);
+  if (!sim("clausura-11683")) return { text: "Tribunales: defendé a Marta en el caso de clausura", action: { type: "sim", id: "clausura" } };
   if (!s.log.some((l) => l.kind === "oral" && l.quality >= 0.6)) return { text: "Facultad: rendí el examen oral con el Prof. Ibarra", action: { type: "oral" } };
+  const c5 = firstPending(["cap5"]);
+  if (c5) return chap(c5);
+  if (!sim("determinacion-11683")) return { text: "ARCA: defendé a la Imprenta Los Andes (determinación de oficio)", action: { type: "sim", id: "determinacion" } };
+  const c6 = firstPending(["cap6"]);
+  if (c6) return chap(c6);
   if (s.cards.some((c) => c.due <= Date.now())) return { text: "Repasá tus tarjetas vencidas", action: { type: "memory" } };
   return { text: "Centro de investigación: reconstruí la red de memoria", action: { type: "map" } };
 }

@@ -1,5 +1,6 @@
 /** CARGA Y PROCESAMIENTO DE MATERIAL DE ESTUDIO. */
-import { ApiError, aiMaterial, extractFile, getHealth } from "../../core/api.ts";
+import { ApiError, extractFile, getHealth } from "../../core/api.ts";
+import { aiMode, processMaterialAI } from "../../core/ai.ts";
 import { events, store, type MaterialMeta } from "../../core/state.ts";
 import { fromAI, processLocal, type ProcessedMaterial } from "../../modules/materials/processor.ts";
 import { deleteMaterial, loadMaterial, saveMaterial } from "../../modules/materials/storage.ts";
@@ -11,7 +12,7 @@ import { go, registerScreen } from "../nav.ts";
 
 export function openUpload(subject?: unknown) {
   openPanel({ title: "Cargar material", subtitle: "Apuntes, programas, legislación, jurisprudencia", back: () => go("study") }, async (body) => {
-    const hh = await getHealth();
+    const hh = { ...(await getHealth()), ai: (await aiMode()) !== null };
     const subj = h("select", null, SUBJECTS.map((s) => h("option", { value: s.id, selected: s.id === (subject ?? "tributario") }, s.name)));
     const name = h("input", { type: "text", placeholder: "Nombre (p. ej. 'Unidad 4 — Ilícitos')" });
     const file = h("input", { type: "file", accept: ".pdf,.docx,.pptx,.txt,.md,image/*" });
@@ -59,7 +60,7 @@ export function openUpload(subject?: unknown) {
         if (hh.ai) {
           say("Procesando con IA…");
           try {
-            processed = fromAI(await aiMaterial(SUBJECTS.find((s) => s.id === subj.value)!.name, text));
+            processed = fromAI(await processMaterialAI(SUBJECTS.find((s) => s.id === subj.value)!.name, text));
           } catch (e) {
             say(`La IA no pudo procesarlo (${(e as Error).message}). Se usa el procesamiento local.`, "");
             processed = processLocal(subj.value, text);

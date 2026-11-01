@@ -33,6 +33,11 @@ Sin `ANTHROPIC_API_KEY` el juego funciona igual con un **evaluador local** (reco
 | **Portada y botones rediseñados**: iconos de línea propios, botones con relieve y foco visible, ficha del estudiante, botón "Continuar" que lleva al siguiente paso, y la ciudad girando de fondo | ✅ |
 | **Música para estudiar**: lofi generado en vivo (3 estaciones y lluvia opcional). No se repite y dura lo que quieras. También acepta un archivo de audio propio | ✅ |
 | **Accesibilidad**: tamaño de texto, letra de alta legibilidad, alto contraste, reducir animaciones, velocidad y narración de los reels, y modo simple sin ciudad 3D | ✅ |
+| **IA sin configurar nada**: dentro del visor de Claude, el profesor, la jueza, la carga de material y el botón "Explicámelo de otra forma" de los reels usan la cuenta de Claude de quien juega (pide permiso la primera vez). Fuera del visor usa el servidor con `ANTHROPIC_API_KEY`, o el evaluador local | ✅ |
+| **Más contenido**: capítulos 5 (Determinación de oficio) y 6 (Ejecución fiscal), segundo caso jugable (Imprenta Los Andes, en el edificio de ARCA) y preguntas orales nuevas | ✅ |
+| **Racha diaria y plan de estudio**: racha de días seguidos con insignias, fecha de examen con cuenta regresiva y plan diario automático hasta el examen | ✅ |
+| **Interiores 3D**: aula con pizarrón, sala de audiencias con estrado, biblioteca, oficinas | ✅ |
+| **Día, noche y clima**: la ciudad sigue tu hora real (ventanas y faroles encendidos de noche) y llueve cuando suena la estación con lluvia, o cuando lo elegís | ✅ |
 | Ciudad isométrica 3D con 9 edificios, NPCs y marcadores de misión | ✅ |
 | Personaje controlable y personalizable (piel, pelo, trajes, accesorios) | ✅ |
 | Facultad y Tribunales con interiores interactivos | ✅ |
@@ -49,7 +54,7 @@ Sin `ANTHROPIC_API_KEY` el juego funciona igual con un **evaluador local** (reco
 
 * **OCR** de fotografías de textos: la app lo informa al intentar subir una imagen.
 * **Laboratorio de casos** generados por IA: hay una pantalla informativa. El motor de simulaciones ya está listo para nuevos casos.
-* **Otros simuladores** (determinación de oficio, ejecución fiscal, amparo, etc.): figuran como "no implementado".
+* **Otros simuladores** (ejecución fiscal, amparo, etc.): figuran como "no implementado".
 * **Contenido de referencia** para materias distintas de Tributario: por ahora se cargan con material propio.
 * **Normas provinciales**: el selector existe, pero sólo hay normas nacionales cargadas.
 * **Cuentas en servidor**: el progreso se guarda en el navegador, con exportación a JSON.

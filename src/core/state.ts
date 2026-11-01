@@ -85,12 +85,14 @@ export interface Prefs {
   autoAdvance: boolean; // reels avanzan solos
   reelPace: number; // multiplicador de duración de reels (1 normal, 1.5 lento, 2 muy lento)
   narrate: boolean; // narración automática en reels
+  dayCycle: boolean; // ciclo de día y noche según la hora real
+  weather: "auto" | "despejado" | "lluvia"; // auto = llueve si suena música con lluvia
   music: { on: boolean; station: string; volume: number; rain: boolean };
 }
 
 export function defaultPrefs(): Prefs {
   const rm = typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
-  return { scale: 1, legible: false, contrast: false, reduceMotion: rm, simple: false, autoAdvance: true, reelPace: 1, narrate: false, music: { on: false, station: "biblioteca", volume: 0.5, rain: false } };
+  return { scale: 1, legible: false, contrast: false, reduceMotion: rm, simple: false, autoAdvance: true, reelPace: 1, narrate: false, dayCycle: true, weather: "auto", music: { on: false, station: "biblioteca", volume: 0.5, rain: false } };
 }
 
 export interface GameState {
@@ -114,6 +116,8 @@ export interface GameState {
   chapters: Record<string, { seen: number; done: boolean; best: number; at?: number }>;
   welcomed: boolean;
   prefs: Prefs;
+  streak: { count: number; best: number; last: string };
+  exam: { date: string; label: string } | null;
   materials: MaterialMeta[];
   settings: { jurisdiccion: Jurisdiccion; fechaReferencia: string; oralRigor: "normal" | "exigente" };
   playerPos: { x: number; z: number };
@@ -147,6 +151,8 @@ export function defaultState(): GameState {
     chapters: {},
     welcomed: false,
     prefs: defaultPrefs(),
+    streak: { count: 0, best: 0, last: "" },
+    exam: null,
     materials: [],
     settings: { jurisdiccion: "Nacional", fechaReferencia: today(), oralRigor: "normal" },
     playerPos: { x: 0, z: 6 },

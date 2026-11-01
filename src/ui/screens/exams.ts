@@ -2,7 +2,7 @@
 import { CLAUSURA } from "../../content/clausura.ts";
 import { ORAL_BANK, notaFromQuality, type OralQuestion } from "../../content/oralBank.ts";
 import { TRIBUTARIO_MAP } from "../../content/tributarioMap.ts";
-import { aiOral, getHealth } from "../../core/api.ts";
+import { aiMode, evaluateOral, AIUnavailable } from "../../core/ai.ts";
 import { store } from "../../core/state.ts";
 import { evaluateLocal } from "../../modules/oral/localEvaluator.ts";
 import { recordActivity } from "../../systems/gamification.ts";
@@ -40,7 +40,8 @@ export function openExams(arg?: unknown) {
 
 function oralSetup(role: "profesor" | "juez") {
   openPanel({ title: role === "juez" ? "Audiencia con la jueza" : "Examen oral", back: () => openExams() }, async (body) => {
-    const hh = await getHealth();
+    const mode = await aiMode();
+    const hh = { ai: mode !== null };
     const topics = [...new Set(ORAL_BANK.filter((q) => role === "profesor" || q.role === "juez" || q.topic.includes("clausura")).map((q) => q.topic))];
     const topicSel = h("select", null, h("option", { value: "" }, "Todos los temas que ya estudiaste"), topics.map((t) => h("option", { value: t, disabled: !topicUnlocked(store.state, t) }, `${TOPICS[t]?.name ?? t}${topicUnlocked(store.state, t) ? "" : ` (🔒 ${chapterLabel(TOPIC_CHAPTER[t])})`}`)));
     const rigor = h("select", null, h("option", { value: "normal", selected: store.state.settings.oralRigor === "normal" }, "Normal"), h("option", { value: "exigente", selected: store.state.settings.oralRigor === "exigente" }, "Exigente (más repreguntas, exige citas)"));
@@ -49,7 +50,7 @@ function oralSetup(role: "profesor" | "juez") {
       h(
         "div",
         { class: "stack" },
-        h("p", { class: hh.ai ? "notice ok" : "notice" }, hh.ai ? "IA activa: el examinador comprende el sentido jurídico de tus respuestas y repregunta en consecuencia." : "IA no configurada en el servidor: se usa el evaluador LOCAL, que busca conceptos equivalentes (no palabras exactas) pero es aproximado."),
+        h("p", { class: hh.ai ? "notice ok" : "notice" }, hh.ai ? `${mode === "cuenta" ? "IA activa con tu cuenta de Claude (te va a pedir permiso la primera vez)" : "IA activa"}: el examinador entiende el sentido de tus respuestas y repregunta en consecuencia.` : "Sin IA en esta vista: corrige el evaluador local, que reconoce conceptos dichos con otras palabras pero es aproximado."),
         h("label", { class: "field" }, "Tema", topicSel),
         h("label", { class: "field" }, "Modalidad", rigor),
         h("label", { class: "row" }, voice, "Leer las preguntas en voz alta"),
@@ -159,7 +160,7 @@ function oralSession(role: "profesor" | "juez", rigor: "normal" | "exigente", qu
       let usedAI = false;
       if (ai) {
         try {
-          const ev = await aiOral({ role, rigor, question: q.question, keyPoints: q.keyPoints.map((k) => k.label), legalBasis: q.legalBasis, history: history.slice(0, -1), answer: text });
+          const ev = await evaluateOral({ role, rigor, question: q.question, keyPoints: q.keyPoints.map((k) => k.label), legalBasis: q.legalBasis, history: history.slice(0, -1), answer: text });
           crit = ev.criterios;
           score = Object.values(ev.criterios).reduce((a, b) => a + b, 0) / 50;
           repregunta = ev.repregunta;
@@ -171,7 +172,8 @@ function oralSession(role: "profesor" | "juez", rigor: "normal" | "exigente", qu
           ];
           usedAI = true;
         } catch (e) {
-          say("sys", `La IA no respondió (${(e as Error).message}). Se usa el evaluador local.`);
+          if (e instanceof AIUnavailable) ai = false;
+          say("sys", e instanceof AIUnavailable ? "La IA no está habilitada: sigo con el evaluador local." : `${(e as Error).message} Uso el evaluador local para esta respuesta.`);
         }
       }
       if (!usedAI) {

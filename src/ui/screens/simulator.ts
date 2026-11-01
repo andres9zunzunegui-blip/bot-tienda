@@ -1,6 +1,7 @@
 /** Interfaz del SIMULADOR DE PROCEDIMIENTOS JURÍDICOS. */
 import { CLAUSURA } from "../../content/clausura.ts";
-import { aiOral, getHealth } from "../../core/api.ts";
+import { DETERMINACION } from "../../content/determinacion.ts";
+import { aiMode, evaluateOral, AIUnavailable } from "../../core/ai.ts";
 import { store } from "../../core/state.ts";
 import { getRef, refLabel, refWarnings } from "../../legal/sources.ts";
 import { SimulationRun, type Choice, type DecisionRecord, type Scenario, type Stage } from "../../modules/simulator/engine.ts";
@@ -20,7 +21,6 @@ const PORTRAITS: Record<string, string> = {
 };
 
 const PENDING_SCENARIOS = [
-  { title: "Determinación de oficio (Ley 11.683)", subject: "Derecho Tributario" },
   { title: "Ejecución fiscal", subject: "Derecho Tributario" },
   { title: "Juicio ordinario: demanda y contestación", subject: "Derecho Procesal" },
   { title: "Reclamo por producto defectuoso", subject: "Derecho del Consumidor" },
@@ -30,7 +30,8 @@ const PENDING_SCENARIOS = [
 
 export function openSimulations() {
   openPanel({ title: "Simulaciones", subtitle: "Procedimientos jurídicos interactivos", wide: true }, (body) => {
-    const runs = store.state.log.filter((l) => l.kind === "simulacion");
+    const runs = store.state.log.filter((l) => l.kind === "simulacion" && l.id === CLAUSURA.id);
+    const runsDet = store.state.log.filter((l) => l.kind === "simulacion" && l.id === DETERMINACION.id);
     add(body, 
       h(
         "div",
@@ -42,6 +43,15 @@ export function openSimulations() {
           h("p", { class: "muted" }, CLAUSURA.summary),
           h("div", { class: "kv" }, h("b", null, "Tu rol"), h("span", null, CLAUSURA.role), h("b", null, "Jurisdicción"), h("span", null, CLAUSURA.jurisdiccion), h("b", null, "Etapas"), h("span", null, "10 fases, con ramificaciones")),
           runs.length ? h("p", null, `Mejor resultado: ${pct(Math.max(...runs.map((r) => r.quality)))} — ${runs.length} intento(s)`) : h("p", null, "Sin intentos todavía."),
+          h("button", { class: "btn gold" }, "Jugar"),
+        ),
+        h(
+          "div",
+          { class: "card click", onclick: () => guard("sim:determinacion", () => openSimulator(DETERMINACION)) },
+          h("div", { class: "row between" }, h("h3", null, "⚖️ ", DETERMINACION.title), h("span", { class: "tag ok" }, "Disponible")),
+          h("p", { class: "muted" }, DETERMINACION.summary),
+          h("div", { class: "kv" }, h("b", null, "Tu rol"), h("span", null, DETERMINACION.role), h("b", null, "Jurisdicción"), h("span", null, DETERMINACION.jurisdiccion), h("b", null, "Etapas"), h("span", null, "5 fases, con ramificaciones")),
+          runsDet.length ? h("p", null, `Mejor resultado: ${pct(Math.max(...runsDet.map((r) => r.quality)))} — ${runsDet.length} intento(s)`) : h("p", null, "Sin intentos todavía."),
           h("button", { class: "btn gold" }, "Jugar"),
         ),
         h(
@@ -59,7 +69,7 @@ export function openSimulations() {
 export function openSimulator(scenario: Scenario) {
   const run = new SimulationRun(scenario);
   let aiOn = false;
-  getHealth().then((hh) => (aiOn = hh.ai));
+  aiMode().then((m) => (aiOn = m !== null));
   let pending: DecisionRecord | null = null; // decisión tomada en una etapa con argumento
   let revealed: { rec: DecisionRecord; stage: Stage } | null = null;
   let docOpen: string | null = null;
@@ -138,7 +148,7 @@ export function openSimulator(scenario: Scenario) {
     const renderArgument = (st: Stage) => {
       const arg = st.argument!;
       const ta = h("textarea", { placeholder: "Escribí tu argumento con fundamento normativo…" });
-      const status = h("p", { class: "muted" }, aiOn ? "Evaluación con IA (juez/docente virtual)." : "Evaluación local aproximada (IA no configurada en el servidor).");
+      const status = h("p", { class: "muted" }, aiOn ? "Evaluación con IA (jueza virtual)." : "Evaluación local aproximada (sin IA en esta vista).");
       const btn = h("button", {
         class: "btn gold",
         onclick: async () => {
@@ -152,7 +162,7 @@ export function openSimulator(scenario: Scenario) {
           let external: { score: number; feedback: string } | undefined;
           if (aiOn) {
             try {
-              const ev = await aiOral({
+              const ev = await evaluateOral({
                 role: "juez",
                 rigor: store.state.settings.oralRigor,
                 question: `${st.narrative(run.ctx)}\n${arg.prompt}`,
@@ -167,7 +177,8 @@ export function openSimulator(scenario: Scenario) {
                 feedback: [ev.devolucion, ...ev.errores.map((e) => `✗ ${e.error} → ${e.correccion}`), ...ev.advertenciasNormativas.map((a) => `⚠️ ${a}`)].join(" "),
               };
             } catch (e) {
-              status.textContent = `La IA no respondió (${(e as Error).message}); se usa la evaluación local.`;
+              if (e instanceof AIUnavailable) aiOn = false;
+              status.textContent = e instanceof AIUnavailable ? "La IA no está habilitada: se usa la evaluación local." : `${(e as Error).message} Se usa la evaluación local.`;
             }
           }
           const rec = run.argue(text, external, pending ?? undefined);
@@ -248,7 +259,7 @@ function renderEnd(body: HTMLElement, run: SimulationRun) {
   const reward = recorded.get(run) ?? recordActivity({
     kind: "simulacion",
     id: s.id,
-    topic: "trib.clausura",
+    topic: s.topic ?? "trib.clausura",
     quality: score,
     label: `Simulación: ${s.title}`,
     topicQualities: run.topicQualities(),

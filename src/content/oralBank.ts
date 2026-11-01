@@ -115,6 +115,38 @@ export const ORAL_BANK: OralQuestion[] = [
     modelAnswer:
       "Porque la clausura tiene un régimen recursivo propio: apelación administrativa ante el superior (art. 77) y recurso judicial ante el fuero penal económico o federal (art. 78). La vía del art. 76 (reconsideración o Tribunal Fiscal) está prevista para determinaciones de tributos y multas. Además, la naturaleza penal de la clausura justifica su revisión por jueces del fuero penal.",
   },
+  {
+    id: "determinacion-procedimiento",
+    topic: "trib.determinacion",
+    role: "profesor",
+    question: "Explique el procedimiento de determinación de oficio y los recursos contra la resolución determinativa.",
+    keyPoints: [
+      { id: "procede", label: "Procede si no hay DDJJ o son impugnables (art. 16)", groups: [["impugn", "no (se )?present", "falta de (presentacion|declaracion)", "omiti"]], criterio: "precision" },
+      { id: "base", label: "Base cierta o presunta", groups: [["base"], ["cierta", "presunta", "presuncion"]], criterio: "precision", followUp: "¿Sobre qué bases puede determinarse el impuesto?" },
+      { id: "vista", label: "Vista con plazo de 15 días prorrogables", groups: [["vista"], ["(15|quince)", "descargo", "prorroga"]], criterio: "fundamentacion", followUp: "¿Qué es la vista y qué plazo tiene el contribuyente?" },
+      { id: "caducidad", label: "Caducidad: 90 días + pronto despacho + 30 días", groups: [["caduc", "pronto despacho"]], criterio: "precision", followUp: "¿Qué pasa si el organismo no resuelve en término?" },
+      { id: "art76", label: "Recursos del art. 76: reconsideración o Tribunal Fiscal, excluyentes, 15 días", groups: [["reconsideracion", "tribunal fiscal", "art(iculo|\\.)? ?76"], ["excluyente", "opcion", "una u otra", "(15|quince)"]], criterio: "relacion", followUp: "¿Qué vías recursivas hay contra la determinación y cómo se relacionan?" },
+    ],
+    legalBasis: ["Ley 11.683 arts. 16, 17 y 76 (paráfrasis, verificar)"],
+    modelAnswer:
+      "Cuando no se presentaron declaraciones juradas o son impugnables, el organismo determina de oficio sobre base cierta o presunta (art. 16). Se confiere vista al contribuyente por 15 días, prorrogables por única vez, para descargo y prueba, y luego el juez administrativo dicta resolución fundada; si pasan 90 días sin resolución, el contribuyente puede pedir pronto despacho y, 30 días después sin resolución, caduca el procedimiento (art. 17). Contra la resolución, dentro de 15 días, se puede optar entre reconsideración ante el superior o apelación ante el Tribunal Fiscal, vías excluyentes (art. 76).",
+  },
+  {
+    id: "ejecucion-excepciones",
+    topic: "trib.ejecucion",
+    role: "profesor",
+    question: "¿Qué es la ejecución fiscal y qué excepciones pueden oponerse?",
+    keyPoints: [
+      { id: "concepto", label: "Juicio de apremio para cobrar deudas firmes", groups: [["juicio", "apremio", "cobro"]], criterio: "precision" },
+      { id: "titulo", label: "Título: boleta de deuda", groups: [["boleta de deuda", "titulo ejecutivo"]], criterio: "terminologia", followUp: "¿Cuál es el título que funda la ejecución?" },
+      { id: "excepciones", label: "Pago total documentado, espera, prescripción, inhabilidad de título", groups: [["pago"], ["prescrip"], ["espera", "inhabilidad"]], criterio: "precision", followUp: "Enumere las excepciones admisibles." },
+      { id: "forma", label: "Inhabilidad sólo por vicios de forma: no se discute el fondo", groups: [["forma", "no se discute", "fondo"]], criterio: "relacion", followUp: "¿Se puede discutir la procedencia del impuesto en la ejecución fiscal?" },
+      { id: "norma", label: "Cita del art. 92", groups: [["art(iculo|\\.)? ?92"]], criterio: "fundamentacion" },
+    ],
+    legalBasis: ["Ley 11.683 art. 92 (paráfrasis, verificar)", "CSJN \"Intercorp\" (2010) — cita a verificar"],
+    modelAnswer:
+      "Es el juicio de apremio por el que el fisco cobra tributos, intereses y multas firmes, sobre la base de una boleta de deuda (art. 92). Las excepciones son taxativas: pago total documentado, espera documentada, prescripción e inhabilidad de título, esta última sólo por vicios de forma; no se discute el fondo de la deuda. La CSJN en \"Intercorp\" exigió control judicial de las medidas cautelares.",
+  },
 ];
 
 /** Nota universitaria argentina (1-10) a partir de la calidad 0..1. Aprobado = 4 (60 %). */

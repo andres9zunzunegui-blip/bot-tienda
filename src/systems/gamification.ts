@@ -72,6 +72,8 @@ export const BADGES: Record<string, { name: string; description: string }> = {
   "memoria-10": { name: "Memoria de acero", description: "10 repasos espaciados exitosos." },
   "lector": { name: "Lector voraz", description: "Cargaste tu primer material de estudio." },
   "retencion": { name: "Lo que se aprende no se olvida", description: "Recordaste correctamente una tarjeta tras 6 días o más." },
+  "racha-3": { name: "Constancia", description: "3 días seguidos aprendiendo." },
+  "racha-7": { name: "Semana perfecta", description: "7 días seguidos aprendiendo." },
 };
 
 export interface BuildingDef {
@@ -172,6 +174,7 @@ export function recordActivity(r: ActivityResult): { xp: number; coins: number }
   const levelBefore = levelFromXp(before.xp);
   const unlockedBefore = new Set(before.unlocked);
   const now = Date.now();
+  let streakGained = 0;
 
   store.update(`activity:${r.kind}`, (s) => {
     s.xp += reward.xp;
@@ -190,10 +193,17 @@ export function recordActivity(r: ActivityResult): { xp: number; coins: number }
     if (s.errors.length > 300) s.errors.splice(0, s.errors.length - 300);
     for (const b of r.badges ?? []) if (!s.badges.includes(b)) s.badges.push(b);
     progressMissions(s, r);
+    if (r.quality >= 0.6) streakGained = bumpStreak(s, now);
     for (const b of BUILDING_UNLOCKS) if (!s.unlocked.includes(b.id) && b.check(s)) s.unlocked.push(b.id);
   });
 
   const s = store.state;
+  if (streakGained) events.emit({ type: "toast", text: `🔥 Racha de ${streakGained} día${streakGained > 1 ? "s" : ""} seguidos`, tone: "ok" });
+  for (const [b, n] of [["racha-3", 3], ["racha-7", 7]] as const)
+    if (s.streak.count >= n && !s.badges.includes(b)) {
+      store.update("badge", (st) => st.badges.push(b));
+      events.emit({ type: "badge", id: b, name: BADGES[b].name });
+    }
   if (reward.xp || reward.coins) events.emit({ type: "reward", xp: reward.xp, coins: reward.coins, label: r.label });
   for (const b of r.badges ?? [])
     if (!before.badges.includes(b) && BADGES[b]) events.emit({ type: "badge", id: b, name: BADGES[b].name });
@@ -239,7 +249,7 @@ export function generateDailyMissions(s: GameState, now = Date.now()): Mission[]
     claimed: false,
     personalized: due > 0,
   });
-  const pendingChapters = ["cap1", "cap2", "cap3", "cap4"].filter((c) => !s.chapters?.[c]?.done);
+  const pendingChapters = ["cap1", "cap2", "cap3", "cap4", "cap5", "cap6"].filter((c) => !s.chapters?.[c]?.done);
   if (pendingChapters.length)
     list.push({
       id: `d-cap-${today()}`,
@@ -334,4 +344,29 @@ export function claimMission(id: string) {
   events.emit({ type: "reward", xp: m.reward.xp, coins: m.reward.coins, label: `Misión: ${m.title}` });
   const lv = levelFromXp(store.state.xp);
   if (lv > levelBefore) events.emit({ type: "levelup", level: lv, rank: rankFor(lv) });
+}
+
+/* ---------------------------- Racha diaria ---------------------------- */
+
+function dayKey(t: number): string {
+  const d = new Date(t);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+/** Suma un día a la racha la primera vez que se aprueba algo en el día. Devuelve la racha nueva (0 si no cambió). */
+export function bumpStreak(s: GameState, now = Date.now()): number {
+  s.streak ??= { count: 0, best: 0, last: "" };
+  const today = dayKey(now);
+  if (s.streak.last === today) return 0;
+  const yesterday = dayKey(now - 86_400_000);
+  s.streak.count = s.streak.last === yesterday ? s.streak.count + 1 : 1;
+  s.streak.best = Math.max(s.streak.best, s.streak.count);
+  s.streak.last = today;
+  return s.streak.count;
+}
+
+/** Racha vigente: si ayer no se estudió, se cortó. */
+export function currentStreak(s: GameState, now = Date.now()): number {
+  if (!s.streak?.last) return 0;
+  return s.streak.last === dayKey(now) || s.streak.last === dayKey(now - 86_400_000) ? s.streak.count : 0;
 }

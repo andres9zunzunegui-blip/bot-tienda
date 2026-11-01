@@ -1,12 +1,13 @@
 /** HUD del mundo, portada y modo simple. */
 import { CHAPTERS } from "../content/chapters.ts";
 import { effectiveAvatar } from "../content/items.ts";
-import { getHealth } from "../core/api.ts";
+import { aiLabel, aiMode } from "../core/ai.ts";
 import { store } from "../core/state.ts";
 import type { BuildingSpec } from "../engine/buildings.ts";
 import { BUILDINGS } from "../engine/buildings.ts";
 import { chapterDone, nextStep } from "../modules/reels/progress.ts";
-import { levelFromXp, rankFor, xpForLevel } from "../systems/gamification.ts";
+import { currentStreak, levelFromXp, rankFor, xpForLevel } from "../systems/gamification.ts";
+import { daysUntil } from "../systems/plan.ts";
 import { add, bar, clear, h, openPanel } from "./dom.ts";
 import { guard } from "./gate.ts";
 import { icon } from "./icons.ts";
@@ -16,7 +17,7 @@ import { musicWidget, openSettings } from "./prefs.ts";
 
 export function runStep(a: ReturnType<typeof nextStep>["action"]) {
   if (a.type === "chapter") go("reels", a.id);
-  else if (a.type === "sim") guard("sim:clausura", () => go("simulations"));
+  else if (a.type === "sim") guard(`sim:${a.id}`, () => go("simulations"));
   else if (a.type === "oral") go("exams", "profesor");
   else if (a.type === "memory") go("memory");
   else go("maps", "evaluar");
@@ -62,6 +63,7 @@ export function renderHud(root: HTMLElement, onMenu: () => void) {
       h(
         "div",
         { class: "hud-res" },
+        h("button", { class: "hud-card", title: "Racha diaria", onclick: () => go("plan") }, "🔥 ", String(currentStreak(s))),
         h("div", { class: "hud-card", title: "Monedas" }, "🪙 ", String(s.coins)),
         h("button", { class: "hud-card", title: "Tarjetas para repasar", onclick: () => go("memory") }, "🧠 ", String(due)),
       ),
@@ -145,7 +147,8 @@ export function renderMenu(root: HTMLElement, onPlay: () => void) {
         { class: "sc-main" },
         h("div", { class: "sc-name" }, h("b", null, s.avatar.name), h("span", null, rankFor(lv))),
         h("div", { class: "sc-bar" }, h("span", null, `Nivel ${lv}`), bar(xpRatio()), h("span", null, `${s.xp} XP`)),
-        h("div", { class: "sc-stats" }, h("span", null, `📚 Teoría ${done}/${CHAPTERS.length}`), h("span", null, `🪙 ${s.coins}`), h("span", null, `🏅 ${s.badges.length}`)),
+        h("div", { class: "sc-stats" }, h("span", null, `🔥 ${currentStreak(s)} día${currentStreak(s) === 1 ? "" : "s"}`), h("span", null, `📚 Teoría ${done}/${CHAPTERS.length}`), h("span", null, `🪙 ${s.coins}`), h("span", null, `🏅 ${s.badges.length}`)),
+        s.exam && daysUntil(s.exam.date) >= 0 ? h("button", { class: "sc-exam", onclick: () => go("plan") }, `🎓 ${s.exam.label}: ${daysUntil(s.exam.date) === 0 ? "¡es hoy!" : `faltan ${daysUntil(s.exam.date)} días`}`) : h("button", { class: "sc-exam muted-btn", onclick: () => go("plan") }, "＋ Cargar fecha de examen y armar plan"),
       ),
     );
     clear(cta);
@@ -165,15 +168,17 @@ export function renderMenu(root: HTMLElement, onPlay: () => void) {
       tile("chart", "Progreso", "Tu rendimiento", () => go("progress")),
       tile("bag", "Inventario", "Premios y tienda", () => go("inventory")),
       tile("user", "Personaje", "Tu avatar", () => go("character")),
+      tile("target", "Mi plan", "Racha y examen", () => go("plan"), currentStreak(s) ? `🔥${currentStreak(s)}` : undefined),
+      tile("book", "Normas", "Fuentes y vigencia", () => go("library")),
     );
   };
   store.subscribe(update);
   update();
 
-  getHealth().then((hh) => {
+  aiMode().then((mode) => {
     add(
       status,
-      h("span", { class: `pill ${hh.ai ? "ok" : "warn"}`, title: hh.ai ? "Corrección con IA" : "Corrección con el evaluador local" }, hh.ai ? "IA activa" : "Corrección local"),
+      h("span", { class: `pill ${mode ? "ok" : "warn"}` }, aiLabel(mode)),
       h("button", { class: "pill info", onclick: () => go("library") }, "Fuentes y vigencia"),
     );
   });
